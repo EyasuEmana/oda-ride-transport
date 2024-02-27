@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
-
+import HomePage from "./page/homePage/index";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Welcome from "./components/welcome";
+import LandingPage from "./page/landingPage/index";
+import ErrorMessage from "./components/errorMessage";
+import Header from "./components/Appbar";
+import theme from "./assets/theme";
+import { ThemeProvider } from "@mui/material";
+import Footer from "./components/footer";
+import RideGoogleMap from "./page/homePage/components/googleMap";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<LandingPage />}></Route>
+          <Route path="/home/:id" element={<HomePage />}></Route>
+          <Route path="/map" element={<RideGoogleMap />}></Route>
+          <Route path={"*"} element={<ErrorMessage />}></Route>
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
