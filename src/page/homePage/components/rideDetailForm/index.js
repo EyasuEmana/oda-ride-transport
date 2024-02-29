@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+
 import {
   Box,
   Grid,
@@ -6,48 +13,72 @@ import {
   InputLabel,
   TextField,
   InputAdornment,
+  Button,
   Select,
   MenuItem,
   FormLabel,
-  useTheme,
   RadioGroup,
   FormControlLabel,
   FormHelperText,
   Stack,
 } from "@mui/material";
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
-import { useNavigate } from "react-router-dom";
+
+import {
+  useLoadScript,
+  Autocomplete,
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+} from "@react-google-maps/api";
+
+// import { google } from "@types/google.maps";
 import { GrLocation } from "react-icons/gr";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
-import { GiCheckMark } from "react-icons/gi";
-import { MdRadioButtonUnchecked } from "react-icons/md";
 import RSRadio from "../../../../components/RSRadio";
 import { useParams } from "react-router-dom";
-import GoogleMap from "../googleMap/index";
-function Index({ formik }) {
+import RSTypography from "../../../../components/RSTypography";
+const libraries = ["places"];
+
+function Index({ formik, handleChangeTripType, selectedTripType }) {
   const [trip, setTrip] = React.useState();
-  const [selectedTripType, setSelectedTripType] = React.useState();
+  const [latLng, setLatLng] = useState(null);
+  const [searchOriginResult, setSearchOriginResult] = useState(null);
+  const [searchDestinationResult, setSearchDestinationResult] = useState(null);
+  const [originLatLng, setOriginLatLng] = useState();
+  const [directionsResponse, setDirectionsResponse] = useState();
+  const [destinationLatLng, setDestinationLatLng] = useState();
+  const [distance, setDistance] = useState();
+  const [duration, setDuration] = useState();
   const params = useParams();
   const travelType = params.id;
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const {
-    ready,
-    value,
-    setValue,
-    suggestions,
-    suggestions: { status, data },
-    clearSuggestions,
-  } = usePlacesAutocomplete();
+  const pickupAddressRef = useRef();
+  const dropDownAddressRef = useRef();
 
-  const handleChangeTripType = (event) => {
-    navigate(`/home/${event.target.value}`);
-    setSelectedTripType(params.id);
-  };
+  const center = useMemo(() => ({ lat: 50, lng: -80 }), []);
+  const onLoad = useCallback((map) => (mapRef.current = map), []);
+  const mapRef = useRef();
+  const pointToPointTripTypes = useMemo(() => ["One way", "Round trip"]);
+
+  const airPorts = useMemo(
+    () => ["Bole Airport", "Emirate Airport", "Kenya Airport", "Abuja Airport"],
+    []
+  );
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
+    libraries: libraries,
+  });
+  useEffect(() => {
+    getRoundTripMenuData();
+  }, [selectedTripType]);
+
+  useEffect(() => {
+    // if (originLatLng && destinationLatLng) {
+    calculateDistance(originLatLng, destinationLatLng);
+    // }
+  }, [originLatLng, destinationLatLng]);
+
   const airportServiceTripTypes = useMemo(
     () => [
       "Ride to the airport(one way)",
@@ -58,11 +89,27 @@ function Index({ formik }) {
     ],
     []
   );
-  const pointToPointTripTypes = useMemo(() => ["One way", "Round trip"]);
-  const airPorts = useMemo(
-    () => ["Bole Airport", "Emirate Airport", "Kenya Airport", "Abuja Airport"],
-    []
-  );
+
+  const calculateDistance = async () => {
+    const google = window.google;
+    const directionsService = new google.maps.DirectionsService();
+
+    await directionsService
+      .route({
+        origin: originLatLng,
+        destination: destinationLatLng,
+        travelMode: google.maps.TravelMode["DRIVING"],
+      })
+      .then((response) => {
+        setDirectionsResponse(response);
+        setDistance(response.routes[0].legs[0].distance.text);
+        setDuration(response.routes[0].legs[0].duration.text);
+      });
+    // .catch((e) => window.alert("Directions request failed due to "));
+    // }
+    console.log("response is: ", directionsResponse);
+  };
+
   const getTripType = () => {
     if (travelType == 1) {
       return "point-to-point";
@@ -71,6 +118,25 @@ function Index({ formik }) {
       return "airport";
     }
   };
+
+  const handleMapClick = async (e) => {
+    const geocoder = new window.google.maps.Geocoder();
+    const latLng = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+    geocoder.geocode({ location: latLng }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          console.log(results[0].formatted_address); // Location name
+          console.log(latLng); // Latitude and Longitude
+          setLatLng(latLng);
+        } else {
+          console.log("No results found");
+        }
+      } else {
+        console.log(`Geocoder failed due to: ${status}`);
+      }
+    });
+  };
+
   const getRoundTripMenuData = () => {
     const tripType = getTripType();
     switch (tripType) {
@@ -86,31 +152,51 @@ function Index({ formik }) {
     }
   };
 
-  const handleSelect = ({ description }) => {
-    setValue(description, false);
-    clearSuggestions();
+  function onOriginChanged() {
+    if (searchOriginResult != null) {
+      //variable to store the result
+      const place = searchOriginResult.getPlace();
+      const latlng = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+      setOriginLatLng(latlng);
+      const name = place.name;
+      const status = place.business_status;
+      const formattedAddress = place.formatted_address;
+    } else {
+      alert("Please enter text");
+    }
+  }
 
-    // Get latitude and longitude of the selected place
-    getGeocode({ address: description })
-      .then((results) => getLatLng(results[0]))
-      .then(({ lat, lng }) => {
-        console.log("Coordinates: ", { lat, lng });
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
-  };
+  function onDestinationChanged() {
+    if (searchDestinationResult != null) {
+      const place = searchDestinationResult.getPlace();
+      const latlng = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+      setDestinationLatLng(latlng);
+    } else {
+      alert("Please enter text");
+    }
+  }
+  function onLoadOriginFunc(autocomplete) {
+    setSearchOriginResult(autocomplete);
+  }
+  function onLoadDestinationFunc(autocomplete) {
+    setSearchDestinationResult(autocomplete);
+  }
+  if (!isLoaded) return <>loading</>;
 
-  useEffect(() => {
-    getRoundTripMenuData();
-  }, [selectedTripType]);
-  // useEffect(() => {
-  //   console.log("suggestions:", suggestions);
-  // }, [value]);
   return (
     <Box>
-      <Grid container justifyContent={"space-between"}>
-        <Grid item xs={5}>
+      <Grid
+        container
+        justifyContent={{ lg: "space-between", sm: "center" }}
+        spacing={2}
+      >
+        <Grid item xs={10} md={5}>
           <Stack direction={"column"} spacing={2}>
             <FormControl fullWidth>
               <FormLabel sx={{ color: "info" }}>Trip Type</FormLabel>
@@ -137,7 +223,6 @@ function Index({ formik }) {
                 />
               </RadioGroup>
             </FormControl>
-            {console.log("travelType == point to point: ", travelType == 1)}
             {(travelType == 1 || travelType == 2) && (
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">
@@ -218,80 +303,131 @@ function Index({ formik }) {
               </FormControl>
             )}
 
-            {(travelType == 1 || travelType == 3) && (
-              <TextField
-                label="Select pickup address"
-                fullWidth
-                name="pickUpAddress"
-                value={formik.values.pickUpAddress}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.pickUpAddress &&
-                  Boolean(formik.errors.pickUpAddress)
-                }
-                helperText={
-                  formik.touched.pickUpAddress && formik.errors.pickUpAddress
-                }
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <GrLocation />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+            {(travelType == 1 || travelType == 3) && isLoaded && (
+              <Autocomplete
+                onPlaceChanged={onOriginChanged}
+                onLoad={onLoadOriginFunc}
+              >
+                <TextField
+                  label="Select pickup address"
+                  fullWidth
+                  name="pickUpAddress"
+                  ref={pickupAddressRef}
+                  // value={formik.values.pickUpAddress}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.pickUpAddress &&
+                    Boolean(formik.errors.pickUpAddress)
+                  }
+                  helperText={
+                    formik.touched.pickUpAddress && formik.errors.pickUpAddress
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GrLocation />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Autocomplete>
             )}
 
             {(travelType == 1 || travelType == 3) && (
-              <TextField
-                fullWidth
-                label="Select Dropoff address"
-                name="dropOffAddress"
-                value={formik.values.dropOffAddress}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.dropOffAddress &&
-                  Boolean(formik.errors.dropOffAddress)
-                }
-                helperText={
-                  formik.touched.dropOffAddress && formik.errors.dropOffAddress
-                }
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <TbCurrentLocation />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <Autocomplete
+                onPlaceChanged={onDestinationChanged}
+                onLoad={onLoadDestinationFunc}
+              >
+                <TextField
+                  fullWidth
+                  label="Select Dropoff address"
+                  name="dropOffAddress"
+                  ref={dropDownAddressRef}
+                  // value={formik.values.dropOffAddress}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.dropOffAddress &&
+                    Boolean(formik.errors.dropOffAddress)
+                  }
+                  helperText={
+                    formik.touched.dropOffAddress &&
+                    formik.errors.dropOffAddress
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <TbCurrentLocation />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Autocomplete>
             )}
 
             {travelType == 2 && (
-              <TextField
-                label="Select Hotel"
-                fullWidth
-                name="hotel"
-                value={formik.values.hotel}
-                onChange={formik.handleChange}
-                error={formik.touched.hotel && Boolean(formik.errors.hotel)}
-                helperText={formik.touched.hotel && formik.errors.hotel}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <MdOutlineHotel />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <Autocomplete types={["lodging"]}>
+                <TextField
+                  label="Select Hotel"
+                  fullWidth
+                  name="hotel"
+                  // value={formik.values.hotel}
+                  onChange={formik.handleChange}
+                  error={formik.touched.hotel && Boolean(formik.errors.hotel)}
+                  helperText={formik.touched.hotel && formik.errors.hotel}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MdOutlineHotel />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Autocomplete>
             )}
           </Stack>
         </Grid>
 
         <Grid item xs={6}>
-          <GoogleMap />
+          <Stack
+            direction={"column"}
+            justifyContent={"space-between"}
+            spacing={2}
+            sx={{ width: "100%", height: "100%" }}
+          >
+            <GoogleMap
+              zoom={3}
+              center={center}
+              onLoad={onLoad}
+              mapContainerStyle={{ width: "100%", height: "100%" }}
+              mapContainerClassName="map-container"
+              onClick={handleMapClick}
+            >
+              {latLng && <Marker position={latLng} />}
+
+              {directionsResponse && (
+                <DirectionsRenderer directions={directionsResponse} />
+              )}
+            </GoogleMap>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              justifyContent={"space-between"}
+            >
+              {<RSTypography>distance: {distance}</RSTypography>}
+              {<RSTypography>duration: {duration}</RSTypography>}
+            </Stack>
+          </Stack>
         </Grid>
+        {/* <Grid item xs={12} >
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              justifyContent={"space-between"}
+            >
+              {<RSTypography>distance: {distance}</RSTypography>}
+              {<RSTypography>duration: {duration}</RSTypography>}
+            </Stack>
+          </Grid> */}
       </Grid>
     </Box>
   );
