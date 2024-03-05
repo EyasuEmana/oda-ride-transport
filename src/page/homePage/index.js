@@ -12,23 +12,22 @@ import * as yup from "yup";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 function Index() {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [selectedTripType, setSelectedTripType] = React.useState();
-  const [test, setTest] = useState();
   const location = useLocation();
   const params = useParams();
   const navigate = useNavigate();
   const [rideInfoInitValue, setRideInfoInitValue] = useState({
-    pickUpAddress: null,
-    dropOffAddress: null,
+    pickupPhysicalAddress: null,
+    dropoffPhysicalAddress: null,
   });
   const [rideInfoValidationSchemaObj, setrideInfoValidationSchemaObj] =
     useState({
       tripType: yup.string("Trip Type").required("Trip type is required!"),
-      pickUpAddress: yup
+      pickupPhysicalAddress: yup
         .string("Pick up address")
         .required("Pick up address is required!"),
-      dropOffAddress: yup
+      dropoffPhysicalAddress: yup
         .string("Dropoff address")
         .required("Dropoff address is required!"),
     });
@@ -40,6 +39,14 @@ function Index() {
     vehicle: yup
       .string("vehicle is string")
       .required("Select at least one vehicle to proceed"),
+
+    numberOfSuitcases: yup
+      .string("suitcase is string")
+      .required("Select at least one suitcases"),
+
+    numberOfPassengers: yup
+      .string("passengers is string")
+      .required("Select at least one passengers"),
   });
   const tripDetailValidationSchema = yup.object({
     pickupDate: yup
@@ -57,16 +64,30 @@ function Index() {
   });
 
   const formikRideInfo = useFormik({
-    initialValues: rideInfoInitValue,
+    initialValues: {
+      tripType: null,
+      pickupPhysicalAddress: null,
+      pickupLongitude: null,
+      pickupLatitude: null,
+      dropoffPhysicalAddress: null,
+      dropoffLongitude: null,
+      dropoffLatitude: null,
+      hour: null,
+      airPort: "Bole Airport",
+      hotel: null,
+    },
     validationSchema: rideInfoValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
       handleNext();
     },
   });
 
   const formikChooseVehicle = useFormik({
-    initialValues: { vehicle: null },
+    initialValues: {
+      vehicle: null,
+      numberOfSuitcases: null,
+      numberOfPassengers: null,
+    },
     validationSchema: rideValidationSchema,
     onSubmit: (values) => {
       handleNext();
@@ -107,15 +128,15 @@ function Index() {
     if (ttype == 1) {
       setRideInfoInitValue({
         tripType: null,
-        pickUpAddress: null,
-        dropOffAddress: null,
+        pickupPhysicalAddress: null,
+        dropoffPhysicalAddress: null,
       });
       setrideInfoValidationSchemaObj({
         tripType: yup.string("Trip Type").required("Trip type is required!"),
-        pickUpAddress: yup
+        pickupPhysicalAddress: yup
           .string("Pick up address")
           .required("Pick up address is required!"),
-        dropOffAddress: yup
+        dropoffPhysicalAddress: yup
           .string("Dropoff address")
           .required("Dropoff address is required!"),
       });
@@ -132,15 +153,15 @@ function Index() {
       });
     } else if (ttype == 3) {
       setRideInfoInitValue({
-        pickUpAddress: null,
-        dropOffAddress: null,
+        pickupPhysicalAddress: null,
+        dropoffPhysicalAddress: null,
         hour: null,
       });
       setrideInfoValidationSchemaObj({
-        pickUpAddress: yup
+        pickupPhysicalAddress: yup
           .string("Pick up address")
           .required("Pick up address is required!"),
-        dropOffAddress: yup
+        dropoffPhysicalAddress: yup
           .string("Dropoff address")
           .required("Dropoff address is required!"),
         hour: yup.string("Hour to travel").required("Hour is required!"),

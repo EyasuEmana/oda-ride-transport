@@ -31,7 +31,6 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 
-// import { google } from "@types/google.maps";
 import { GrLocation } from "react-icons/gr";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
@@ -52,7 +51,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const [duration, setDuration] = useState();
   const params = useParams();
   const travelType = params.id;
-  const pickupAddressRef = useRef();
+  const pickupPhysicalAddressRef = useRef();
   const dropDownAddressRef = useRef();
 
   const center = useMemo(() => ({ lat: 50, lng: -80 }), []);
@@ -92,22 +91,26 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
 
   const calculateDistance = async () => {
     const google = window.google;
-    const directionsService = new google.maps.DirectionsService();
+    var directionsService = null;
+    if (google) {
+      directionsService = new google.maps.DirectionsService();
 
-    await directionsService
-      .route({
-        origin: originLatLng,
-        destination: destinationLatLng,
-        travelMode: google.maps.TravelMode["DRIVING"],
-      })
-      .then((response) => {
-        setDirectionsResponse(response);
-        setDistance(response.routes[0].legs[0].distance.text);
-        setDuration(response.routes[0].legs[0].duration.text);
-      });
+      await directionsService
+        .route({
+          origin: originLatLng,
+          destination: destinationLatLng,
+          travelMode: google.maps.TravelMode["DRIVING"],
+        })
+        .then((response) => {
+          setDirectionsResponse(response);
+          setDistance(response.routes[0].legs[0].distance.text);
+          setDuration(response.routes[0].legs[0].duration.text);
+        });
+    }
+
     // .catch((e) => window.alert("Directions request failed due to "));
     // }
-    console.log("response is: ", directionsResponse);
+    // console.log("response is: ", directionsResponse);
   };
 
   const getTripType = () => {
@@ -154,8 +157,9 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
 
   function onOriginChanged() {
     if (searchOriginResult != null) {
-      //variable to store the result
       const place = searchOriginResult.getPlace();
+      const pickupPhysicalAddress = place.formatted_address;
+      formik.setFieldValue("pickupPhysicalAddress", pickupPhysicalAddress);
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
@@ -176,6 +180,8 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       };
+      const dropoffPhysicalAddress = place.formatted_address;
+      formik.setFieldValue("dropoffPhysicalAddress", dropoffPhysicalAddress);
       setDestinationLatLng(latlng);
     } else {
       alert("Please enter text");
@@ -311,17 +317,18 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 <TextField
                   label="Select pickup address"
                   fullWidth
-                  name="pickUpAddress"
-                  ref={pickupAddressRef}
-                  // value={formik.values.pickUpAddress}
+                  name="pickupPhysicalAddress"
+                  ref={pickupPhysicalAddressRef}
+                  // value={formik.values.pickupPhysicalAddress}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.pickUpAddress &&
-                    Boolean(formik.errors.pickUpAddress)
+                    formik.touched.pickupPhysicalAddress &&
+                    Boolean(formik.errors.pickupPhysicalAddress)
                   }
                   helperText={
-                    formik.touched.pickUpAddress && formik.errors.pickUpAddress
+                    formik.touched.pickupPhysicalAddress &&
+                    formik.errors.pickupPhysicalAddress
                   }
                   InputProps={{
                     startAdornment: (
@@ -342,18 +349,18 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 <TextField
                   fullWidth
                   label="Select Dropoff address"
-                  name="dropOffAddress"
+                  name="dropoffPhysicalAddress"
                   ref={dropDownAddressRef}
-                  // value={formik.values.dropOffAddress}
+                  // value={formik.values.dropoffPhysicalAddress}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.dropOffAddress &&
-                    Boolean(formik.errors.dropOffAddress)
+                    formik.touched.dropoffPhysicalAddress &&
+                    Boolean(formik.errors.dropoffPhysicalAddress)
                   }
                   helperText={
-                    formik.touched.dropOffAddress &&
-                    formik.errors.dropOffAddress
+                    formik.touched.dropoffPhysicalAddress &&
+                    formik.errors.dropoffPhysicalAddress
                   }
                   InputProps={{
                     startAdornment: (

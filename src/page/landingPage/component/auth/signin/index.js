@@ -4,8 +4,15 @@ import { Box, TextField, Grid, Stack, InputAdornment } from "@mui/material";
 import axios from "axios";
 import RSButton from "../../../../../components/RSButton";
 import RSTextField from "../../../../../components/RSTextField";
-import RSTypography from "../../../../../components/RSTypography";
 function Index() {
+  const signIn = async () => {
+
+    const response = await axios.get(
+      "http://localhost:8765/user-manager-service/api/education-level"
+    );
+
+    console.log("response", response);
+  };
   return (
     <Box>
       <Grid container spacing={2}>
@@ -26,6 +33,7 @@ function Index() {
               sx={{ width: 200 }}
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
+              onClick={signIn}
             >
               Signin
             </RSButton>
