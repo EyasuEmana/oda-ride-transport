@@ -3,12 +3,10 @@ import {
   Box,
   Stack,
   Grid,
-  TextField,
   FormControlLabel,
   FormControl,
   RadioGroup,
-  Radio,
-  FormLabel,
+  TextField,
   Checkbox,
 } from "@mui/material";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -16,12 +14,23 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import RSButton from "../../../../components/RSButton";
-import RSTypography from "../../../../components/RSTypography";
 import RSTextField from "../../../../components/RSTextField";
 import RSRadio from "../../../../components/RSRadio";
 function Index({ formik }) {
   const [stopOnWay, setStopOnWay] = useState(false);
+  const getFormattdTime = (time) => {
+    return time.format().substring(11, 19);
+  };
+  const erroSlot = (field) => {
+    return {
+      textField: {
+        helperText:
+          formik.touched[field] && formik.errors[field] && formik.errors[field],
+        error: formik.touched[field] && Boolean(formik.errors[field]),
+        sx: { color: "red" },
+      },
+    };
+  };
   return (
     <Box>
       <Grid container direction={{ xs: "column-reverse", lg: "row" }}>
@@ -37,34 +46,34 @@ function Index({ formik }) {
                     label="Pickup Date"
                     disablePast
                     value={formik.values.pickupDate}
-                    onChange={(date) =>
-                      formik.setFieldValue("pickupDate", date)
-                    }
+                    onChange={(date) => {
+                      formik.setFieldValue(
+                        "pickupDate",
+                        date && date.format().substring(0, 10)
+                      );
+                    }}
                     onBlur={formik.handleBlur}
-                    error={
+                    onError={
                       formik.touched.pickupDate &&
                       Boolean(formik.errors.pickupDate)
                     }
-                    helperText={
-                      formik.touched.pickupDate && formik.errors.pickupDate
-                    }
                     sx={{ width: "100%" }}
+                    slotProps={erroSlot("pickupDate")}
                   />
+
                   <TimePicker
                     label="Pickup time"
                     value={formik.values.pickupTime}
                     onChange={(time) =>
-                      formik.setFieldValue("pickupTime", time)
+                      time && formik.setFieldValue("pickupTime", time)
                     }
                     onBlur={formik.handleBlur}
                     error={
                       formik.touched.pickupTime &&
                       Boolean(formik.errors.pickupTime)
                     }
-                    helperText={
-                      formik.touched.pickupTime && formik.errors.pickupTime
-                    }
                     sx={{ width: "100%" }}
+                    slotProps={erroSlot("pickupTime")}
                   />
                 </DemoContainer>
               </LocalizationProvider>
@@ -77,44 +86,57 @@ function Index({ formik }) {
                     label="Return Pickup Date"
                     value={formik.values.returnPickupDate}
                     onChange={(date) =>
-                      formik.setFieldValue("returnPickupDate", date)
+                      formik.setFieldValue(
+                        "returnPickupDate",
+                        date && date.format().substring(0, 10)
+                      )
                     }
                     onBlur={formik.handleBlur}
                     error={
                       formik.touched.returnPickupDate &&
                       Boolean(formik.errors.returnPickupDate)
-                    }
-                    helperText={
-                      formik.touched.returnPickupDate &&
-                      formik.errors.returnPickupDate
-                    }
+                    } 
                     sx={{ width: "100%" }}
+                    slotProps={erroSlot("returnPickupDate")}
                   />
+
                   <TimePicker
                     label="Return Pickup Time"
                     value={formik.values.returnPickupTime}
                     onChange={(time) =>
-                      formik.setFieldValue("returnPickupTime", time)
+                      time &&
+                      formik.setFieldValue(
+                        "returnPickupTime",
+                        getFormattdTime(time)
+                      )
                     }
                     onBlur={formik.handleBlur}
                     error={
                       formik.touched.returnPickupTime &&
                       Boolean(formik.errors.returnPickupTime)
                     }
-                    helperText={
-                      formik.touched.returnPickupTime &&
-                      formik.errors.returnPickupTime
-                    }
                     sx={{ width: "100%" }}
+                    slotProps={erroSlot("returnPickupTime")}
                   />
                 </DemoContainer>
               </LocalizationProvider>
             </Box>
             <RSTextField
+              fullWidth
+              color="info"
+              name="instruction"
+              onBlur={formik.handleBlur}
               label="Special Instructions"
+              value={formik.values.instruction}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.instruction && Boolean(formik.errors.instruction)
+              }
+              helperText={
+                formik.touched.instruction && formik.errors.instruction
+              }
               multiline
               rows={4}
-              color="info"
             />
             <FormControlLabel
               control={

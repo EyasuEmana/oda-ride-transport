@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCars } from "../actions/bookActions";
+import { book, getCars } from "../actions/bookActions";
 
 const initialState = {
   cars: [],
+  isBookSuccess: false,
 };
 
 const UserSlice = createSlice({
@@ -20,9 +21,15 @@ const UserSlice = createSlice({
       state.cars = action.payload;
     });
     builder.addCase(getCars.rejected, (state, action) => {});
+
+    builder.addCase(book.pending, (state, action) => {});
+    builder.addCase(book.fulfilled, (state, action) => {
+      state.isBookSuccess = true;
+      console.log("data", action);
+    });
+    builder.addCase(book.rejected, (state, action) => {});
   },
 });
 
-export const { login, logout, setRole, setMenuAction, updateCars } =
-  UserSlice.actions;
+export const { login, updateCars } = UserSlice.actions;
 export default UserSlice.reducer;

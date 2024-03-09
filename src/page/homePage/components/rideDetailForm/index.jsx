@@ -13,7 +13,6 @@ import {
   InputLabel,
   TextField,
   InputAdornment,
-  Button,
   Select,
   MenuItem,
   FormLabel,
@@ -53,11 +52,11 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const travelType = params.id;
   const pickupPhysicalAddressRef = useRef();
   const dropDownAddressRef = useRef();
-
+  const MILE_TO_KM = 1.60934;
   const center = useMemo(() => ({ lat: 50, lng: -80 }), []);
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const mapRef = useRef();
-  const pointToPointTripTypes = useMemo(() => ["One way", "Round trip"]);
+  const pointToPointTripTypes = useMemo(() => ["One way", "Round-Trip"]);
 
   const airPorts = useMemo(
     () => ["Bole Airport", "Emirate Airport", "Kenya Airport", "Abuja Airport"],
@@ -73,9 +72,9 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   }, [selectedTripType]);
 
   useEffect(() => {
-    // if (originLatLng && destinationLatLng) {
-    calculateDistance(originLatLng, destinationLatLng);
-    // }
+    if (originLatLng && destinationLatLng) {
+      calculateDistance(originLatLng, destinationLatLng);
+    }
   }, [originLatLng, destinationLatLng]);
 
   const airportServiceTripTypes = useMemo(
@@ -102,15 +101,15 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
           travelMode: google.maps.TravelMode["DRIVING"],
         })
         .then((response) => {
+          formik.setFieldValue(
+            "distanceInMiles",
+            (response.routes[0].legs[0].distance.value * 0.001) / MILE_TO_KM
+          );
           setDirectionsResponse(response);
           setDistance(response.routes[0].legs[0].distance.text);
           setDuration(response.routes[0].legs[0].duration.text);
         });
     }
-
-    // .catch((e) => window.alert("Directions request failed due to "));
-    // }
-    // console.log("response is: ", directionsResponse);
   };
 
   const getTripType = () => {
@@ -125,8 +124,9 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const handleMapClick = async (e) => {
     const geocoder = new window.google.maps.Geocoder();
     const latLng = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+
     geocoder.geocode({ location: latLng }, (results, status) => {
-      if (status === "OK") {
+      if (status == "OK") {
         if (results[0]) {
           console.log(results[0].formatted_address); // Location name
           console.log(latLng); // Latitude and Longitude
@@ -159,11 +159,14 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     if (searchOriginResult != null) {
       const place = searchOriginResult.getPlace();
       const pickupPhysicalAddress = place.formatted_address;
-      formik.setFieldValue("pickupPhysicalAddress", pickupPhysicalAddress);
+
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       };
+      formik.setFieldValue("pickupPhysicalAddress", pickupPhysicalAddress);
+      formik.setFieldValue("pickupLatitude", latlng?.lat);
+      formik.setFieldValue("pickupLongitude", latlng?.lng);
       setOriginLatLng(latlng);
       const name = place.name;
       const status = place.business_status;
@@ -182,6 +185,9 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       };
       const dropoffPhysicalAddress = place.formatted_address;
       formik.setFieldValue("dropoffPhysicalAddress", dropoffPhysicalAddress);
+      formik.setFieldValue("dropoffLatitude", latlng?.lat);
+      formik.setFieldValue("dropoffLongitude", latlng?.lng);
+
       setDestinationLatLng(latlng);
     } else {
       alert("Please enter text");
@@ -230,7 +236,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
               </RadioGroup>
             </FormControl>
             {(travelType == 1 || travelType == 2) && (
-              <FormControl fullWidth>
+              <FormControl fullWidth color="info">
                 <InputLabel id="demo-simple-select-helper-label">
                   Select one way or round trip
                 </InputLabel>
@@ -258,7 +264,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
             )}
 
             {travelType == 2 && (
-              <FormControl fullWidth>
+              <FormControl fullWidth color="info">
                 <InputLabel id="airport label">Select Airport</InputLabel>
                 <Select
                   label="Select Airport"
@@ -284,7 +290,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
             )}
 
             {travelType == 3 && (
-              <FormControl fullWidth>
+              <FormControl fullWidth color="info">
                 <InputLabel id="hour label">Select Hours</InputLabel>
                 <Select
                   // value={selectedTrip}
@@ -315,6 +321,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 onLoad={onLoadOriginFunc}
               >
                 <TextField
+                  color="info"
                   label="Select pickup address"
                   fullWidth
                   name="pickupPhysicalAddress"
@@ -347,6 +354,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 onLoad={onLoadDestinationFunc}
               >
                 <TextField
+                  color="info"
                   fullWidth
                   label="Select Dropoff address"
                   name="dropoffPhysicalAddress"

@@ -5,22 +5,21 @@ import RideDetailForm from "./components/rideDetailForm";
 import ChooseVehicleForm from "./components/chooseVehicleForm";
 import ContactDetailForm from "./components/contactDetailForm";
 import TripDetail from "./components/tripDetail";
-
+import { useDispatch } from "react-redux";
 import Summary from "./components/summary";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { book } from "../../store/actions/bookActions";
 
 function Index() {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedTripType, setSelectedTripType] = React.useState();
+  const dispatch = useDispatch();
+  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const location = useLocation();
-  const params = useParams();
   const navigate = useNavigate();
-  const [rideInfoInitValue, setRideInfoInitValue] = useState({
-    pickupPhysicalAddress: null,
-    dropoffPhysicalAddress: null,
-  });
+
   const [rideInfoValidationSchemaObj, setrideInfoValidationSchemaObj] =
     useState({
       tripType: yup.string("Trip Type").required("Trip type is required!"),
@@ -48,6 +47,7 @@ function Index() {
       .string("passengers is string")
       .required("Select at least one passengers"),
   });
+
   const tripDetailValidationSchema = yup.object({
     pickupDate: yup
       .string("should be string value")
@@ -61,6 +61,9 @@ function Index() {
     returnPickupTime: yup
       .string("should be string value")
       .required("Return pickup time is required"),
+    instruction: yup
+      .string("special instruction shoud be string")
+      .required("special instruction is required"),
   });
 
   const formikRideInfo = useFormik({
@@ -72,7 +75,8 @@ function Index() {
       dropoffPhysicalAddress: null,
       dropoffLongitude: null,
       dropoffLatitude: null,
-      hour: null,
+      distanceInMiles: 0,
+      hour: 0,
       airPort: "Bole Airport",
       hotel: null,
     },
@@ -85,12 +89,14 @@ function Index() {
   const formikChooseVehicle = useFormik({
     initialValues: {
       vehicle: null,
-      numberOfSuitcases: null,
-      numberOfPassengers: null,
+      numberOfSuitcases: 0,
+      numberOfPassengers: 0,
+      extraOptions: [],
     },
     validationSchema: rideValidationSchema,
     onSubmit: (values) => {
-      handleNext();
+      console.log("values: ", values);
+      // handleNext();
     },
   });
 
@@ -100,9 +106,45 @@ function Index() {
       pickupTime: null,
       returnPickupDate: null,
       returnPickupTime: null,
+      additionalStopOnTheWayPrice: 0,
+      instruction: null,
     },
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
+      handleNext();
+    },
+  });
+  const contactValidationSchema = yup.object().shape({
+    firstName: yup.string("should be string").required(),
+    lastName: yup.string("should be string").required(),
+    email: yup
+      .string("should be string")
+      .email("should be valid email")
+      .required("Email required"),
+    confirmEmail: yup
+      .string()
+      .oneOf([yup.ref("email"), null], "Emails must match")
+      .required("Confirm email is required"),
+    cellPhone: yup.string().matches(phoneRegex, "Invalid phone number format"),
+    passengerFirstName: yup.string(),
+    passengerLastName: yup.string(),
+    passengerCellPhone: yup
+      .string()
+      .matches(phoneRegex, "Invalid phone number format"),
+  });
+  const formikContact = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      confirmEmail: "",
+      cellPhone: "",
+      passengerFirstName: "",
+      passengerLastName: "",
+      passengerCellPhone: "",
+    },
+    validationSchema: contactValidationSchema,
+    onSubmit: () => {
       handleNext();
     },
   });
@@ -116,7 +158,7 @@ function Index() {
   };
 
   const handleChangeTripType = (event) => {
-    formikTripDetail.resetForm();
+    // formikTripDetail.resetForm();
     const selectedType = event.target.value;
     navigate(`/home/${selectedType}`);
     setSelectedTripType(selectedType);
@@ -125,12 +167,7 @@ function Index() {
   function setRideDetailFormikData() {
     var ttype = location.pathname.split("/").pop();
 
-    if (ttype == 1) {
-      setRideInfoInitValue({
-        tripType: null,
-        pickupPhysicalAddress: null,
-        dropoffPhysicalAddress: null,
-      });
+    if (ttype === 1) {
       setrideInfoValidationSchemaObj({
         tripType: yup.string("Trip Type").required("Trip type is required!"),
         pickupPhysicalAddress: yup
@@ -140,23 +177,13 @@ function Index() {
           .string("Dropoff address")
           .required("Dropoff address is required!"),
       });
-    } else if (ttype == 2) {
-      setRideInfoInitValue({
-        tripType: null,
-        airPort: "Bole Airport",
-        hotel: null,
-      });
+    } else if (ttype === 2) {
       setrideInfoValidationSchemaObj({
         tripType: yup.string("Trip Type").required("Trip type is required!"),
         airPort: yup.string("airport").required("Airport required!"),
         hotel: yup.string("Hotel is string").required("Hotel is required!"),
       });
-    } else if (ttype == 3) {
-      setRideInfoInitValue({
-        pickupPhysicalAddress: null,
-        dropoffPhysicalAddress: null,
-        hour: null,
-      });
+    } else if (ttype === 3) {
       setrideInfoValidationSchemaObj({
         pickupPhysicalAddress: yup
           .string("Pick up address")
@@ -168,6 +195,16 @@ function Index() {
       });
     }
   }
+
+  const handleFinish = () => {
+    const values = {
+      rideInfo: formikRideInfo.values,
+      vehicle: formikChooseVehicle.values,
+      tripDetail: formikTripDetail.values,
+      contact: formikContact.values,
+    };
+    dispatch(book(values));
+  };
 
   useEffect(() => {
     setRideDetailFormikData();
@@ -185,8 +222,10 @@ function Index() {
         formikTripDetail.handleSubmit();
         break;
       case 3:
-        // formikSummary.handleSubmit();
-        break;
+        formikContact.handleSubmit();
+      // case 4:
+      //   formikSummary.handleSubmit();
+      //   break;
       default:
         break;
     }
@@ -224,7 +263,7 @@ function Index() {
               <ChooseVehicleForm formik={formikChooseVehicle} />
             )}
             {activeStep === 2 && <TripDetail formik={formikTripDetail} />}
-            {activeStep === 3 && <ContactDetailForm />}
+            {activeStep === 3 && <ContactDetailForm formik={formikContact} />}
             {activeStep === 4 && <Summary />}
           </Box>
         </Grid>
@@ -243,10 +282,15 @@ function Index() {
             >
               BACK
             </Button>
-
-            <Button variant="contained" onClick={handleSubmit}>
-              {getNextButtonLabel()}
-            </Button>
+            {activeStep === 4 ? (
+              <Button variant="contained" onClick={handleFinish}>
+                Finish
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={handleSubmit}>
+                {getNextButtonLabel()}
+              </Button>
+            )}
           </Stack>
         </Grid>
       </Grid>
