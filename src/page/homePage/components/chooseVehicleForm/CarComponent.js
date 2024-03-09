@@ -7,7 +7,6 @@ import {
   Badge,
   useMediaQuery,
 } from "@mui/material";
-import hyundaiVenue from "../../../../assets/images/Hyundail Venue.webp";
 import RSTypography from "../../../../components/RSTypography";
 import RSButton from "../../../../components/RSButton";
 import { BsPeople } from "react-icons/bs";
@@ -15,12 +14,12 @@ import { PiSuitcaseDuotone } from "react-icons/pi";
 
 function CarComponent({ carDetail, formik, handleCarSelect }) {
   const {
-    id,
-    carTitle,
-    imgUrl,
-    cost,
-    peopleCapacity,
-    suitcaseCapacity,
+    carId,
+    carName,
+    carImageUrl,
+    pricePerMile,
+    maxPassengers,
+    maxSuitcases,
     isSelected,
   } = carDetail;
 
@@ -30,13 +29,14 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
     return (
       <img
         style={{ width: "100%", height: "auto", objectFit: "contain" }}
-        src={imgUrl}
+        src={carImageUrl}
       />
     );
   };
   const handleSelect = () => {
-    formik.setFieldValue("vehicle", carDetail.id);
-    handleCarSelect(carDetail.id);
+    formik.setFieldValue("vehicle", carDetail.carId);
+    console.log("id: ",carDetail.carId)
+    handleCarSelect(carDetail.carId);
   };
   return (
     <Box
@@ -46,7 +46,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
         paddingBottom: matchSmallScreen && 4,
       }}
     >
-      <Grid container justifyContent={"space-between"} >
+      <Grid container justifyContent={"space-between"}>
         <Grid item md={5.5} xs={12}>
           <CarImg />
         </Grid>
@@ -66,7 +66,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                   fontsize={"25px"}
                   txtcolor={theme.palette.warning.main}
                 >
-                  {carTitle}
+                  {carName}
                 </RSTypography>
               </Grid>
               <Grid item xs={5}>
@@ -75,7 +75,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                     <Stack direction={"row"} justifyContent={"flex-start"}>
                       <Badge
                         color={theme.palette.info.main}
-                        badgeContent={peopleCapacity}
+                        badgeContent={maxPassengers}
                       >
                         <BsPeople size={30} />
                       </Badge>
@@ -83,7 +83,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                     <Stack direction={"row"} justifyContent={"flex-end"}>
                       <Badge
                         color={theme.palette.info.main}
-                        badgeContent={suitcaseCapacity}
+                        badgeContent={maxSuitcases}
                       >
                         <PiSuitcaseDuotone size={30} />
                       </Badge>
@@ -95,7 +95,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
 
             <Grid container>
               <Grid item xs={6}>
-                <RSTypography fontsize={"25px"}>{cost}$</RSTypography>
+                <RSTypography fontsize={"25px"}>{pricePerMile}$</RSTypography>
               </Grid>
               <Grid item xs={6}>
                 {isSelected ? (

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -13,15 +13,18 @@ import {
 import CarComponent from "./CarComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { getCars } from "../../../../store/actions/bookActions";
-import { updateCars } from "../../../../store/reducers/bookReducers";
 import RSTypography from "../../../../components/RSTypography";
 import ExtraOptionComponent from "./ExtraOptionComponent";
 import { getExtraOptions } from "../../../../store/actions/extraOptions";
 import extraOptions from "./options";
+import { getAllCars } from "../../../../store/actions/carAction";
+import { updateCars } from "../../../../store/reducers/carReducer";
 
 function Index({ formik }) {
   const dispatch = useDispatch();
-  const { cars } = useSelector((state) => state.bookReducer);
+  const [carType, setCarType] = useState("All Vehicles");
+  // const { cars } = useSelector((state) => state.bookReducer);
+  const { cars } = useSelector((state) => state.carReducer);
   // const { extraOptions } = useSelector((state) => state.extraOptionReducer);
   const carTypes = useMemo(() => [
     "All Vehicles",
@@ -31,21 +34,36 @@ function Index({ formik }) {
     "SUV",
     "Van",
   ]);
+
   const handleCarSelect = (selectedCarId) => {
     const updatedCars = cars.map((car) => ({
       ...car,
-      isSelected: car.id === selectedCarId,
+      isSelected: car.carId === selectedCarId,
     }));
     dispatch(updateCars(updatedCars));
   };
 
+  const handleChangeCarType = (e) => {
+    setCarType(e.target.value);
+  };
+  const filterCars = (suitcase, peopleCapacity) => {
+    return cars?.filter(
+      (car) =>
+        car?.maxSuitcases >= formik.values.numberOfSuitcases &&
+        car?.maxPassengers >= formik.values.numberOfPassengers &&
+        (carType === "All Vehicles" ? true : car?.carType === carType)
+    );
+  };
+
   useEffect(() => {
     dispatch(getCars());
+    dispatch(getAllCars());
     dispatch(getExtraOptions());
   }, []);
+
   useEffect(() => {
-    console.log("extraOptions: ", extraOptions);
-  }, [extraOptions]);
+    console.log("cars: ", cars);
+  }, [cars]);
   return (
     <Grid container direction={{ xs: "column-reverse", lg: "row" }}>
       <Grid item xs={3}>
@@ -69,9 +87,13 @@ function Index({ formik }) {
             <FormControl sx={{ width: "100%" }} color="info">
               <InputLabel>TYPE</InputLabel>
 
-              <Select label="TYPE">
+              <Select
+                label="TYPE"
+                value={carType}
+                onChange={handleChangeCarType}
+              >
                 {carTypes.map((carType, index) => (
-                  <MenuItem value={index}>{carType}</MenuItem>
+                  <MenuItem value={carType}>{carType}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -105,7 +127,6 @@ function Index({ formik }) {
                 </FormHelperText>
               )}
             </FormControl>
-
             <FormControl sx={{ width: "100%" }} color="info">
               <InputLabel>PASSENGERS</InputLabel>
               <Select
@@ -140,11 +161,12 @@ function Index({ formik }) {
 
         <Grid item xs={12}>
           <Stack direction="column" spacing={2}>
-            {Boolean(formik.errors.vehicle) && (
-              <Alert severity="error">{formik.errors.vehicle}</Alert>
-            )}
-            {cars?.map((car) => (
-              <Box key={car.id}>
+            {formik.touched.numberOfPassengers &&
+              Boolean(formik.errors.vehicle) && (
+                <Alert severity="error">{formik.errors.vehicle}</Alert>
+              )}
+            {filterCars()?.map((car) => (
+              <Box key={car.carId}>
                 <CarComponent
                   carDetail={car}
                   formik={formik}
