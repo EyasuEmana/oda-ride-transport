@@ -1,6 +1,6 @@
 import HomePage from "./page/homePage/index";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Welcome from "./components/welcome";
+// import Welcome from "./components/welcome";
 import LandingPage from "./page/landingPage/index";
 import ErrorMessage from "./components/errorMessage";
 import Header from "./components/Appbar";

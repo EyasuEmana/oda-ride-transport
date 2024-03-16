@@ -19,45 +19,36 @@ function ExtraOptionComponent({ option, formik }) {
   const theme = useTheme();
 
   const handleAddItem = () => {
-    if (option?.counter !== option?.maxAllowedItems) {
-      option.counter = option.counter + 1;
+    if (quantity !== option?.maxAllowedItems) {
       setQuantity((prev) => prev + 1);
       var options = [...formik.values.extraOptions];
+      const extraOptionSize = formik.values.extraOptions.length;
       const optionIndex = options.findIndex(
         (opt) => opt.extraOptionId === option.extraOptionId
       );
-      if (optionIndex !== -1) {
-        options[optionIndex] = {
-          ...options[optionIndex],
-          quantity: options[optionIndex].quantity + 1,
-        };
-      } else {
-        options.push({
-          extraOptionId: option?.extraOptionId,
-          quantity: 1,
-        });
-      }
+
+      options[optionIndex] = {
+        ...options[optionIndex],
+        quantity: options[optionIndex].quantity + 1,
+      };
+
       formik.setFieldValue("extraOptions", options);
     }
   };
 
   const handleReduceItem = () => {
-    if (option?.counter !== 0) {
-      option.counter = option.counter - 1;
+    if (quantity !== 0) {
       setQuantity((prev) => prev - 1);
     }
   };
   const handleSelect = () => {
     var options = [...formik.values.extraOptions];
-    const optionIndex = options.findIndex(
-      (opt) => opt.extraOptionId === option.extraOptionId
-    );
-    if (optionIndex !== -1) {
-      options[optionIndex] = {
-        ...options[optionIndex],
-        quantity: 1,
-      };
-    }
+    const extraOptionSize = formik.values.extraOptions.length;
+    options[extraOptionSize] = {
+      extraOptionId: option.extraOptionId,
+      name: option.name,
+      quantity: 1,
+    };
     formik.setFieldValue("extraOptions", options);
     setQuantity(1);
     setIsSelected((prev) => !prev);
@@ -68,16 +59,12 @@ function ExtraOptionComponent({ option, formik }) {
     const indexToRemove = options.findIndex(
       (opt) => opt.extraOptionId === option.extraOptionId
     );
-    if (indexToRemove !== -1) {
-      options.splice(indexToRemove, 1);
-    }
+    options.splice(indexToRemove, 1);
     setQuantity(0);
     formik.setFieldValue("extraOptions", options);
     setIsSelected((prev) => !prev);
   };
-  useEffect(() => {
-    option.counter = 0;
-  }, []);
+
   return (
     <Grid
       item
@@ -120,7 +107,7 @@ function ExtraOptionComponent({ option, formik }) {
                 <FaArrowAltCircleLeft size={20} />
               </IconButton>
               <IconButton
-                onClick={handleAddItem}
+                onClick={() => handleAddItem()}
                 disabled={!isSelected || option?.maxAllowedItems == quantity}
               >
                 <FaArrowAltCircleRight size={20} />

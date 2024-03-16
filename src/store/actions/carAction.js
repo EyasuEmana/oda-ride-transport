@@ -84,12 +84,11 @@ export const getAllCars = createAsyncThunk(
   "car/get-cars",
   async (values, thunkAPI) => {
     try {
-      var res = await axios.get(
-        "https://121ccd19-2618-46ce-a360-534846c76b8c.mock.pstmn.io/cars"
-      );
+      var res = await axios.get(remote_host + "/api/v1/cars");
       //   var res = await axios.get(remote_host + "/api/v1/cars");
-      //   return res.data;
-      return cars;
+       console.log("cars: ",res.data)
+      return res.data;
+      // return cars;
     } catch (error) {
       return thunkAPI.rejectWithValue("unable to load cars");
     }

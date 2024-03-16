@@ -4,6 +4,9 @@ import { book, getCars } from "../actions/bookActions";
 const initialState = {
   cars: [],
   isBookSuccess: false,
+  isError: false,
+  errorMessage: "",
+  cost: 0,
 };
 
 const UserSlice = createSlice({
@@ -13,6 +16,12 @@ const UserSlice = createSlice({
     login: (state, action) => {},
     updateCars: (state, action) => {
       state.cars = action.payload;
+    },
+    addCost: (state, action) => {
+      state.cost = state.cost + action.payload;
+    },
+    reduceCost: (state, action) => {
+      state.cost = state.cost - action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -27,9 +36,12 @@ const UserSlice = createSlice({
       state.isBookSuccess = true;
       console.log("data", action);
     });
-    builder.addCase(book.rejected, (state, action) => {});
+    builder.addCase(book.rejected, (state, action) => {
+      state.errorMessage = action.payload;
+      state.isError = true;
+    });
   },
 });
 
-export const { login, updateCars } = UserSlice.actions;
+export const { login, updateCars, addCost, reduceCost } = UserSlice.actions;
 export default UserSlice.reducer;

@@ -30,11 +30,11 @@ function Index() {
         justifyContent={"center"}
         spacing={5}
       >
-        <Grid item xs={5}>
+        <Grid item md={5} xs={11}>
           <Stack direction={"column"} spacing={3}>
             <RSTypography fontsize={"25px"} fontweight={"500"}>
-              "Discover the safest and most customer-friendly ride system in our
-              city!"
+              " Discover the safest and most customer-friendly ride system in
+              our city!"
             </RSTypography>
 
             <RSButton
@@ -47,11 +47,14 @@ function Index() {
             </RSButton>
           </Stack>
         </Grid>
-
-        <Grid item xs={5}>
-          <Stack direction={"column"} spacing={2}>
+        <Grid item md={5} xs={11}>
+          <Stack direction={"column"} spacing={2} alignItems={"center"}>
             {serviceCardData.map((service) => (
-              <ServiceCard imgUrl={service.imgUrl} text={service.text} id={service.id}/>
+              <ServiceCard
+                imgUrl={service.imgUrl}
+                text={service.text}
+                id={service.id}
+              />
             ))}
           </Stack>
         </Grid>

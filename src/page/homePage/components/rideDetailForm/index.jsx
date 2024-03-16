@@ -20,6 +20,8 @@ import {
   FormControlLabel,
   FormHelperText,
   Stack,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import {
@@ -48,6 +50,10 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const [destinationLatLng, setDestinationLatLng] = useState();
   const [distance, setDistance] = useState();
   const [duration, setDuration] = useState();
+
+  const theme = useTheme();
+  const matchXS = useMediaQuery(theme.breakpoints.down("md"));
+
   const params = useParams();
   const travelType = params.id;
   const pickupPhysicalAddressRef = useRef();
@@ -56,7 +62,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const center = useMemo(() => ({ lat: 50, lng: -80 }), []);
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const mapRef = useRef();
-  const pointToPointTripTypes = useMemo(() => ["One way", "Round-Trip"]);
+  const pointToPointTripTypes = useMemo(() => ["One-Way", "Round-Trip"]);
 
   const airPorts = useMemo(
     () => ["Bole Airport", "Emirate Airport", "Kenya Airport", "Abuja Airport"],
@@ -208,7 +214,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
         justifyContent={{ lg: "space-between", sm: "center" }}
         spacing={2}
       >
-        <Grid item xs={10} md={5}>
+        <Grid item md={5} xs={12}>
           <Stack direction={"column"} spacing={2}>
             <FormControl fullWidth>
               <FormLabel sx={{ color: "info" }}>Trip Type</FormLabel>
@@ -387,7 +393,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                   label="Select Hotel"
                   fullWidth
                   name="hotel"
-                  // value={formik.values.hotel}
                   onChange={formik.handleChange}
                   error={formik.touched.hotel && Boolean(formik.errors.hotel)}
                   helperText={formik.touched.hotel && formik.errors.hotel}
@@ -404,45 +409,38 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
           </Stack>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item md={6} xs={12}>
           <Stack
             direction={"column"}
             justifyContent={"space-between"}
             spacing={2}
             sx={{ width: "100%", height: "100%" }}
           >
-            <GoogleMap
-              zoom={3}
-              center={center}
-              onLoad={onLoad}
-              mapContainerStyle={{ width: "100%", height: "100%" }}
-              mapContainerClassName="map-container"
-              onClick={handleMapClick}
-            >
-              {latLng && <Marker position={latLng} />}
-
-              {directionsResponse && (
-                <DirectionsRenderer directions={directionsResponse} />
-              )}
-            </GoogleMap>
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              justifyContent={"space-between"}
-            >
-              {<RSTypography>distance: {distance}</RSTypography>}
-              {<RSTypography>duration: {duration}</RSTypography>}
-            </Stack>
+          <GoogleMap
+            zoom={3}
+            center={center}
+            onLoad={onLoad}
+            mapContainerStyle={{
+              width: "100%",
+              height:  matchXS && 400,
+            }}
+            mapContainerClassName="map-container"
+            onClick={handleMapClick}
+          >
+            {latLng && <Marker position={latLng} />}
+            {directionsResponse && (
+              <DirectionsRenderer directions={directionsResponse} />
+            )}
+          </GoogleMap>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent={"space-between"}
+          >
+            <RSTypography>distance: {distance}</RSTypography>
+            <RSTypography>duration: {duration}</RSTypography>
+          </Stack>
           </Stack>
         </Grid>
-        {/* <Grid item xs={12} >
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              justifyContent={"space-between"}
-            >
-              {<RSTypography>distance: {distance}</RSTypography>}
-              {<RSTypography>duration: {duration}</RSTypography>}
-            </Stack>
-          </Grid> */}
       </Grid>
     </Box>
   );

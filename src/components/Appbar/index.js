@@ -24,24 +24,17 @@ const categories = ["Home", "About Us", "Contact Us", "FAQ"];
 
 function Header() {
   const [value, setValue] = useState(0);
-  const [activeButton, setActiveButton] = useState(1);
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
-  const handleActiveButton = (active) => {
-    setActiveButton(active);
-  };
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+
   const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundColor: "#FFF",
     height: "auto",
     position: "sticky",
     justifyContent: "center",
     alignItems: "space-between",
-    paddingTop: 8,
-    paddingBottom: 8,
+   
     boxShadow: 0,
   }));
   const StyledTabs = styled(Tabs)({

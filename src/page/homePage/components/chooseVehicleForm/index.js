@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -8,6 +8,7 @@ import {
   Select,
   FormHelperText,
   InputLabel,
+  CircularProgress,
   FormControl,
 } from "@mui/material";
 import CarComponent from "./CarComponent";
@@ -16,16 +17,19 @@ import { getCars } from "../../../../store/actions/bookActions";
 import RSTypography from "../../../../components/RSTypography";
 import ExtraOptionComponent from "./ExtraOptionComponent";
 import { getExtraOptions } from "../../../../store/actions/extraOptions";
-import extraOptions from "./options";
 import { getAllCars } from "../../../../store/actions/carAction";
 import { updateCars } from "../../../../store/reducers/carReducer";
+import Summary from "./SummaryTillVehicle";
+import StepSummary from "../StepSummary";
+import { addCost } from "../../../../store/reducers/bookReducers";
 
-function Index({ formik }) {
+function Index({ formik, rideSummaryData }) {
   const dispatch = useDispatch();
   const [carType, setCarType] = useState("All Vehicles");
-  // const { cars } = useSelector((state) => state.bookReducer);
-  const { cars } = useSelector((state) => state.carReducer);
-  // const { extraOptions } = useSelector((state) => state.extraOptionReducer);
+  const { cars, loading } = useSelector((state) => state.carReducer);
+  const { extraOptions, loading_extra_option } = useSelector(
+    (state) => state.extraOptionReducer
+  );
   const carTypes = useMemo(() => [
     "All Vehicles",
     "Limousis",
@@ -36,24 +40,44 @@ function Index({ formik }) {
   ]);
 
   const handleCarSelect = (selectedCarId) => {
-    const updatedCars = cars.map((car) => ({
-      ...car,
-      isSelected: car.carId === selectedCarId,
-    }));
+    const updatedCars = cars.map((car) => {
+      console.log("price: ",car.pricePerHour)
+      if (car.carId == selectedCarId)
+        dispatch(addCost(parseInt(car.pricePerHour)));
+      return {
+        ...car,
+        isSelected: car.carId == selectedCarId,
+      };
+    });
     dispatch(updateCars(updatedCars));
   };
 
   const handleChangeCarType = (e) => {
     setCarType(e.target.value);
   };
-  const filterCars = (suitcase, peopleCapacity) => {
-    return cars?.filter(
+  const filterCars = () => {
+    var filteredCars = [];
+    filteredCars = cars?.filter(
       (car) =>
         car?.maxSuitcases >= formik.values.numberOfSuitcases &&
         car?.maxPassengers >= formik.values.numberOfPassengers &&
         (carType === "All Vehicles" ? true : car?.carType === carType)
     );
+
+    return filteredCars;
   };
+
+  useEffect(() => {
+    const filteredCars = filterCars();
+    const selectedCarIndex = filteredCars.findIndex(
+      (car) => car.carId == formik.values.vehicle
+    );
+
+    if (selectedCarIndex < 0) {
+      formik.setFieldValue("vehicle", null);
+      handleCarSelect(-1);
+    }
+  }, [formik.values.numberOfSuitcases, formik.values.numberOfPassengers]);
 
   useEffect(() => {
     dispatch(getCars());
@@ -61,18 +85,20 @@ function Index({ formik }) {
     dispatch(getExtraOptions());
   }, []);
 
-  useEffect(() => {
-    console.log("cars: ", cars);
-  }, [cars]);
   return (
-    <Grid container direction={{ xs: "column-reverse", lg: "row" }}>
+    <Grid container direction={{ xs: "column-reverse", lg: "row" }} spacing={1}>
       <Grid item xs={3}>
-        Summary
+        <StepSummary
+          rideSummaryData={rideSummaryData}
+          vehicleSummaryData={[]}
+          tripSummaryData={[]}
+          contactSummaryData={[]}
+        />
       </Grid>
       <Grid item container xs={8} spacing={2} justifyContent={"center"}>
         <Grid item xs={12}>
           <Box
-            sx={{ width: "100%", backgroundColor: "#CCC", padding: 2, mb: 1 }}
+            sx={{ width: "100%", backgroundColor: "#DDD", padding: 2, mb: 1 }}
           >
             <RSTypography>Filter vehicles</RSTypography>
           </Box>
@@ -115,7 +141,7 @@ function Index({ formik }) {
                   formik.errors.numberOfSuitcases
                 }
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                   <MenuItem key={value} value={value}>
                     {value}
                   </MenuItem>
@@ -161,10 +187,14 @@ function Index({ formik }) {
 
         <Grid item xs={12}>
           <Stack direction="column" spacing={2}>
-            {formik.touched.numberOfPassengers &&
-              Boolean(formik.errors.vehicle) && (
-                <Alert severity="error">{formik.errors.vehicle}</Alert>
-              )}
+            {formik.touched.vehicle && Boolean(formik.errors.vehicle) && (
+              <Alert severity="error">{formik.errors.vehicle}</Alert>
+            )}
+            {loading && (
+              <center>
+                <CircularProgress color="info" />
+              </center>
+            )}
             {filterCars()?.map((car) => (
               <Box key={car.carId}>
                 <CarComponent
@@ -176,13 +206,18 @@ function Index({ formik }) {
             ))}
           </Stack>
         </Grid>
-
         <Grid item xs={12}>
           <Stack direction={"column"} spacing={2}>
             <RSTypography fontsize={20}>Extra Options</RSTypography>
-            {extraOptions.map((option) => (
-              <ExtraOptionComponent option={option} formik={formik} />
-            ))}
+            {loading_extra_option && (
+              <center>
+                <CircularProgress color="info" />
+              </center>
+            )}
+            {extraOptions &&
+              extraOptions.map((option) => (
+                <ExtraOptionComponent option={option} formik={formik} />
+              ))}
           </Stack>
         </Grid>
       </Grid>

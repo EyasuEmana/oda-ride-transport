@@ -35,7 +35,8 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
   };
   const handleSelect = () => {
     formik.setFieldValue("vehicle", carDetail.carId);
-    console.log("id: ",carDetail.carId)
+    formik.setFieldValue("vehicleName", carDetail.carName);
+
     handleCarSelect(carDetail.carId);
   };
   return (
