@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Stack,
   Grid,
+  FormLabel,
   FormControlLabel,
   FormControl,
   FormHelperText,
@@ -16,18 +17,21 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useLocation } from "react-router-dom";
-
+import { useSelector, useDispatch } from "react-redux";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import RSTextField from "../../../../components/RSTextField";
 import RSRadio from "../../../../components/RSRadio";
 import StepSummary from "../StepSummary";
+import { getAllPreferences } from "../../../../store/actions/preferenceAction";
 function Index({ formik, vehicleSummaryData, rideSummaryData }) {
   const [stopOnWay, setStopOnWay] = useState(false);
   const getFormattdTime = (time) => {
     return time.format().substring(11, 19);
   };
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { preferences } = useSelector((state) => state.preferenceReducer);
   var travelType = location.pathname.split("/").pop();
   const tripType = rideSummaryData.tripType;
   const erroSlot = (field) => {
@@ -51,6 +55,9 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       tripType == "Ride from the airport(round trip)"
     );
   };
+  useEffect(() => {
+    dispatch(getAllPreferences());
+  }, []);
   return (
     <Box>
       <Grid
@@ -75,33 +82,38 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                   disablePast
                   value={formik.values.pickupDate}
                   onChange={(date) => {
+                    formik.setFieldValue("pickupDate", date);
                     formik.setFieldValue(
-                      "pickupDate",
+                      "formattedPickupDate",
                       date && date.format().substring(0, 10)
                     );
                   }}
                   onBlur={formik.handleBlur}
                   onError={
-                    formik.touched.pickupDate &&
-                    Boolean(formik.errors.pickupDate)
+                    formik.touched.formattedPickupDate &&
+                    Boolean(formik.errors.formattedPickupDate)
                   }
-                  slotProps={erroSlot("pickupDate")}
+                  slotProps={erroSlot("formattedPickupDate")}
                 />
 
                 <TimePicker
                   label="Pickup time"
                   value={formik.values.pickupTime}
-                  onChange={(time) =>
+                  onChange={(time) => {
+                    formik.setFieldValue("pickupTime", time);
                     time &&
-                    formik.setFieldValue("pickupTime", getFormattdTime(time))
-                  }
+                      formik.setFieldValue(
+                        "formattedPickupTime",
+                        getFormattdTime(time)
+                      );
+                  }}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.pickupTime &&
-                    Boolean(formik.errors.pickupTime)
+                    formik.touched.formattedPickupTime &&
+                    Boolean(formik.errors.formattedPickupTime)
                   }
                   sx={{ width: "100%" }}
-                  slotProps={erroSlot("pickupTime")}
+                  slotProps={erroSlot("formattedPickupTime")}
                 />
               </DemoContainer>
             </LocalizationProvider>
@@ -112,41 +124,94 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                     disablePast
                     label="Return Pickup Date"
                     value={formik.values.returnPickupDate}
-                    onChange={(date) =>
+                    onChange={(date) => {
+                      formik.setFieldValue("returnPickupDate", date);
                       formik.setFieldValue(
-                        "returnPickupDate",
+                        "formattedReturnPickupDate",
                         date && date.format().substring(0, 10)
-                      )
-                    }
+                      );
+                    }}
                     onBlur={formik.handleBlur}
                     error={
-                      formik.touched.returnPickupDate &&
-                      Boolean(formik.errors.returnPickupDate)
+                      formik.touched.formattedReturnPickupDate &&
+                      Boolean(formik.errors.formattedReturnPickupDate)
                     }
                     sx={{ width: "100%" }}
-                    slotProps={erroSlot("returnPickupDate")}
+                    slotProps={erroSlot("formattedReturnPickupDate")}
                   />
 
                   <TimePicker
                     label="Return Pickup Time"
                     value={formik.values.returnPickupTime}
-                    onChange={(time) =>
+                    onChange={(time) => {
+                      formik.setFieldValue("returnPickupTime", time);
                       time &&
-                      formik.setFieldValue(
-                        "returnPickupTime",
-                        getFormattdTime(time)
-                      )
-                    }
+                        formik.setFieldValue(
+                          "formattedReturnPickupTime",
+                          getFormattdTime(time)
+                        );
+                    }}
                     onBlur={formik.handleBlur}
                     error={
-                      formik.touched.returnPickupTime &&
-                      Boolean(formik.errors.returnPickupTime)
+                      formik.touched.formattedReturnPickupTime &&
+                      Boolean(formik.errors.formattedReturnPickupTime)
                     }
                     sx={{ width: "100%" }}
-                    slotProps={erroSlot("returnPickupTime")}
+                    slotProps={erroSlot("formattedReturnPickupTime")}
                   />
                 </DemoContainer>
               </LocalizationProvider>
+            )}
+
+            {/* <RSTextField
+              color="info"
+              name="instruction"
+              onBlur={formik.handleBlur}
+              label="Special Instructions"
+              value={formik.values.instruction}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.instruction && Boolean(formik.errors.instruction)
+              }
+              helperText={
+                formik.touched.instruction && formik.errors.instruction
+              }
+            />
+            <RSTextField label="Flight Number (arrival)" color="info" />
+*/}
+            {isAirportTravel && (
+              <RSTextField
+                fullWidth
+                color="info"
+                name="airline"
+                onBlur={formik.handleBlur}
+                label="Airline"
+                value={formik.values.airline}
+                onChange={formik.handleChange}
+                error={formik.touched.airline && Boolean(formik.errors.airline)}
+                helperText={formik.touched.airline && formik.errors.airline}
+                multiline
+              />
+            )}
+            {isAirportTravel && (
+              <RSTextField
+                fullWidth
+                color="info"
+                name="arrivalFlightNumber"
+                onBlur={formik.handleBlur}
+                label="Flight Number (arrival)"
+                value={formik.values.arrivalFlightNumber}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.arrivalFlightNumber &&
+                  Boolean(formik.errors.arrivalFlightNumber)
+                }
+                helperText={
+                  formik.touched.arrivalFlightNumber &&
+                  formik.errors.arrivalFlightNumber
+                }
+                multiline
+              />
             )}
 
             <RSTextField
@@ -166,6 +231,43 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
               multiline
               rows={4}
             />
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ color: "info" }}>
+                Airport Pickup Preference :
+              </FormLabel>
+              <RadioGroup
+                row
+                defaultValue={1}
+                name="pickupPreference"
+                onBlur={formik.handleBlur}
+                label="Special pickupPreferences"
+                value={formik.values.pickupPreference}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.pickupPreference &&
+                  Boolean(formik.errors.pickupPreference)
+                }
+                helperText={
+                  formik.touched.pickupPreference &&
+                  formik.errors.pickupPreference
+                }
+              >
+                {preferences?.map((preference) => (
+                  <FormControlLabel
+                    value={preference.pickupPreferenceId}
+                    control={<RSRadio />}
+                    label={`${preference.preferenceName} ($${preference.preferencePrice})`}
+                  />
+                ))}
+              </RadioGroup>
+
+              {formik.touched.pickupPreference && (
+                <FormHelperText sx={{ color: "red" }}>
+                  {formik.errors.pickupPreference}
+                </FormHelperText>
+              )}
+            </FormControl>
             {isHourlyTravel && (
               <FormControl fullWidth color="info">
                 <InputLabel id="occation">Occation</InputLabel>
@@ -179,7 +281,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                     formik.touched.occation && Boolean(formik.errors.occation)
                   }
                 >
-                  <MenuItem value="wedding">Wedding</MenuItem>
+                  <MenuItem value="Wedding">Wedding</MenuItem>
                   <MenuItem value="tour">Tour</MenuItem>
                   <MenuItem value="prom">Promotion</MenuItem>
                   <MenuItem value="gradiation">Graduation</MenuItem>

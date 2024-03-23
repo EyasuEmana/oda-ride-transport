@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Stack, Button, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Stack,
+  Button,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import Stepper from "./components/stepper/index";
 import RideDetailForm from "./components/rideDetailForm";
 import ChooseVehicleForm from "./components/chooseVehicleForm";
@@ -12,7 +20,9 @@ import * as yup from "yup";
 import { useNavigate, useLocation } from "react-router-dom";
 import { book } from "../../store/actions/bookActions";
 import Success from "./components/Success";
-
+import { getAllCars } from "../../store/actions/carAction";
+import { getExtraOptions } from "../../store/actions/extraOptions";
+import { getAirports } from "../../store/actions/airportAction";
 function Index() {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
@@ -23,7 +33,7 @@ function Index() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { isBookSuccess, errorMessage, isError } = useSelector(
+  const { isBookSuccess, errorMessage, isError, isBookPending } = useSelector(
     (state) => state.bookReducer
   );
   var travelType = location.pathname.split("/").pop();
@@ -61,51 +71,76 @@ function Index() {
   const formikRideInfo = useFormik({
     initialValues: {
       tripType: "One-Way",
-      pickupPhysicalAddress: null,
-      pickupLongitude: null,
-      pickupLatitude: null,
-      dropoffPhysicalAddress: null,
-      dropoffLongitude: null,
-      dropoffLatitude: null,
+      pickupPhysicalAddress: "",
+      pickupLongitude: 0,
+      pickupLatitude: 0,
+      dropoffPhysicalAddress: "",
+      dropoffLongitude: 0,
+      dropoffLatitude: 0,
       distanceInMiles: 0,
       hour: 0,
-      airPort: "Bole Airport",
-      hotel: null,
+      airPortId: null,
+      airportName: "",
+      airportAddressLongitude: 0,
+      airportAddressLatitude: 0,
+      hotel: "",
+      accommodationAddress: "",
+      accommodationLongitude: 0,
+      accommodationLatitude: 0,
     },
     validationSchema: rideInfoValidationSchema,
     onSubmit: (values) => {
       handleNext();
     },
   });
+  const isRoundTrip = () => {
+    var tripType = formikRideInfo.values.tripType;
+    return (
+      tripType == "Round-Trip" ||
+      tripType == "Ride to the airport(round trip)" ||
+      tripType == "Ride from the airport(round trip)"
+    );
+  };
 
   const tripDetailValidationSchema = yup.object({
-    tripType: yup.boolean().default(location.pathname.split("/").pop() == 3),
-    isRoundTrip: yup
-      .boolean()
-      .default(formikRideInfo.values.tripType == "Round-Trip"),
-    pickupDate: yup
+    isHourly: yup.boolean().default(location.pathname.split("/").pop() == 3),
+    isAirport: yup.boolean().default(location.pathname.split("/").pop() == 2),
+    isRoundTrip: yup.boolean().default(isRoundTrip()),
+    formattedPickupDate: yup
       .string("should be string value")
       .required("Pickup date is required"),
-    pickupTime: yup
+    formattedPickupTime: yup
       .string("should be string value")
       .required("Pickup time is required"),
-    returnPickupDate: yup.string().when("isRoundTrip", {
+    formattedReturnPickupDate: yup.string().when("isRoundTrip", {
       is: true,
       then: (schema) => schema.required("Return pickup date is required"),
       otherwise: (schema) => schema.nullable(true),
     }),
-    returnPickupTime: yup.string().when("isRoundTrip", {
+    formattedReturnPickupTime: yup.string().when("isRoundTrip", {
       is: true,
-      then: (schema) => schema.required("Return pickup date is required"),
+      then: (schema) => schema.required("Return pickup time is required"),
       otherwise: (schema) => schema.nullable(true),
     }),
     instruction: yup
       .string("special instruction shoud be string")
       .nullable(true),
+
+    pickupPreference: yup.number().required("preference require"),
     // .required("special instruction is required"),
-    occation: yup.string().when("tripType", {
+    occation: yup.string().when("isHourly", {
       is: true,
       then: (schema) => schema.required("Occation is required"),
+      otherwise: (schema) => schema,
+    }),
+    arrivalFlightNumber: yup.string().when("isAirport", {
+      is: true,
+      then: (schema) => schema.required("flight number is required"),
+      otherwise: (schema) => schema,
+    }),
+    airline: yup.string().when("isAirport", {
+      is: true,
+      then: (schema) => schema.required("airline is required"),
       otherwise: (schema) => schema,
     }),
   });
@@ -128,13 +163,20 @@ function Index() {
   const formikTripDetail = useFormik({
     initialValues: {
       tripType: location.pathname.split("/").pop() == 3,
+      formattedPickupDate: null,
       pickupDate: null,
+      formattedPickupTime: null,
       pickupTime: null,
+      formattedReturnPickupDate: null,
       returnPickupDate: null,
+      formattedReturnPickupTime: null,
       returnPickupTime: null,
       additionalStopOnTheWayPrice: 0,
-      instruction: null,
+      instruction: "",
+      arrivalFlightNumber: "",
+      airline: "",
       occation: "",
+      pickupPreference: 1,
     },
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
@@ -181,7 +223,7 @@ function Index() {
     validationSchema: yup.object({
       concent: yup.boolean().oneOf([true], "You should concent to the summary"),
     }),
-    onSubmit: () => {
+    onSubmit: (value) => {
       handleFinish();
     },
   });
@@ -214,7 +256,7 @@ function Index() {
     } else if (travelType == 2) {
       setrideInfoValidationSchemaObj({
         tripType: yup.string("Trip Type").required("Trip type is required!"),
-        airPort: yup.string("airport").required("Airport required!"),
+        airPortId: yup.string("airport").required("Airport required!"),
         hotel: yup.string("Hotel is string").required("Hotel is required!"),
       });
     } else if (travelType == 3) {
@@ -240,17 +282,6 @@ function Index() {
     };
     dispatch(book(values));
   };
-
-  useEffect(() => {
-    setRideDetailFormikData();
-  }, [location]);
-
-  useEffect(() => {
-    if (isBookSuccess) {
-      handleNext();
-    }
-    if (isError) setOpen((prev) => !prev);
-  }, [isBookSuccess, errorMessage, isError]);
 
   const handleSubmit = () => {
     switch (activeStep) {
@@ -284,7 +315,7 @@ function Index() {
       case 3:
         return "SUMMARY";
       case 4:
-        return "FINISH";
+        return "BOOK";
       default:
         break;
     }
@@ -318,17 +349,9 @@ function Index() {
       {
         label: "Pickup date",
         value:
-          formikTripDetail.values.pickupDate +
+          formikTripDetail.values.formattedPickupDate +
           " " +
-          formikTripDetail.values.pickupTime,
-        isVisible: true,
-      },
-      {
-        label: "Dropoff date",
-        value:
-          formikTripDetail.values.returnPickupDate +
-          " " +
-          formikTripDetail.values.returnPickupTime,
+          formikTripDetail.values.formattedPickupTime,
         isVisible: true,
       },
       {
@@ -355,6 +378,24 @@ function Index() {
     ];
     return contactSummaryData;
   };
+
+  useEffect(() => {
+    setRideDetailFormikData();
+  }, [location]);
+
+  useEffect(() => {
+    if (isBookSuccess) {
+      handleNext();
+    }
+    if (isError) setOpen((prev) => !prev);
+  }, [isBookSuccess, errorMessage, isError]);
+
+  useEffect(() => {
+    dispatch(getAllCars());
+    dispatch(getAirports());
+    dispatch(getExtraOptions());
+  }, []);
+
   return (
     <Box mt={5}>
       <Stepper step={activeStep} />
@@ -417,7 +458,11 @@ function Index() {
                 BACK
               </Button>
               <Button variant="contained" onClick={handleSubmit}>
-                {getNextButtonLabel()}
+                {isBookPending ? (
+                  <CircularProgress size={25} sx={{ color: "#FFF" }} />
+                ) : (
+                  getNextButtonLabel()
+                )}
               </Button>
               {/* )} */}
             </Stack>

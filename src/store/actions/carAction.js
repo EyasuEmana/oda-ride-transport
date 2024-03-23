@@ -85,10 +85,7 @@ export const getAllCars = createAsyncThunk(
   async (values, thunkAPI) => {
     try {
       var res = await axios.get(remote_host + "/api/v1/cars");
-      //   var res = await axios.get(remote_host + "/api/v1/cars");
-       console.log("cars: ",res.data)
       return res.data;
-      // return cars;
     } catch (error) {
       return thunkAPI.rejectWithValue("unable to load cars");
     }

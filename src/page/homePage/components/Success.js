@@ -17,7 +17,7 @@ function Success() {
           You've successfully booked for transportation
         </RSTypography>
         <RSTypography txtcolor="#03930A">
-          Thank you for choosing us!
+          Thank you for using our service!
         </RSTypography>
       </Stack>
     </Box>

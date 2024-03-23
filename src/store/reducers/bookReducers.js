@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { book, getCars } from "../actions/bookActions";
+import { book } from "../actions/bookActions";
 
 const initialState = {
   cars: [],
+  isBookPending: false,
   isBookSuccess: false,
   isError: false,
   errorMessage: "",
@@ -14,9 +15,7 @@ const UserSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {},
-    updateCars: (state, action) => {
-      state.cars = action.payload;
-    },
+
     addCost: (state, action) => {
       state.cost = state.cost + action.payload;
     },
@@ -25,23 +24,20 @@ const UserSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getCars.pending, (state) => {});
-    builder.addCase(getCars.fulfilled, (state, action) => {
-      state.cars = action.payload;
+    builder.addCase(book.pending, (state, action) => {
+      state.isBookPending = true;
     });
-    builder.addCase(getCars.rejected, (state, action) => {});
-
-    builder.addCase(book.pending, (state, action) => {});
     builder.addCase(book.fulfilled, (state, action) => {
+      state.isBookPending = false;
       state.isBookSuccess = true;
-      console.log("data", action);
     });
     builder.addCase(book.rejected, (state, action) => {
+      state.isBookPending = false;
       state.errorMessage = action.payload;
       state.isError = true;
     });
   },
 });
 
-export const { login, updateCars, addCost, reduceCost } = UserSlice.actions;
+export const { login, addCost, reduceCost } = UserSlice.actions;
 export default UserSlice.reducer;

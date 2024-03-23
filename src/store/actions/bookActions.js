@@ -1,18 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { mock_host_url, remote_host } from "../../globalVariable";
-export const getCars = createAsyncThunk(
-  "book/get-cars",
-  async (values, thunkAPI) => {
-    try {
-      var res = await axios.get(mock_host_url + "/cars");
-      return res.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue("unable to load cars");
-    }
-  }
-);
-
+ 
 export const book = createAsyncThunk(
   "book/apply-book",
   async (values, thunkAPI) => {
@@ -27,39 +16,78 @@ export const book = createAsyncThunk(
       dropoffLatitude: rideInfo?.dropoffLatitude,
       numberOfPassengers: vehicle?.numberOfPassengers,
       numberOfSuitcases: vehicle?.numberOfSuitcases,
-      pickupDateTime: tripDetail?.pickupDate + " " + tripDetail?.pickupTime,
+      pickupDateTime: tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
       specialInstructions: tripDetail?.instruction,
       bookingFor: contact?.bookingFor,
       passengerFullName: contact?.passengerFullName,
       passengerCellPhone: contact?.passengerCellPhone,
-
       carId: vehicle?.vehicle,
       extraOptions: vehicle.extraOptions,
     };
     if (rideInfo?.tripType == "Round-Trip") {
+      // console.log("here: ", rideInfo?.tripType == "Round-Trip");
       body.returnPickupDateTime =
         tripDetail?.returnPickupDate + " " + tripDetail?.returnPickupTime;
     }
+    // console.log("body: ", body);
+    var extraOptions = [];
+    body.extraOptions.map((option) => {
+      extraOptions.push({
+        extraOptionId: option.extraOptionId,
+        quantity: option.quantity,
+      });
+    });
+    body.extraOptions = extraOptions;
 
     try {
-      if (travelType == 3) {
+      if (travelType == 1) {
+        body.tripType = rideInfo?.tripType;
+        body.distanceInMiles = rideInfo?.distanceInMiles;
+
+        res = await axios.post(
+          remote_host + "/api/v1/point-to-point-books",
+          body
+        );
+      } else if (travelType == 2) {
+        const body = {
+          tripType: rideInfo?.tripType,
+          airportId: rideInfo?.airPortId,
+          numberOfPassengers: vehicle?.numberOfPassengers,
+          numberOfSuitcases: vehicle?.numberOfSuitcases,
+          accommodationAddress: "123 Main St, Anytown, USA",
+          accommodationLongitude: -73.935242,
+          accommodationLatitude: 40.73061,
+          airline: tripDetail?.airline,
+          arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
+          specialInstructions: tripDetail?.instruction,
+          pickupDateTime: tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
+          distanceInMiles: rideInfo?.distanceInMiles,
+          carId: vehicle?.vehicle,
+          additionalStopId: 1,
+          additionalStopOnTheWayDescription: "hello",
+          pickupPreferenceId: tripDetail?.pickupPreference,
+          extraOptions: extraOptions,
+          bookingFor: contact?.bookingFor,
+          passengerFullName: contact?.passengerFullName,
+          passengerCellPhone: contact?.passengerCellPhone,
+        };
+        if (
+          rideInfo?.tripType == "Ride from the airport(round trip)" ||
+          rideInfo?.tripType == "Ride to the airport(round trip)"
+        ) {
+          body.returnPickupDateTime =
+            tripDetail?.returnPickupDate + " " + tripDetail?.returnPickupTime;
+        }
+        res = await axios.post(remote_host + "/api/v1/airport-books", body);
+        return res.data;
+      } else if (travelType == 3) {
         body.selectedHours = rideInfo?.hour;
         body.occasion = tripDetail?.occation;
         res = await axios.post(
           remote_host + "/api/v1/hourly-charter-books",
           body
         );
-      } else if (travelType == 2) {
-        // body.selectedHours = rideInfo?.hour;
-        body.additionalStopOnTheWayPrice = 15.995;
-        body.tripType = rideInfo?.tripType;
-        body.distanceInMiles = rideInfo?.distanceInMiles;
-        res = await axios.post(
-          remote_host + "/api/v1/point-to-point-books",
-          body
-        );
       }
-      return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }

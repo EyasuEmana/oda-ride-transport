@@ -1,47 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getProfileInfo, signIn } from "../actions/user";
-import { editProfileInfo } from "../actions/editProfileInfo";
-import { registration } from "../actions/registration";
 // import jwt_decode from "jwt-decode";
 import jwtDecode from "jwt-decode";
+import { signIn, signup } from "../actions/authAction";
 
 const initialState = {
-  isLoggedIn: false,
-  isLoginPoppedUp: false,
-  isLoadingSignin: false,
-  loginErrorMsg: null,
+  signinLoanding: false,
+  signinSuccess: false,
+  signinErrorMessage: "",
+
+  signupLoanding: false,
+  signupSuccess: false,
+  signupErrorMessage: "",
   userProfileInfo: {},
   role: "",
-  menu: [
-    {
-      title: "Home",
-      url: "#home",
-    },
-    {
-      title: "Features",
-      url: "#features",
-    },
-    {
-      title: "About Us",
-      url: "#aboutus",
-    },
-    {
-      title: "FAQ",
-      url: "#faq",
-    },
-    {
-      title: "Testimony",
-      url: "#testimony",
-    },
-    {
-      title: "Contact Us",
-      url: "#footer",
-    },
-    {
-      title: "Help",
-      url: "#help",
-    },
-  ],
 };
 
 const UserSlice = createSlice({
@@ -60,34 +31,27 @@ const UserSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(signIn.pending, (state) => {
-      state.isLoadingSignin = true;
+      state.signinLoanding = true;
     });
     builder.addCase(signIn.fulfilled, (state, action) => {
-      state.isLoadingSignin = false;
-      const { access_token, refresh_token } = action.payload;
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
-      localStorage.setItem("isAuthenticated", "true");
+      state.signinLoanding = false;
+      state.signinSuccess = true;
     });
     builder.addCase(signIn.rejected, (state, action) => {
-      state.loginErrorMsg = action.payload;
-      state.isLoadingSignin = false;
+      state.signinLoanding = false;
+      state.signinErrorMessage = action.payload;
     });
 
-    builder.addCase(getProfileInfo.fulfilled, (state, action) => {
-      state.userProfileInfo = action.payload;
+    builder.addCase(signup.pending, (state) => {
+      state.signupLoanding = true;
     });
-    builder.addCase(registration.pending, (state, action) => {
-      console.log("peding");
+    builder.addCase(signup.fulfilled, (state, action) => {
+      state.signupLoanding = false;
+      state.signupSuccess = true;
     });
-    builder.addCase(registration.fulfilled, (state, action) => {
-      console.log("fulfilled");
-      state.userProfileInfo = action.payload;
-    });
-    builder.addCase(registration.rejected, (state, action) => {
-      console.log("rejected");
-
-      console.log(action);
+    builder.addCase(signup.rejected, (state, action) => {
+      state.signupLoanding = false;
+      state.signinErrorMessage = action.payload;
     });
   },
 });

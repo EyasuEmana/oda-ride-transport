@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import CarComponent from "./CarComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { getCars } from "../../../../store/actions/bookActions";
 import RSTypography from "../../../../components/RSTypography";
 import ExtraOptionComponent from "./ExtraOptionComponent";
 import { getExtraOptions } from "../../../../store/actions/extraOptions";
@@ -22,6 +21,7 @@ import { updateCars } from "../../../../store/reducers/carReducer";
 import Summary from "./SummaryTillVehicle";
 import StepSummary from "../StepSummary";
 import { addCost } from "../../../../store/reducers/bookReducers";
+import { updateExtraOption } from "../../../../store/reducers/extraOptionReducer";
 
 function Index({ formik, rideSummaryData }) {
   const dispatch = useDispatch();
@@ -41,7 +41,6 @@ function Index({ formik, rideSummaryData }) {
 
   const handleCarSelect = (selectedCarId) => {
     const updatedCars = cars.map((car) => {
-      console.log("price: ",car.pricePerHour)
       if (car.carId == selectedCarId)
         dispatch(addCost(parseInt(car.pricePerHour)));
       return {
@@ -50,6 +49,60 @@ function Index({ formik, rideSummaryData }) {
       };
     });
     dispatch(updateCars(updatedCars));
+  };
+
+  const handleExtraOptionSelect = (selectedOptionId) => {
+    const updatedExtraOptions = extraOptions.map((option) => {
+      if (selectedOptionId == option.extraOptionId)
+        return {
+          ...option,
+          itemQuantity: 1,
+          isSelected: selectedOptionId == option.extraOptionId,
+        };
+      else return option;
+    });
+    dispatch(updateExtraOption(updatedExtraOptions));
+  };
+
+  const handleExtraOptionUnSelect = (selectedOptionId) => {
+    const updatedExtraOptions = extraOptions.map((option) => {
+      if (selectedOptionId == option.extraOptionId)
+        return {
+          ...option,
+          itemQuantity: 0,
+          isSelected: false,
+        };
+      else return option;
+    });
+    dispatch(updateExtraOption(updatedExtraOptions));
+  };
+
+  const addExtraOptionQuantity = (selectedOptionId) => {
+    const updatedExtraOptions = extraOptions.map((option) => {
+      if (selectedOptionId == option.extraOptionId) {
+        return {
+          ...option,
+          itemQuantity: option.itemQuantity + 1,
+        };
+      } else {
+        return option;
+      }
+    });
+    dispatch(updateExtraOption(updatedExtraOptions));
+  };
+
+  const reduceExtraOptionQuantity = (selectedOptionId) => {
+    const updatedExtraOptions = extraOptions.map((option) => {
+      if (selectedOptionId == option.extraOptionId) {
+        return {
+          ...option,
+          itemQuantity: option.itemQuantity - 1,
+        };
+      } else {
+        return option;
+      }
+    });
+    dispatch(updateExtraOption(updatedExtraOptions));
   };
 
   const handleChangeCarType = (e) => {
@@ -63,7 +116,6 @@ function Index({ formik, rideSummaryData }) {
         car?.maxPassengers >= formik.values.numberOfPassengers &&
         (carType === "All Vehicles" ? true : car?.carType === carType)
     );
-
     return filteredCars;
   };
 
@@ -78,12 +130,6 @@ function Index({ formik, rideSummaryData }) {
       handleCarSelect(-1);
     }
   }, [formik.values.numberOfSuitcases, formik.values.numberOfPassengers]);
-
-  useEffect(() => {
-    dispatch(getCars());
-    dispatch(getAllCars());
-    dispatch(getExtraOptions());
-  }, []);
 
   return (
     <Grid container direction={{ xs: "column-reverse", lg: "row" }} spacing={1}>
@@ -216,7 +262,14 @@ function Index({ formik, rideSummaryData }) {
             )}
             {extraOptions &&
               extraOptions.map((option) => (
-                <ExtraOptionComponent option={option} formik={formik} />
+                <ExtraOptionComponent
+                  option={option}
+                  formik={formik}
+                  handleExtraOptionSelect={handleExtraOptionSelect}
+                  handleExtraOptionUnSelect={handleExtraOptionUnSelect}
+                  addExtraOptionQuantity={addExtraOptionQuantity}
+                  reduceExtraOptionQuantity={reduceExtraOptionQuantity}
+                />
               ))}
           </Stack>
         </Grid>

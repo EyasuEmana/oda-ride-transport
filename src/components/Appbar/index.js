@@ -6,35 +6,53 @@ import {
   Tabs,
   Tab,
   useMediaQuery,
+  Container,
   useTheme,
   Drawer,
   Box,
   List,
   ListItem,
+  Avatar,
   ListItemButton,
   IconButton,
+  Menu,
+  Typography,
+  MenuItem,
   Toolbar,
 } from "@mui/material";
 import { TiThMenuOutline } from "react-icons/ti";
 import logo from "../../assets/images/Odaa Transportation - Logo-01.svg";
 import RSButton from "../RSButton";
 import { Link, scroller } from "react-scroll";
-
-const categories = ["Home", "About Us", "Contact Us", "FAQ"];
+import { useNavigate } from "react-router-dom";
+const publicNavbarMenus = [
+  { title: "Home", link: "/" },
+  { title: "About Us", link: "/about-us" },
+  { title: "Contact Us", link: "/contact-us" },
+  { title: "FAQ", link: "/faq" },
+];
+const authNavbarMenus = [
+  { title: "Home", link: "/" },
+  { title: "My Order", link: "/my-order" },
+];
 
 function Header() {
   const [value, setValue] = useState(0);
   const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
-  const isMatch = useMediaQuery(theme.breakpoints.down("md"));
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMatch = useMediaQuery(theme.breakpoints.down("md"));
+  const isLoggedin = true;
   const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    theme,
     backgroundColor: "#FFF",
     height: "auto",
     position: "sticky",
     justifyContent: "center",
     alignItems: "space-between",
-   
+
     boxShadow: 0,
   }));
   const StyledTabs = styled(Tabs)({
@@ -61,59 +79,110 @@ function Header() {
       offset: -50,
     });
   };
+  const getNavbarMenu = () => {
+    return isLoggedin ? authNavbarMenus : publicNavbarMenus;
+  };
 
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
   return (
-    <Box>
-      <StyledAppBar>
-        <Toolbar
-          sx={{
-            paddingX: "42px",
-            marginLeft: 0,
-          }}
+    <AppBar
+      sx={{
+        backgroundColor: "#FFF",
+        height: "auto",
+        position: "sticky",
+        justifyContent: "center",
+        alignItems: "space-between",
+      }}
+    >
+      <Toolbar
+        disableGutters
+        sx={{
+          paddingX: "42px",
+          marginLeft: 0,
+        }}
+      >
+        <Stack
+          spacing={"60px"}
+          direction={"row"}
+          alignItems={"center"}
+          sx={{ flexGrow: 1, display: { xs: "flex" } }}
         >
-          <Stack
-            spacing={"60px"}
-            direction={"row"}
-            alignItems={"center"}
-            sx={{ flexGrow: 1 }}
-          >
-            <img
-              style={{
-                width: "107px",
-                height: "74px",
-                left: "0px",
+          <img
+            style={{
+              width: "107px",
+              height: "74px",
+              left: "0px",
+            }}
+            alt="logo "
+            src={logo}
+          />
+          {isMatch ? (
+            <IconButton onClick={() => setOpen(true)}>
+              <TiThMenuOutline color={theme.palette.info.main} />
+            </IconButton>
+          ) : (
+            <StyledTabs
+              sx={{ marginLeft: "0px" }}
+              value={value}
+              onChange={(e, value) => {
+                setValue(value);
               }}
-              alt="logo "
-              src={logo}
-            />
-            {isMatch ? (
-              <IconButton onClick={() => setOpen(true)}>
-                <TiThMenuOutline color={theme.palette.info.main} />
+            >
+              {getNavbarMenu().map((menu, index) => (
+                <StyledTab
+                  label={menu.title}
+                  key={menu.title}
+                  onClick={() => {
+                    scrollToSection(`section${index + 1}`);
+                    navigate(menu.link);
+                  }}
+                />
+              ))}
+            </StyledTabs>
+          )}
+        </Stack>
+
+        <Box sx={{ flexGrow: 0 }}>
+          {isLoggedin ? (
+            <Box>
+              <IconButton onClick={handleOpenUserMenu}>
+                <Avatar
+                  alt="Remy Sharp"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZCldKgmO2Hs0UGk6nRClAjATKoF9x2liYYA&s"
+                  sx={{ width: 56, height: 56 }}
+                />
               </IconButton>
-            ) : (
-              <StyledTabs
-                sx={{ marginLeft: "0px" }}
-                value={value}
-                onChange={(e, value) => {
-                  setValue(value);
+
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
                 }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
               >
-                {categories.map((page, index) => (
-                  <StyledTab
-                    label={page}
-                    key={page}
-                    onClick={() => scrollToSection(`section${index + 1}`)}
-                  />
+                {["Setting", "Logout"].map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
                 ))}
-              </StyledTabs>
-            )}
-          </Stack>
-          <Stack
-            direction="row"
-            justifyContent={"center"}
-            alignItems={"center"}
-            spacing={"15px"}
-          >
+              </Menu>
+            </Box>
+          ) : (
             <RSButton
               borderradius={"5px"}
               variant="contained"
@@ -121,12 +190,12 @@ function Header() {
             >
               Login / SignUp
             </RSButton>
-          </Stack>
-        </Toolbar>
-      </StyledAppBar>
+          )}
+        </Box>
+      </Toolbar>
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <List>
-          {["Home", "About Us", "Contact Us", "FAQ"].map((key) => (
+          {getNavbarMenu().map((key) => (
             <ListItem key={key}>
               <ListItemButton>
                 <Link
@@ -150,7 +219,7 @@ function Header() {
           ))}
         </List>
       </Drawer>
-    </Box>
+    </AppBar>
   );
 }
 export default Header;

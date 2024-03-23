@@ -31,7 +31,7 @@ import {
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-
+import { useSelector, useDispatch } from "react-redux";
 import { GrLocation } from "react-icons/gr";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
@@ -45,12 +45,15 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const [latLng, setLatLng] = useState(null);
   const [searchOriginResult, setSearchOriginResult] = useState(null);
   const [searchDestinationResult, setSearchDestinationResult] = useState(null);
+  const [searchAccomodationResult, setSearchAccomodationResult] =
+    useState(null);
   const [originLatLng, setOriginLatLng] = useState();
+  const [airportLatLng, setAirportLatLng] = useState();
+  const [accomodationtLatLng, setAccomodationLatLng] = useState();
   const [directionsResponse, setDirectionsResponse] = useState();
   const [destinationLatLng, setDestinationLatLng] = useState();
   const [distance, setDistance] = useState();
   const [duration, setDuration] = useState();
-
   const theme = useTheme();
   const matchXS = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -63,12 +66,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const mapRef = useRef();
   const pointToPointTripTypes = useMemo(() => ["One-Way", "Round-Trip"]);
-
-  const airPorts = useMemo(
-    () => ["Bole Airport", "Emirate Airport", "Kenya Airport", "Abuja Airport"],
-    []
-  );
-
+  const { airports } = useSelector((state) => state.airportReducer);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
     libraries: libraries,
@@ -79,9 +77,15 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
 
   useEffect(() => {
     if (originLatLng && destinationLatLng) {
-      calculateDistance(originLatLng, destinationLatLng);
+      calculateDistance();
     }
   }, [originLatLng, destinationLatLng]);
+
+  useEffect(() => {
+    if (airportLatLng && accomodationtLatLng) {
+      calculateAirportDistance();
+    }
+  }, [airportLatLng, accomodationtLatLng]);
 
   const airportServiceTripTypes = useMemo(
     () => [
@@ -89,7 +93,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       "Ride from the airport(one way)",
       "Ride to the airport(round trip)",
       "Ride from the airport(round trip)",
-      "Ride from the airport(round trips with two different airports)",
     ],
     []
   );
@@ -112,12 +115,44 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
             (response.routes[0].legs[0].distance.value * 0.001) / MILE_TO_KM
           );
           setDirectionsResponse(response);
-          setDistance(response.routes[0].legs[0].distance.text);
+          console.log("distance: ", response.routes[0].legs[0].distance.value);
+          const distanceInMile =
+            response.routes[0].legs[0].distance.value / 1609.344;
+          setDistance(distanceInMile.toFixed(2) + " Mile"); // in mile
+          // setDistance(response.routes[0].legs[0].distance.text); in km
           setDuration(response.routes[0].legs[0].duration.text);
         });
     }
   };
 
+  const calculateAirportDistance = async () => {
+    const google = window.google;
+    var directionsService = null;
+    if (google) {
+      directionsService = new google.maps.DirectionsService();
+      console.log("airportLatLng: ", airportLatLng);
+      console.log("accomodationtLatLng: ", accomodationtLatLng);
+      await directionsService
+        .route({
+          origin: airportLatLng,
+          destination: accomodationtLatLng,
+          travelMode: google.maps.TravelMode["DRIVING"],
+        })
+        .then((response) => {
+          console.log("response: ", response);
+          formik.setFieldValue(
+            "distanceInMiles",
+            (response.routes[0].legs[0].distance.value * 0.001) / MILE_TO_KM
+          );
+          setDirectionsResponse(response);
+          const distanceInMile =
+            response.routes[0].legs[0].distance.value / 1609.344;
+          setDistance(distanceInMile.toFixed(2) + " Mile"); // in mile
+          setDuration(response.routes[0].legs[0].duration.text);
+        })
+        .catch((error) => console.log("error2: ", error));
+    }
+  };
   const getTripType = () => {
     if (travelType == 1) {
       return "point-to-point";
@@ -174,9 +209,9 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       formik.setFieldValue("pickupLatitude", latlng?.lat);
       formik.setFieldValue("pickupLongitude", latlng?.lng);
       setOriginLatLng(latlng);
-      const name = place.name;
-      const status = place.business_status;
-      const formattedAddress = place.formatted_address;
+      // const name = place.name;
+      // const status = place.business_status;
+      // const formattedAddress = place.formatted_address;
     } else {
       alert("Please enter text");
     }
@@ -199,13 +234,53 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       alert("Please enter text");
     }
   }
+
+  function onAccommodationChange() {
+    if (searchAccomodationResult != null) {
+      const place = searchAccomodationResult.getPlace();
+      const latlng = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+      console.log("place: ", place);
+      // const accommodationAddress = place.formatted_address;
+      const accommodationAddress = place.name;
+      formik.setFieldValue("hotel", accommodationAddress);
+      formik.setFieldValue("accommodationAddress", accommodationAddress);
+      formik.setFieldValue("accommodationLatitude", latlng?.lat);
+      formik.setFieldValue("accommodationLongitude", latlng?.lng);
+      setAccomodationLatLng(latlng);
+    } else {
+      alert("Please enter text");
+    }
+  }
+
   function onLoadOriginFunc(autocomplete) {
     setSearchOriginResult(autocomplete);
   }
   function onLoadDestinationFunc(autocomplete) {
     setSearchDestinationResult(autocomplete);
   }
-  if (!isLoaded) return <>loading</>;
+  function onLoadAccomodationFunc(autocomplete) {
+    setSearchAccomodationResult(autocomplete);
+  }
+  function handleAirportChange(e) {
+    formik.handleChange(e);
+    const lat = e.target.value.airportAddressLatitude;
+    const lng = e.target.value.airportAddressLongitude;
+    formik.setFieldValue("airPortId", e.target.value.airportId);
+    formik.setFieldValue("airportAddressLatitude", lat);
+    formik.setFieldValue("airportAddressLongitude", lng);
+    const airportLatLng = {
+      lat: lat,
+      lng: lng,
+    };
+    setAirportLatLng(airportLatLng);
+  }
+
+  if (!isLoaded) {
+    return <>loading</>;
+  }
 
   return (
     <Box>
@@ -274,22 +349,25 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 <InputLabel id="airport label">Select Airport</InputLabel>
                 <Select
                   label="Select Airport"
-                  name="airPort"
-                  value={formik.values.airPort}
-                  onChange={formik.handleChange}
+                  name="airportName"
+                  value={formik.values.airportName}
+                  onChange={(e) => handleAirportChange(e)}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.airPort && Boolean(formik.errors.airPort)
+                    formik.touched.airportName &&
+                    Boolean(formik.errors.airportName)
                   }
-                  helperText={formik.touched.airPort && formik.errors.airPort}
+                  helperText={
+                    formik.touched.airportName && formik.errors.airportName
+                  }
                 >
-                  {airPorts?.map((key) => (
-                    <MenuItem value={key}>{key}</MenuItem>
+                  {airports?.map((airport, key) => (
+                    <MenuItem value={airport}>{airport.airportName}</MenuItem>
                   ))}
                 </Select>
-                {formik.touched.airPort && (
+                {formik.touched.airportName && (
                   <FormHelperText sx={{ color: "red" }}>
-                    {formik.errors.airPort}
+                    {formik.errors.airportName}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -331,6 +409,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                   label="Select pickup address"
                   fullWidth
                   name="pickupPhysicalAddress"
+                  value={formik.values.pickupPhysicalAddress}
                   ref={pickupPhysicalAddressRef}
                   // value={formik.values.pickupPhysicalAddress}
                   onChange={formik.handleChange}
@@ -366,6 +445,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                   name="dropoffPhysicalAddress"
                   ref={dropDownAddressRef}
                   // value={formik.values.dropoffPhysicalAddress}
+                  value={formik.values.dropoffPhysicalAddress}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={
@@ -388,14 +468,25 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
             )}
 
             {travelType == 2 && (
-              <Autocomplete types={["lodging"]}>
+              <Autocomplete
+                onPlaceChanged={onAccommodationChange}
+                onLoad={onLoadAccomodationFunc}
+                types={["lodging"]}
+              >
                 <TextField
                   label="Select Hotel"
                   fullWidth
-                  name="hotel"
+                  name="accommodationAddress"
+                  value={formik.values.accommodationAddress}
                   onChange={formik.handleChange}
-                  error={formik.touched.hotel && Boolean(formik.errors.hotel)}
-                  helperText={formik.touched.hotel && formik.errors.hotel}
+                  error={
+                    formik.touched.accommodationAddress &&
+                    Boolean(formik.errors.accommodationAddress)
+                  }
+                  helperText={
+                    formik.touched.accommodationAddress &&
+                    formik.errors.accommodationAddress
+                  }
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -416,29 +507,29 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
             spacing={2}
             sx={{ width: "100%", height: "100%" }}
           >
-          <GoogleMap
-            zoom={3}
-            center={center}
-            onLoad={onLoad}
-            mapContainerStyle={{
-              width: "100%",
-              height:  matchXS && 400,
-            }}
-            mapContainerClassName="map-container"
-            onClick={handleMapClick}
-          >
-            {latLng && <Marker position={latLng} />}
-            {directionsResponse && (
-              <DirectionsRenderer directions={directionsResponse} />
-            )}
-          </GoogleMap>
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            justifyContent={"space-between"}
-          >
-            <RSTypography>distance: {distance}</RSTypography>
-            <RSTypography>duration: {duration}</RSTypography>
-          </Stack>
+            <GoogleMap
+              zoom={3}
+              center={center}
+              onLoad={onLoad}
+              mapContainerStyle={{
+                width: "100%",
+                height: matchXS && 400,
+              }}
+              mapContainerClassName="map-container"
+              onClick={handleMapClick}
+            >
+              {latLng && <Marker position={latLng} />}
+              {directionsResponse && (
+                <DirectionsRenderer directions={directionsResponse} />
+              )}
+            </GoogleMap>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              justifyContent={"space-between"}
+            >
+              <RSTypography>Distance: {distance ? distance : "_"}</RSTypography>
+              <RSTypography>Duration: {duration ? duration : "_"}</RSTypography>
+            </Stack>
           </Stack>
         </Grid>
       </Grid>

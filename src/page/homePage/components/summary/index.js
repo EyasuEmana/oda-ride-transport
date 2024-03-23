@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { Box, Checkbox, useTheme, FormControlLabel } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  useTheme,
+  FormControlLabel,
+  FormControl,
+  FormHelperText,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import { GiCheckMark } from "react-icons/gi";
 import { MdRadioButtonUnchecked } from "react-icons/md";
@@ -12,10 +19,6 @@ function Index({
   contactSummaryData,
 }) {
   const theme = useTheme();
-  const { isBookSuccess } = useSelector((state) => state.bookReducer);
-  useEffect(() => {
-    console.log("isBookSuccess", isBookSuccess);
-  }, [isBookSuccess]);
   return (
     <Box>
       <Box>
@@ -24,28 +27,37 @@ function Index({
           vehicleSummaryData={vehicleSummaryData}
           tripSummaryData={tripSummaryData}
           contactSummaryData={contactSummaryData}
+          screenType={"large"}
         />
       </Box>
-      <FormControlLabel
-        name="concent"
-        value={formik.values.concent}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.concent && Boolean(formik.errors.concent)}
-        control={
-          <Checkbox
-            checkedIcon={
-              <GiCheckMark
-                size={22}
-                style={{ color: theme.palette.info.main }}
-              />
-            }
-            icon={<MdRadioButtonUnchecked size={22} />}
-          />
-        }
-        label="Concent"
-        labelPlacement="end"
-      />
+      <FormControl>
+        <FormControlLabel
+          name="concent"
+          value={formik.values.concent}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.concent && Boolean(formik.errors.concent)}
+          control={
+            <Checkbox
+              checkedIcon={
+                <GiCheckMark
+                  size={22}
+                  style={{ color: theme.palette.info.main }}
+                />
+              }
+              icon={<MdRadioButtonUnchecked size={22} />}
+            />
+          }
+          label="Concent"
+          labelPlacement="end"
+        />
+
+        {formik.touched.concent && formik.errors.concent && (
+          <FormHelperText sx={{ color: "red" }}>
+            {formik.errors.concent}
+          </FormHelperText>
+        )}
+      </FormControl>
     </Box>
   );
 }

@@ -21,6 +21,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
     maxPassengers,
     maxSuitcases,
     isSelected,
+    status,
   } = carDetail;
 
   const theme = useTheme();
@@ -36,7 +37,6 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
   const handleSelect = () => {
     formik.setFieldValue("vehicle", carDetail.carId);
     formik.setFieldValue("vehicleName", carDetail.carName);
-
     handleCarSelect(carDetail.carId);
   };
   return (

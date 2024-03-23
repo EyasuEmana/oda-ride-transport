@@ -8,6 +8,7 @@ function StepSummary({
   vehicleSummaryData,
   tripSummaryData,
   contactSummaryData,
+  screenType,
 }) {
   const theme = useTheme();
   const location = useLocation();
@@ -17,13 +18,12 @@ function StepSummary({
   const isAirportTravel = travelType === "2";
   const isHourlyTravel = travelType === "3";
   const { cost } = useSelector((state) => state.bookReducer);
+
   const isRoundTrip = () => {
     return (
       tripType == "Round-Trip" ||
       tripType == "Ride to the airport(round trip)" ||
-      tripType == "Ride from the airport(round trip)" ||
-      tripType ==
-        "Ride from the airport(round trips with two different airports)"
+      tripType == "Ride from the airport(round trip)"
     );
   };
 
@@ -48,7 +48,7 @@ function StepSummary({
           tripType == "Ride to the airport(round trip)" ||
           "Ride to the airport(one way)";
         pickupAddr = isFromAirport
-          ? rideSummaryData.airPort
+          ? rideSummaryData.airPortId
           : isToAirport
           ? rideSummaryData.hotel
           : null;
@@ -75,7 +75,7 @@ function StepSummary({
         dropoffAddr = isFromAirport
           ? rideSummaryData.hotel
           : isToAirport
-          ? rideSummaryData.airPort
+          ? rideSummaryData.airPortId
           : null;
       default:
         break;
@@ -85,7 +85,7 @@ function StepSummary({
 
   const generateSummaryData = () => {
     const summaryDataTemp = [
-      { label: "Trip type- ", value: tripType, isVisible: true },
+      { label: "Trip type- ", value: tripType, isVisible: !isHourlyTravel },
       {
         label: "Pickup addr.",
         value: getPickupAddr(),
@@ -113,7 +113,7 @@ function StepSummary({
       },
       {
         label: "Airport",
-        value: rideSummaryData?.airPort,
+        value: rideSummaryData?.airPortId,
         isVisible: isAirportTravel,
       },
       {
@@ -124,6 +124,7 @@ function StepSummary({
     ];
     return summaryDataTemp;
   };
+
   const Field = ({ label, value }) => (
     <Stack
       direction={"row"}
@@ -144,26 +145,48 @@ function StepSummary({
         </RSTypography>
       </Box>
       <Box padding={1}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}></Grid>
-        </Grid>
-        <Stack direction={"column"} spacing={2}>
-          {[
-            ...generateSummaryData(),
-            ...vehicleSummaryData,
-            ...tripSummaryData,
-            ...contactSummaryData,
-          ].map(
-            (field, index) =>
-              field?.isVisible && (
-                <Field key={index} label={field.label} value={field.value} />
-              )
-          )}
-          <Field key={12121} label={"Money"} value={cost} />
-        </Stack>
+        {screenType == "large" ? (
+          <Grid container spacing={2}>
+            {[
+              ...generateSummaryData(),
+              ...vehicleSummaryData,
+              ...tripSummaryData,
+              ...contactSummaryData,
+            ].map(
+              (field, index) =>
+                field?.isVisible && (
+                  <Grid item xs={12} lg={6}>
+                    <Field
+                      key={index}
+                      label={field.label}
+                      value={field.value}
+                    />
+                  </Grid>
+                )
+            )}
+          </Grid>
+        ) : (
+          <Stack direction={"column"} spacing={2}>
+            {[
+              ...generateSummaryData(),
+              ...vehicleSummaryData,
+              ...tripSummaryData,
+              ...contactSummaryData,
+            ].map(
+              (field, index) =>
+                field?.isVisible && (
+                  <Field key={index} label={field.label} value={field.value} />
+                )
+            )}
+            <Field key={"fee"} label={"Service Fee"} value={cost} />
+          </Stack>
+        )}
       </Box>
     </Box>
   );
 }
 
+StepSummary.defaultProperty = {
+  screenType: "small",
+};
 export default StepSummary;

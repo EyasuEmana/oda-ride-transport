@@ -12,17 +12,20 @@ import { FaArrowAltCircleLeft } from "react-icons/fa";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import RSButton from "../../../../components/RSButton";
 
-function ExtraOptionComponent({ option, formik }) {
-  const { name, description, pricePerItem } = option;
-  const [isSelected, setIsSelected] = useState(false);
-  const [quantity, setQuantity] = useState(0);
+function ExtraOptionComponent({
+  option,
+  formik,
+  handleExtraOptionSelect,
+  handleExtraOptionUnSelect,
+  addExtraOptionQuantity,
+  reduceExtraOptionQuantity,
+}) {
+  const { name, description, pricePerItem, isSelected, itemQuantity } = option;
   const theme = useTheme();
 
   const handleAddItem = () => {
-    if (quantity !== option?.maxAllowedItems) {
-      setQuantity((prev) => prev + 1);
+    if (itemQuantity !== option?.maxAllowedItems) {
       var options = [...formik.values.extraOptions];
-      const extraOptionSize = formik.values.extraOptions.length;
       const optionIndex = options.findIndex(
         (opt) => opt.extraOptionId === option.extraOptionId
       );
@@ -31,14 +34,14 @@ function ExtraOptionComponent({ option, formik }) {
         ...options[optionIndex],
         quantity: options[optionIndex].quantity + 1,
       };
-
+      addExtraOptionQuantity(option.extraOptionId);
       formik.setFieldValue("extraOptions", options);
     }
   };
 
   const handleReduceItem = () => {
-    if (quantity !== 0) {
-      setQuantity((prev) => prev - 1);
+    if (itemQuantity !== 0) {
+      reduceExtraOptionQuantity(option.extraOptionId);
     }
   };
   const handleSelect = () => {
@@ -50,8 +53,7 @@ function ExtraOptionComponent({ option, formik }) {
       quantity: 1,
     };
     formik.setFieldValue("extraOptions", options);
-    setQuantity(1);
-    setIsSelected((prev) => !prev);
+    handleExtraOptionSelect(option.extraOptionId);
   };
 
   const handleUnselect = () => {
@@ -60,9 +62,8 @@ function ExtraOptionComponent({ option, formik }) {
       (opt) => opt.extraOptionId === option.extraOptionId
     );
     options.splice(indexToRemove, 1);
-    setQuantity(0);
+    handleExtraOptionUnSelect(option.extraOptionId);
     formik.setFieldValue("extraOptions", options);
-    setIsSelected((prev) => !prev);
   };
 
   return (
@@ -97,18 +98,20 @@ function ExtraOptionComponent({ option, formik }) {
           >
             <Stack direction={"row"} justifyContent={"space-between"}>
               <Typography>Number</Typography>
-              <Typography> {quantity}</Typography>
+              <Typography> {itemQuantity}</Typography>
             </Stack>
             <Stack direction={"row"} justifyContent={"space-around"}>
               <IconButton
                 onClick={handleReduceItem}
-                disabled={!isSelected || (isSelected && quantity === 1)}
+                disabled={!isSelected || (isSelected && itemQuantity === 1)}
               >
                 <FaArrowAltCircleLeft size={20} />
               </IconButton>
               <IconButton
                 onClick={() => handleAddItem()}
-                disabled={!isSelected || option?.maxAllowedItems == quantity}
+                disabled={
+                  !isSelected || option?.maxAllowedItems == itemQuantity
+                }
               >
                 <FaArrowAltCircleRight size={20} />
               </IconButton>
