@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@mui/material/styles";
@@ -6,12 +6,12 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { Box, Alert, Snackbar } from "@mui/material";
 import Register from "./register";
 import Signin from "./signin";
+import { useSelector } from "react-redux";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -38,6 +38,15 @@ TabPanel.propTypes = {
 export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [openFailSnackbar, setOpenFailSnackbar] = useState(false);
+
+  const {
+    isSignupSuccess,
+    signUpSuccessMessage,
+    signupErrorMessage,
+    isSignUpFail,
+  } = useSelector((state) => state.authReducer);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -59,6 +68,24 @@ export default function FullWidthTabs() {
       color: "#FFF",
     },
   };
+  const handleCloseFailSnackbar = () => {
+    setOpenFailSnackbar(false);
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSuccessSnackbar(false);
+  };
+  useEffect(() => {
+    if (isSignupSuccess) {
+      setOpenSuccessSnackbar(true);
+      setValue(0);
+    }
+  }, [isSignupSuccess]);
+
+  useEffect(() => {
+    if (isSignUpFail) {
+      setOpenFailSnackbar(true);
+    }
+  }, [isSignUpFail]);
   return (
     <Box sx={{ width: 700 }}>
       <Tabs
@@ -89,6 +116,39 @@ export default function FullWidthTabs() {
           <Register />
         </TabPanel>
       </SwipeableViews>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={openSuccessSnackbar}
+        onClose={handleCloseSnackbar}
+        key={"bottom" + "left"}
+        autoHideDuration={3000}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {signUpSuccessMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={openFailSnackbar}
+        onClose={handleCloseFailSnackbar}
+        key={"bottom" + "left"}
+        autoHideDuration={3000}
+      >
+        <Alert
+          onClose={handleCloseFailSnackbar}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {signupErrorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

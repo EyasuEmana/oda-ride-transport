@@ -155,7 +155,7 @@ function StepSummary({
             ].map(
               (field, index) =>
                 field?.isVisible && (
-                  <Grid item xs={12} lg={6}>
+                  <Grid item xs={12} md={6}>
                     <Field
                       key={index}
                       label={field.label}

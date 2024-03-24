@@ -1,7 +1,7 @@
 {
   "name": "ride-project",
   "version": "0.1.0",
-  "homepage":"http://odatransport.com/",
+  "homepage": "http://odatransport.com/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -16,10 +16,12 @@
     "@testing-library/user-event": "^13.5.0",
     "@vis.gl/react-google-maps": "^0.7.1",
     "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
     "dayjs": "^1.11.10",
     "formik": "^2.4.5",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
+    "react-credit-cards-2": "^1.0.2",
     "react-dom": "^18.2.0",
     "react-google-maps": "^9.4.5",
     "react-icons": "^5.0.1",

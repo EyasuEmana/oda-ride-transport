@@ -1,14 +1,24 @@
-import React from "react";
-import { Box, Grid, Stack } from "@mui/material";
-import RSButton from "../../../../../components/RSButton";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Grid,
+  Stack,
+  CircularProgress,
+  Alert,
+  Button,
+  Snackbar,
+} from "@mui/material";
 import RSTextField from "../../../../../components/RSTextField";
 import RSTypography from "../../../../../components/RSTypography";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../../../../../store/actions/authAction";
 function Index() {
   const dispatch = useDispatch();
+  const { signupLoanding, signUpSuccessMessage, isSignupSuccess } = useSelector(
+    (state) => state.authReducer
+  );
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const signInValidationSchema = yup.object({
     firstname: yup.string().required("first name required"),
@@ -30,14 +40,15 @@ function Index() {
       lastname: "",
       email: "",
       phone: "",
-      password: "",
-      confirmPassword: "",
+      password: "@Eyasu123",
+      confirmPassword: "@Eyasu123",
     },
     validationSchema: signInValidationSchema,
     onSubmit: (values) => {
       dispatch(signup(values));
     },
   });
+
   return (
     <Box>
       <Grid container item spacing={2}>
@@ -143,19 +154,21 @@ function Index() {
         </Grid>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="flex-end">
-            <RSButton
-              sx={{ width: 200 }}
-              backgroundcolor={"#FF0013"}
-              txtcolor={"#FFF"}
+            <Button
+              sx={{ backgroundColor: "#FF0013" }}
+              variant="contained"
               onClick={formikSignup.handleSubmit}
             >
-              Register
-            </RSButton>
+              {signupLoanding ? (
+                <CircularProgress size={25} sx={{ color: "#FFF" }} />
+              ) : (
+                <>Register</>
+              )}
+            </Button>
           </Stack>
         </Grid>
       </Grid>
-
-      {/* <RSButton onClick={() => register()} variant="outlined">Register</RSButton> */}
+     
     </Box>
   );
 }

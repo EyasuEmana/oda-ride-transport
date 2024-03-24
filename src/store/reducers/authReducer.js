@@ -6,11 +6,14 @@ import { signIn, signup } from "../actions/authAction";
 const initialState = {
   signinLoanding: false,
   signinSuccess: false,
+  isSignInFail: false,
   signinErrorMessage: "",
 
   signupLoanding: false,
-  signupSuccess: false,
+  isSignUpFail:false,
   signupErrorMessage: "",
+  isSignupSuccess: false,
+  signUpSuccessMessage: "",
   userProfileInfo: {},
   role: "",
 };
@@ -39,6 +42,7 @@ const UserSlice = createSlice({
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.signinLoanding = false;
+
       state.signinErrorMessage = action.payload;
     });
 
@@ -46,12 +50,18 @@ const UserSlice = createSlice({
       state.signupLoanding = true;
     });
     builder.addCase(signup.fulfilled, (state, action) => {
+      if (action.payload.fullName) {
+        console.log("fullName", action.payload.fullName);
+
+        state.isSignupSuccess = true;
+        state.signUpSuccessMessage = `${action.payload.fullName} successfully regestered`;
+      }
       state.signupLoanding = false;
-      state.signupSuccess = true;
     });
     builder.addCase(signup.rejected, (state, action) => {
       state.signupLoanding = false;
-      state.signinErrorMessage = action.payload;
+      state.isSignUpFail = true;
+      state.signupErrorMessage = action.payload;
     });
   },
 });

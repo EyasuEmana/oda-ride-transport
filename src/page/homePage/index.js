@@ -29,7 +29,7 @@ function Index() {
   const dispatch = useDispatch();
 
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
-  const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)+ (?:[a-zA-Z]+)$/;
+  const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -210,7 +210,7 @@ function Index() {
       confirmEmail: "",
       cellPhone: "",
       bookingFor: "Myself",
-      passengerFullName: "Eyasu Emana Hambisa",
+      passengerFullName: "Eyasu Emana",
       passengerCellPhone: "0947736471",
     },
     validationSchema: contactValidationSchema,
@@ -457,7 +457,7 @@ function Index() {
               >
                 BACK
               </Button>
-              <Button variant="contained" onClick={handleSubmit}>
+              <Button variant="contained" onClick={handleSubmit} >
                 {isBookPending ? (
                   <CircularProgress size={25} sx={{ color: "#FFF" }} />
                 ) : (

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { mock_host_url, remote_host } from "../../globalVariable";
- 
+
 export const book = createAsyncThunk(
   "book/apply-book",
   async (values, thunkAPI) => {
@@ -16,7 +16,8 @@ export const book = createAsyncThunk(
       dropoffLatitude: rideInfo?.dropoffLatitude,
       numberOfPassengers: vehicle?.numberOfPassengers,
       numberOfSuitcases: vehicle?.numberOfSuitcases,
-      pickupDateTime: tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
+      pickupDateTime:
+        tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
       specialInstructions: tripDetail?.instruction,
       bookingFor: contact?.bookingFor,
       passengerFullName: contact?.passengerFullName,
@@ -24,12 +25,20 @@ export const book = createAsyncThunk(
       carId: vehicle?.vehicle,
       extraOptions: vehicle.extraOptions,
     };
+    const isRoundTrip = () => {
+      var tripType = body.tripType;
+      return (
+        tripType == "Round-Trip" ||
+        tripType == "Ride to the airport(round trip)" ||
+        tripType == "Ride from the airport(round trip)"
+      );
+    };
     if (rideInfo?.tripType == "Round-Trip") {
-      // console.log("here: ", rideInfo?.tripType == "Round-Trip");
       body.returnPickupDateTime =
-        tripDetail?.returnPickupDate + " " + tripDetail?.returnPickupTime;
+        tripDetail?.formattedReturnPickupDate +
+        " " +
+        tripDetail?.formattedReturnPickupTime;
     }
-    // console.log("body: ", body);
     var extraOptions = [];
     body.extraOptions.map((option) => {
       extraOptions.push({
@@ -60,7 +69,10 @@ export const book = createAsyncThunk(
           airline: tripDetail?.airline,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
-          pickupDateTime: tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
+          pickupDateTime:
+            tripDetail?.formattedPickupDate +
+            " " +
+            tripDetail?.formattedPickupTime,
           distanceInMiles: rideInfo?.distanceInMiles,
           carId: vehicle?.vehicle,
           additionalStopId: 1,
@@ -76,7 +88,9 @@ export const book = createAsyncThunk(
           rideInfo?.tripType == "Ride to the airport(round trip)"
         ) {
           body.returnPickupDateTime =
-            tripDetail?.returnPickupDate + " " + tripDetail?.returnPickupTime;
+            tripDetail?.formattedReturnPickupDate +
+            " " +
+            tripDetail?.formattedReturnPickupTime;
         }
         res = await axios.post(remote_host + "/api/v1/airport-books", body);
         return res.data;

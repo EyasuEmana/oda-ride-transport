@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Stack, Grid, FormControlLabel, Checkbox } from "@mui/material";
+import { Stack, Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
+import "bootstrap/dist/css/bootstrap.min.css";
 import RSTextField from "../../../../components/RSTextField";
 import StepSummary from "../StepSummary";
+import CreditCardForm from "./CreditCardForm";
 function Index({
   formik,
   vehicleSummaryData,
@@ -25,7 +27,12 @@ function Index({
     }
   };
   return (
-    <Grid container direction={{ xs: "column-reverse", lg: "row" }} spacing={1}>
+    <Grid
+      container
+      direction={{ xs: "column-reverse", lg: "row" }}
+      spacing={1}
+      justifyContent={"start"}
+    >
       <Grid item xs={3}>
         <StepSummary
           rideSummaryData={rideSummaryData}
@@ -47,103 +54,55 @@ function Index({
             label="I'm booking this for someone else."
           />
         </Grid>
-        <Stack direction={"row"} spacing={2}>
-          <RSTextField
-            label="Passenger Full Name"
-            color={"info"}
-            fullWidth
-            disabled={!bookForPassenger}
-            {...formik.getFieldProps("passengerFullName")}
-            error={
-              formik.touched.passengerFullName &&
-              Boolean(formik.errors.passengerFullName)
-            }
-            helperText={
-              formik.touched.passengerFullName &&
-              formik.errors.passengerFullName
-            }
-          />
-          <RSTextField
-            label="Passenger Phone number"
-            color={"info"}
-            disabled={!bookForPassenger}
-            fullWidth
-            {...formik.getFieldProps("passengerCellPhone")}
-            error={
-              formik.touched.passengerCellPhone &&
-              Boolean(formik.errors.passengerCellPhone)
-            }
-            helperText={
-              formik.touched.passengerCellPhone &&
-              formik.errors.passengerCellPhone
-            }
-          />
-        </Stack>
+        <Grid item xs={12}>
+          <Stack direction={"row"} spacing={2}>
+            <RSTextField
+              label="Passenger Full Name"
+              color={"info"}
+              fullWidth
+              disabled={!bookForPassenger}
+              {...formik.getFieldProps("passengerFullName")}
+              error={
+                formik.touched.passengerFullName &&
+                Boolean(formik.errors.passengerFullName)
+              }
+              helperText={
+                formik.touched.passengerFullName &&
+                formik.errors.passengerFullName
+              }
+            />
+            <RSTextField
+              label="Passenger Phone number"
+              color={"info"}
+              disabled={!bookForPassenger}
+              fullWidth
+              {...formik.getFieldProps("passengerCellPhone")}
+              error={
+                formik.touched.passengerCellPhone &&
+                Boolean(formik.errors.passengerCellPhone)
+              }
+              helperText={
+                formik.touched.passengerCellPhone &&
+                formik.errors.passengerCellPhone
+              }
+            />
+          </Stack>
+        </Grid>
+        {/* <Grid item xs={12} mt={2}>
+          <Stack direction={"row"} spacing={2}>
+            <RSTextField label="Credit Card" color={"info"} fullWidth />
+            <RSTextField label="Expiration Date" color={"info"} fullWidth />
+            <RSTextField label="Security Code" color={"info"} fullWidth />
+          </Stack>
+        </Grid> */}
+        <Grid item xs={12} mt={2}>
+          <Box>
+            <CreditCardForm />
+          </Box>
+        </Grid>
       </Grid>
     </Grid>
   );
 }
 
 export default Index;
-
-{
-  /* <Grid item xs={6}>
-            <RSTextField
-              label="First Name"
-              color={"info"}
-              fullWidth
-              {...formik.getFieldProps("firstName")}
-              error={
-                formik.touched.firstName && Boolean(formik.errors.firstName)
-              }
-              helperText={formik.touched.firstName && formik.errors.firstName}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <RSTextField
-              label="Last Name"
-              color={"info"}
-              fullWidth
-              {...formik.getFieldProps("lastName")}
-              error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-              helperText={formik.touched.lastName && formik.errors.lastName}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <RSTextField
-              label="Email"
-              color={"info"}
-              fullWidth
-              {...formik.getFieldProps("email")}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <RSTextField
-              label="Confirm Email"
-              color={"info"}
-              fullWidth
-              {...formik.getFieldProps("confirmEmail")}
-              error={
-                formik.touched.confirmEmail &&
-                Boolean(formik.errors.confirmEmail)
-              }
-              helperText={
-                formik.touched.confirmEmail && formik.errors.confirmEmail
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <RSTextField
-              label="Your Cell Phone"
-              color={"info"}
-              fullWidth
-              {...formik.getFieldProps("cellPhone")}
-              error={
-                formik.touched.cellPhone && Boolean(formik.errors.cellPhone)
-              }
-              helperText={formik.touched.cellPhone && formik.errors.cellPhone}
-            />
-          </Grid> */
-}
