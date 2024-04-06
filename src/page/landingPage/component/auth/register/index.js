@@ -31,7 +31,7 @@ function Index() {
     password: yup.string().required("password required"),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Emails must match")
+      .oneOf([yup.ref("password"), null], "Password must match")
       .required("confirm password required"),
   });
   const formikSignup = useFormik({
@@ -40,8 +40,8 @@ function Index() {
       lastname: "",
       email: "",
       phone: "",
-      password: "@Eyasu123",
-      confirmPassword: "@Eyasu123",
+      password: "",
+      confirmPassword: "",
     },
     validationSchema: signInValidationSchema,
     onSubmit: (values) => {
@@ -52,7 +52,7 @@ function Index() {
   return (
     <Box>
       <Grid container item spacing={2}>
-        <RSTypography>Personal Details</RSTypography>
+        {/* <RSTypography>Personal Details</RSTypography> */}
         <Grid item container spacing={2}>
           <Grid item xs={6}>
             <RSTextField

@@ -14,16 +14,13 @@ import { PiSuitcaseDuotone } from "react-icons/pi";
 
 function CarComponent({ carDetail, formik, handleCarSelect }) {
   const {
-    carId,
     carName,
     carImageUrl,
     pricePerMile,
     maxPassengers,
     maxSuitcases,
     isSelected,
-    status,
   } = carDetail;
-
   const theme = useTheme();
   const matchSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const CarImg = () => {

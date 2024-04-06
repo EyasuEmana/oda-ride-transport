@@ -1,16 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import jwt_decode from "jwt-decode";
-import jwtDecode from "jwt-decode";
-import { signIn, signup } from "../actions/authAction";
+import { jwtDecode } from "jwt-decode";
+import {
+  forgetPassword,
+  resetPassword,
+  signIn,
+  signup,
+} from "../actions/authAction";
 
 const initialState = {
   signinLoanding: false,
-  signinSuccess: false,
+  isAuthenticated: false,
+  isSigninSuccess: false,
   isSignInFail: false,
   signinErrorMessage: "",
+  signinSuccessMessage: "",
+
+  resetPwdLoading: false,
+  isResetPwdSuccess: false,
+  isResetPwdFail: false,
+  resetPwdSuccessMessage: "",
+  resetPwdFailMessage: "",
+
+  forgetPwdLoading: false,
+  isForgetPwdSuccess: false,
+  isForgetPwdFail: false,
+  forgetPwdSuccessMessage: "",
+  forgetPwdFailMessage: "",
 
   signupLoanding: false,
-  isSignUpFail:false,
+  isSignUpFail: false,
   signupErrorMessage: "",
   isSignupSuccess: false,
   signUpSuccessMessage: "",
@@ -27,22 +45,39 @@ const UserSlice = createSlice({
     },
 
     logout: (state) => {
-      state.isLoggedIn = false;
+      sessionStorage.removeItem("access_token");
+      sessionStorage.removeItem("session_expiration");
+      state.isAuthenticated = false;
+      state.isSigninSuccess = false;
     },
-
-    setRole: (state) => {},
+    setIsAuthenticated: (state) => {
+      const accessToken = sessionStorage.getItem("access_token");
+      state.isAuthenticated = accessToken !== null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(signIn.pending, (state) => {
       state.signinLoanding = true;
     });
     builder.addCase(signIn.fulfilled, (state, action) => {
+      const authtoken = action.payload["auth-token"];
+      const decodedToken = jwtDecode(authtoken);
+      // console.log("decodedToken: ", decodedToken);
+
+      const expirationTime = decodedToken.exp * 1000; // Convert seconds to milliseconds
+      const currentTime = new Date().getTime(); // Current time in milliseconds
+      const sessionDuration = expirationTime - currentTime;
+
+      sessionStorage.setItem("access_token", authtoken);
+      sessionStorage.setItem("session_expiration", sessionDuration.toString()); // Store session duration
+
       state.signinLoanding = false;
-      state.signinSuccess = true;
+      state.isSigninSuccess = true;
+      state.signinSuccessMessage = "Signin success!";
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.signinLoanding = false;
-
+      state.isSignInFail = true;
       state.signinErrorMessage = action.payload;
     });
 
@@ -63,8 +98,39 @@ const UserSlice = createSlice({
       state.isSignUpFail = true;
       state.signupErrorMessage = action.payload;
     });
+    builder.addCase(resetPassword.pending, (state) => {
+      state.resetPwdLoading = true;
+    });
+    builder.addCase(resetPassword.fulfilled, (state, action) => {
+      state.isResetPwdSuccess = true;
+      state.resetPwdSuccessMessage = "Password changed successfully";
+      state.resetPwdLoading = false;
+    });
+    builder.addCase(resetPassword.rejected, (state, action) => {
+      state.resetPwdLoading = false;
+      state.isResetPwdFail = true;
+      state.resetPwdFailMessage = action.payload;
+    });
+
+    builder.addCase(forgetPassword.pending, (state) => {
+      state.forgetPwdLoading = true;
+    });
+    builder.addCase(forgetPassword.fulfilled, (state, action) => {
+      state.isForgetPwdSuccess = true;
+      state.isForgetPwdFail = false;
+      state.forgetPwdSuccessMessage =
+        "We've sent instruction to change password to the email!";
+      state.forgetPwdLoading = false;
+    });
+    builder.addCase(forgetPassword.rejected, (state, action) => {
+      state.forgetPwdLoading = false;
+      state.isForgetPwdSuccess = false;
+      state.isForgetPwdFail = true;
+      state.forgetPwdFailMessage = action.payload;
+    });
   },
 });
 
-export const { login, logout, setRole, setMenuAction } = UserSlice.actions;
+export const { login, logout, setIsAuthenticated, setRole, setMenuAction } =
+  UserSlice.actions;
 export default UserSlice.reducer;

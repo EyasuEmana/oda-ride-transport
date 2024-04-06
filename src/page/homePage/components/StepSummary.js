@@ -17,7 +17,7 @@ function StepSummary({
   const isPointToPointTravel = travelType === "1";
   const isAirportTravel = travelType === "2";
   const isHourlyTravel = travelType === "3";
-  const { cost } = useSelector((state) => state.bookReducer);
+  const { fee } = useSelector((state) => state.bookReducer);
 
   const isRoundTrip = () => {
     return (
@@ -178,7 +178,7 @@ function StepSummary({
                   <Field key={index} label={field.label} value={field.value} />
                 )
             )}
-            <Field key={"fee"} label={"Service Fee"} value={cost} />
+            <Field key={"fee"} label={"Service Fee"} value={fee} />
           </Stack>
         )}
       </Box>

@@ -20,13 +20,15 @@ import { getAllCars } from "../../../../store/actions/carAction";
 import { updateCars } from "../../../../store/reducers/carReducer";
 import Summary from "./SummaryTillVehicle";
 import StepSummary from "../StepSummary";
-import { addCost } from "../../../../store/reducers/bookReducers";
+import { adFee } from "../../../../store/reducers/bookReducers";
 import { updateExtraOption } from "../../../../store/reducers/extraOptionReducer";
 
 function Index({ formik, rideSummaryData }) {
   const dispatch = useDispatch();
   const [carType, setCarType] = useState("All Vehicles");
   const { cars, loading } = useSelector((state) => state.carReducer);
+  const { fee } = useSelector((state) => state.bookReducer);
+  const bookReducer = useSelector((state) => state.bookReducer);
   const { extraOptions, loading_extra_option } = useSelector(
     (state) => state.extraOptionReducer
   );
@@ -41,8 +43,22 @@ function Index({ formik, rideSummaryData }) {
 
   const handleCarSelect = (selectedCarId) => {
     const updatedCars = cars.map((car) => {
-      if (car.carId == selectedCarId)
-        dispatch(addCost(parseInt(car.pricePerHour)));
+      if (car.carId == selectedCarId && formik?.vehicle != car.carId) {
+        const prevSelectedCarFee = formik.values.vehicleFee;
+        const addedFee = fee - prevSelectedCarFee + parseInt(car.pricePerHour);
+        console.log(
+          "fee: " +
+            fee +
+            " - prevSelectedCarFee: " +
+            prevSelectedCarFee +
+            "+ selected car price: ",
+          parseInt(car.pricePerHour) + " = ",
+          addedFee
+        );
+      
+        dispatch(adFee(addedFee));
+      }
+
       return {
         ...car,
         isSelected: car.carId == selectedCarId,
@@ -130,7 +146,6 @@ function Index({ formik, rideSummaryData }) {
       handleCarSelect(-1);
     }
   }, [formik.values.numberOfSuitcases, formik.values.numberOfPassengers]);
-
   return (
     <Grid container direction={{ xs: "column-reverse", lg: "row" }} spacing={1}>
       <Grid item xs={3}>

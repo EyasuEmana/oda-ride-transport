@@ -1,8 +1,19 @@
 import React, { useState } from "react";
 import Cards from "react-credit-cards-2";
+import axios from "axios";
+import { Alert } from "@mui/material";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
-const CreditCardForm = () => {
-  const [state, setState] = useState({
+import { host, remote_host } from "../../../../globalVariable";
+const CreditCardForm = ({ formik }) => {
+  const [errorResponse, setErrorresponse] = useState({
+    isError: false,
+    errorMessage: "",
+  });
+  const [successResponse, setSuccessresponse] = useState({
+    isSuccess: false,
+    successMessage: "",
+  });
+  const [cardInfo, setCardInfo] = useState({
     number: "",
     name: "",
     expiry: "",
@@ -12,29 +23,76 @@ const CreditCardForm = () => {
   });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setState((prev) => ({ ...prev, [name]: value }));
+    setCardInfo((prev) => ({ ...prev, [name]: value }));
+    formik.setFieldValue(name, value);
   };
   const handleInputFocus = (e) => {
-    setState((prev) => ({ ...prev, focus: e.target.name }));
+    setCardInfo((prev) => ({ ...prev, focus: e.target.name }));
   };
+  function formatDateString(inputString) {
+    // Split the input string into parts
+    var year = inputString.slice(0, 2);
+    var month = inputString.slice(2);
+
+    // Concatenate parts with "/"
+    var formattedString = year + "/" + month;
+
+    return formattedString;
+  }
+  const handleCardInfoSubmit = async (e) => {
+    e.preventDefault();
+    const body = {
+      creditCardNumber: cardInfo.number,
+      expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
+      securityCode: cardInfo.cvc, //"123",
+    };
+    console.log("body: ", body);
+    await axios
+      .post(`${remote_host}/api/v1/users/payment-detail/validate-card`, body)
+      .then((result) => {
+        if (result.data) {
+          formik.setFieldValue("isValidCardInfo", true);
+          setErrorresponse((prev) => ({ ...prev, isError: false }));
+          setSuccessresponse({
+            isSuccess: true,
+            successMessage: result.data.message,
+          });
+        }
+      })
+      .catch((error) => {
+        setSuccessresponse((prev) => ({ ...prev, isSuccess: false }));
+        if (error?.response) {
+          setErrorresponse({
+            isError: true,
+            errorMessage: error.response.data.message,
+          });
+        } else {
+          setErrorresponse({
+            isError: true,
+            errorMessage: "Network Error!",
+          });
+        }
+      });
+  };
+
   return (
     <div>
       <Cards
-        number={state.number}
-        expiry={state.expiry}
-        cvc={state.cvc}
-        name={state.name}
-        focused={state.focus}
+        number={cardInfo.number}
+        expiry={cardInfo.expiry}
+        cvc={cardInfo.cvc}
+        name={cardInfo.name}
+        focused={cardInfo.focus}
       />
       <div className="mt-3">
-        <form>
+        <form onSubmit={handleCardInfoSubmit}>
           <div className="mb-3">
             <input
               type="number"
               name="number"
               className="form-control"
               placeholder="Card Number"
-              value={state.number}
+              value={cardInfo.number}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
               required
@@ -59,7 +117,7 @@ const CreditCardForm = () => {
                 className="form-control"
                 placeholder="Expire Date"
                 pattern="\d\d/\d\d"
-                value={state.expiry}
+                value={cardInfo.expiry}
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 required
@@ -72,7 +130,7 @@ const CreditCardForm = () => {
                 className="form-control"
                 placeholder="CVC"
                 pattern="\d{3,4}"
-                value={state.cvc}
+                value={cardInfo.cvc}
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 required
@@ -84,6 +142,23 @@ const CreditCardForm = () => {
           </div>
         </form>
       </div>
+      {errorResponse.isError && (
+        <Alert severity="error" variant="filled" sx={{ width: "100%", mt: 3 }}>
+          {errorResponse.errorMessage}
+        </Alert>
+      )}
+      {successResponse.isSuccess && (
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%", mt: 3 }}
+        >
+          {successResponse.successMessage}
+        </Alert>
+      )}
+      {formik.touched.isValidCardInfo && formik.errors.isValidCardInfo && (
+        <span style={{ color: "#F00" }}>{formik.errors.isValidCardInfo}</span>
+      )}
     </div>
   );
 };

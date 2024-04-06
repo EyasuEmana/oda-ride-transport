@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Stack,
@@ -6,7 +6,6 @@ import {
   Tabs,
   Tab,
   useMediaQuery,
-  Container,
   useTheme,
   Drawer,
   Box,
@@ -22,9 +21,14 @@ import {
 } from "@mui/material";
 import { TiThMenuOutline } from "react-icons/ti";
 import logo from "../../assets/images/Odaa Transportation - Logo-01.svg";
+import { useDispatch } from "react-redux";
 import RSButton from "../RSButton";
 import { Link, scroller } from "react-scroll";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { logout, setIsAuthenticated } from "../../store/reducers/authReducer";
+import ChangePasswordDrawer from "./ChangePassword";
+import { useLocation } from "react-router-dom";
 const publicNavbarMenus = [
   { title: "Home", link: "/" },
   { title: "About Us", link: "/about-us" },
@@ -32,34 +36,31 @@ const publicNavbarMenus = [
   { title: "FAQ", link: "/faq" },
 ];
 const authNavbarMenus = [
-  { title: "Home", link: "/" },
+  { title: "Home", link: "/home/1" },
   { title: "My Order", link: "/my-order" },
 ];
 
 function Header() {
   const [value, setValue] = useState(0);
   const [open, setOpen] = React.useState(false);
+  const [openChangePasswordPopup, setOpenChangePasswordPopup] =
+    React.useState(false);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const { isSigninSuccess, isAuthenticated } = useSelector(
+    (state) => state.authReducer
+  );
+  const dispatch = useDispatch();
+  const location = useLocation();
   const theme = useTheme();
   const navigate = useNavigate();
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
-  const isLoggedin = true;
-  const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    theme,
-    backgroundColor: "#FFF",
-    height: "auto",
-    position: "sticky",
-    justifyContent: "center",
-    alignItems: "space-between",
 
-    boxShadow: 0,
-  }));
   const StyledTabs = styled(Tabs)({
     "& .MuiTabs-indicator": {
       display: "none",
     },
   });
+
   const StyledTab = styled(Tab)(({ theme }) => ({
     textTransform: "capitalize",
     color: theme.palette.black.main,
@@ -79,8 +80,9 @@ function Header() {
       offset: -50,
     });
   };
+
   const getNavbarMenu = () => {
-    return isLoggedin ? authNavbarMenus : publicNavbarMenus;
+    return isAuthenticated ? authNavbarMenus : publicNavbarMenus;
   };
 
   const handleOpenUserMenu = (event) => {
@@ -90,6 +92,38 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogout = (e) => {
+    handleCloseUserMenu(e);
+    dispatch(logout());
+    navigate("/");
+  };
+
+  const handleClickOpen = () => {
+    setOpenChangePasswordPopup(true);
+  };
+
+  const handleChangePassword = () => {
+    handleClickOpen();
+  };
+  useEffect(() => {
+    dispatch(setIsAuthenticated());
+  }, [isSigninSuccess]);
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/home/1":
+      case "/home/2":
+      case "/home/3":
+        setValue(0);
+        break;
+      case "/my-order":
+        setValue(1);
+        break;
+      default:
+        break;
+    }
+  }, [location]);
   return (
     <AppBar
       sx={{
@@ -149,12 +183,12 @@ function Header() {
         </Stack>
 
         <Box sx={{ flexGrow: 0 }}>
-          {isLoggedin ? (
+          {isAuthenticated ? (
             <Box>
               <IconButton onClick={handleOpenUserMenu}>
                 <Avatar
                   alt="Remy Sharp"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZCldKgmO2Hs0UGk6nRClAjATKoF9x2liYYA&s"
+                  // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZCldKgmO2Hs0UGk6nRClAjATKoF9x2liYYA&s"
                   sx={{ width: 56, height: 56 }}
                 />
               </IconButton>
@@ -175,11 +209,12 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {["Setting", "Logout"].map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))}
+                <MenuItem key={2} onClick={handleChangePassword}>
+                  <Typography textAlign="center">Change Password</Typography>
+                </MenuItem>
+                <MenuItem key={2} onClick={handleLogout}>
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
               </Menu>
             </Box>
           ) : (
@@ -195,11 +230,17 @@ function Header() {
       </Toolbar>
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <List>
-          {getNavbarMenu().map((key) => (
+          {getNavbarMenu().map((menu, key) => (
             <ListItem key={key}>
               <ListItemButton>
                 <Link
                   to="section1"
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      navigate(menu.link);
+                    } else {
+                    }
+                  }}
                   smooth={true}
                   duration={500}
                   spy={true}
@@ -211,7 +252,7 @@ function Header() {
                     fontSize={16}
                     fontWeight={700}
                   >
-                    {key}
+                    {menu.title}
                   </RSButton>
                 </Link>
               </ListItemButton>
@@ -219,6 +260,10 @@ function Header() {
           ))}
         </List>
       </Drawer>
+      <ChangePasswordDrawer
+        setOpenChangePasswordPopup={setOpenChangePasswordPopup}
+        openChangePasswordPopup={openChangePasswordPopup}
+      />
     </AppBar>
   );
 }

@@ -13,6 +13,7 @@ import {
   Select,
   Checkbox,
 } from "@mui/material";
+import axios from "axios";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -24,8 +25,10 @@ import RSTextField from "../../../../components/RSTextField";
 import RSRadio from "../../../../components/RSRadio";
 import StepSummary from "../StepSummary";
 import { getAllPreferences } from "../../../../store/actions/preferenceAction";
+import { remote_host } from "../../../../globalVariable";
 function Index({ formik, vehicleSummaryData, rideSummaryData }) {
   const [stopOnWay, setStopOnWay] = useState(false);
+  const [additionalStopsOnTheWay, setAdditionalStopsOnTheWay] = useState([]);
   const getFormattdTime = (time) => {
     return time.format().substring(11, 19);
   };
@@ -55,7 +58,22 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       tripType == "Ride from the airport(round trip)"
     );
   };
+  const getAdditionalAtStopOnTheWay = async () => {
+    await axios
+      .get(`${remote_host}/api/v1/additional-stops`)
+      .then((res) => {
+        setAdditionalStopsOnTheWay(res.data);
+      })
+      .catch((error) =>
+        console.log("error: ", "error while loading additional stop on the way")
+      );
+  };
+
+  const handleStopOnWayChange = (event) => {
+    formik.setFieldValue("additionalStopId", event.target.value);
+  };
   useEffect(() => {
+    getAdditionalAtStopOnTheWay();
     dispatch(getAllPreferences());
   }, []);
   return (
@@ -300,7 +318,14 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                   control={
                     <Checkbox
                       checked={stopOnWay}
-                      onChange={(e) => setStopOnWay(e.target.checked)}
+                      onChange={(e) => {
+                        setStopOnWay(e.target.checked);
+                        formik.setFieldValue("additionalStopId", null);
+                        formik.setFieldValue(
+                          "additionalStopOnTheWayDescription",
+                          ""
+                        );
+                      }}
                     />
                   }
                   label="Additional stop on the way"
@@ -311,21 +336,31 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                       <FormControl>
                         <RadioGroup
                           aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue="Oneway"
+                          // defaultValue={1}
                           name="radio-buttons-group"
+                          onChange={handleStopOnWayChange}
                         >
-                          <FormControlLabel
-                            value="Oneway"
-                            control={<RSRadio />}
-                            label="Oneway ($20)"
-                          />
-                          {isRoundTrip() && (
-                            <FormControlLabel
-                              value="RoundTrip"
-                              control={<RSRadio />}
-                              label="RoundTrip ($40)"
-                            />
-                          )}
+                          {additionalStopsOnTheWay.map((stopOnWay) => {
+                            stopOnWay.hidden =
+                              stopOnWay.stopType == "Roundtrip" &&
+                              !isRoundTrip();
+                            return (
+                              !stopOnWay.hidden && (
+                                <FormControlLabel
+                                  value={stopOnWay.additionalStopId}
+                                  control={<RSRadio />}
+                                  label={
+                                    stopOnWay.stopType +
+                                    " (" +
+                                    stopOnWay.additionalStopPrice +
+                                    " " +
+                                    stopOnWay.currency +
+                                    ")"
+                                  }
+                                />
+                              )
+                            );
+                          })}
                         </RadioGroup>
                       </FormControl>
                       <RSTextField
@@ -333,6 +368,16 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                         label="Let's know where you'd like to stop on the way"
                         multiline
                         rows={3}
+                        fullWidth
+                        {...formik.getFieldProps(
+                          "additionalStopOnTheWayDescription"
+                        )}
+                        error={
+                          formik.touched.additionalStopOnTheWayDescription &&
+                          Boolean(
+                            formik.errors.additionalStopOnTheWayDescription
+                          )
+                        }
                       />
                     </Stack>
                   </Box>

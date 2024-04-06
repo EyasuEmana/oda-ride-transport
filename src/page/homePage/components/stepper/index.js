@@ -43,6 +43,7 @@ export default function CustomStepper({ step }) {
       color: theme.palette.info.main,
     },
   });
+  
   const CustomStepLabel = styled(StepLabel)({
     ".Mui-active": {
       color: "#000",

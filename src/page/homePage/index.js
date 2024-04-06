@@ -23,11 +23,12 @@ import Success from "./components/Success";
 import { getAllCars } from "../../store/actions/carAction";
 import { getExtraOptions } from "../../store/actions/extraOptions";
 import { getAirports } from "../../store/actions/airportAction";
+import { setIsAuthenticated } from "../../store/reducers/authReducer";
 function Index() {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
   const dispatch = useDispatch();
-
+  
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
@@ -148,6 +149,7 @@ function Index() {
   const formikChooseVehicle = useFormik({
     initialValues: {
       vehicle: null,
+      vehicleFee: 0,
       vehicleName: "",
       numberOfSuitcases: 0,
       numberOfPassengers: 1,
@@ -172,6 +174,8 @@ function Index() {
       formattedReturnPickupTime: null,
       returnPickupTime: null,
       additionalStopOnTheWayPrice: 0,
+      additionalStopId: null,
+      additionalStopOnTheWayDescription: "",
       instruction: "",
       arrivalFlightNumber: "",
       airline: "",
@@ -186,6 +190,9 @@ function Index() {
   const contactValidationSchema = yup.object().shape({
     firstName: yup.string("should be string") /* .required() */,
     lastName: yup.string("should be string") /* .required() */,
+    isValidCardInfo: yup
+      .boolean()
+      .oneOf([true], "Please, validate your card Info!"),
     email: yup.string("should be string").email("should be valid email"),
     /* .required("Email required") */ confirmEmail: yup
       .string()
@@ -208,6 +215,12 @@ function Index() {
       lastName: "",
       email: "",
       confirmEmail: "",
+      number: "",
+      name: "",
+      expiry: "",
+      cvc: "",
+      name: "",
+      isValidCardInfo: false,
       cellPhone: "",
       bookingFor: "Myself",
       passengerFullName: "Eyasu Emana",
@@ -457,7 +470,7 @@ function Index() {
               >
                 BACK
               </Button>
-              <Button variant="contained" onClick={handleSubmit} >
+              <Button variant="contained" onClick={handleSubmit}>
                 {isBookPending ? (
                   <CircularProgress size={25} sx={{ color: "#FFF" }} />
                 ) : (

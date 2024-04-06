@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Grid } from "@mui/material";
 import OrderCard from "./OrderCard";
+import { useDispatch, useSelector } from "react-redux";
+import { getPassengerBooks } from "../../store/actions/bookActions";
 function Order() {
+  const dispatch = useDispatch();
+  const { passengerBooks } = useSelector((state) => state.bookReducer);
+  useEffect(() => {
+    dispatch(getPassengerBooks());
+  }, []);
+  useEffect(() => {
+    console.log("passengerBooks: ", passengerBooks);
+  }, [passengerBooks]);
+
   return (
     <Box p={5}>
       <Grid
@@ -10,9 +21,14 @@ function Order() {
         alignItems={"center"}
         spacing={2}
       >
-        {[1, 2, 3, 4].map((order) => (
+
+        {passengerBooks?.map((order) => (
           <Grid item xs={12} md={6} lg={3}>
-            <OrderCard />
+            <OrderCard
+              serviceFee={order.serviceFee}
+              status={order.status}
+              travelType={order.travelType}
+            />
           </Grid>
         ))}
       </Grid>

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { book } from "../actions/bookActions";
+import { book, getPassengerBooks } from "../actions/bookActions";
 
 const initialState = {
   cars: [],
@@ -8,19 +8,21 @@ const initialState = {
   isError: false,
   errorMessage: "",
   cost: 0,
+  fee: 0,
+
+  isGetPassengerBookLoading: false,
+  passengerBooks: [],
 };
 
 const UserSlice = createSlice({
   name: "book",
   initialState,
   reducers: {
-    login: (state, action) => {},
-
-    addCost: (state, action) => {
-      state.cost = state.cost + action.payload;
+    adFee: (state, action) => {
+      state.fee = state.fee + action.payload;
     },
-    reduceCost: (state, action) => {
-      state.cost = state.cost - action.payload;
+    reducefee: (state, action) => {
+      state.fee = state.fee - action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -36,8 +38,24 @@ const UserSlice = createSlice({
       state.errorMessage = action.payload;
       state.isError = true;
     });
+
+    builder.addCase(getPassengerBooks.pending, (state, action) => {
+      state.isGetPassengerBookLoading = true;
+    });
+    builder.addCase(getPassengerBooks.fulfilled, (state, action) => {
+      return {
+        ...state,
+        isGetPassengerBookLoading: false,
+        passengerBooks: action.payload,
+      };
+    });
+    builder.addCase(getPassengerBooks.rejected, (state, action) => {
+      state.isGetPassengerBookLoading = false;
+      state.errorMessage = action.payload;
+      state.isError = true;
+    });
   },
 });
 
-export const { login, addCost, reduceCost } = UserSlice.actions;
+export const { adFee, reduceCost } = UserSlice.actions;
 export default UserSlice.reducer;

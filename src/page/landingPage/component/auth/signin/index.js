@@ -1,22 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { Box, TextField, Grid, Stack, InputAdornment } from "@mui/material";
-import axios from "axios";
-import RSButton from "../../../../../components/RSButton";
+import {
+  Box,
+  Grid,
+  Stack,
+  Button,
+  CircularProgress,
+  Alert,
+  Snackbar,
+} from "@mui/material";
 import RSTextField from "../../../../../components/RSTextField";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../../../../store/actions/authAction";
+import { Link, useNavigate } from "react-router-dom";
 function Index() {
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [openFailSnackbar, setOpenFailSnackbar] = useState(false);
   const dispatch = useDispatch();
-  // const signIn = async () => {
-  //   const response = await axios.get(
-  //     "http://localhost:8765/user-manager-service/api/education-level"
-  //   );
+  const navigate = useNavigate();
+  const {
+    isSigninSuccess,
+    signinLoanding,
+    signinSuccessMessage,
+    signinErrorMessage,
+    isSignInFail,
+  } = useSelector((state) => state.authReducer);
 
-  //   console.log("response", response);
-  // };
   const signInValidationSchema = yup.object({
     username: yup.string().required("username required"),
     password: yup.string().required("password required"),
@@ -28,6 +39,26 @@ function Index() {
       dispatch(signIn(values));
     },
   });
+
+  const handleCloseFailSnackbar = () => {
+    setOpenFailSnackbar(false);
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSuccessSnackbar(false);
+  };
+  useEffect(() => {
+    if (isSigninSuccess) {
+      setOpenSuccessSnackbar(true);
+      navigate("/home/1");
+    }
+  }, [isSigninSuccess]);
+
+  useEffect(() => {
+    if (isSignInFail) {
+      setOpenFailSnackbar(true);
+    }
+  }, [isSignInFail]);
+
   return (
     <Box>
       <Grid container spacing={2}>
@@ -63,18 +94,55 @@ function Index() {
           />
         </Grid>
         <Grid item xs={12}>
-          <Stack direction="row" justifyContent="flex-end">
-            <RSButton
-              sx={{ width: 200 }}
-              backgroundcolor={"#FF0013"}
-              txtcolor={"#FFF"}
+          <Stack direction="row" justifyContent="space-between">
+            <Link to={"/forget-password"}>forget password</Link>
+
+            <Button
+              sx={{ backgroundColor: "#FF0013" }}
+              variant="contained"
               onClick={formikSignIn.handleSubmit}
             >
-              Signin
-            </RSButton>
+              {signinLoanding ? (
+                <CircularProgress size={25} sx={{ color: "#FFF" }} />
+              ) : (
+                <> Signin</>
+              )}
+            </Button>
           </Stack>
         </Grid>
       </Grid>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={openSuccessSnackbar}
+        onClose={handleCloseSnackbar}
+        key={"bottom" + "left"}
+        autoHideDuration={3000}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {signinSuccessMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={openFailSnackbar}
+        onClose={handleCloseFailSnackbar}
+        key={"bottom" + "left"}
+        autoHideDuration={3000}
+      >
+        <Alert
+          onClose={handleCloseFailSnackbar}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {signinErrorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

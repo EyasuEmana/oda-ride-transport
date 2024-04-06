@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, useMediaQuery, Stack } from "@mui/material";
 import RSTypography from "../../../../components/RSTypography";
 import RSButton from "../../../../components/RSButton";
 import { useTheme } from "@emotion/react";
@@ -18,13 +18,21 @@ function Index({ imgUrl, text, id }) {
       src={imgUrl}
     />
   );
-
+  const matchBelowMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <Box>
       <Stack direction={"row"} alignItems={"center"}>
-        <Box sx={{ backgroundColor: "#B2AAAA", padding: 1 }}>
-          <Logo />
-        </Box>
+        {
+          <Box
+            sx={{
+              backgroundColor: "#B2AAAA",
+              padding: 1,
+              display: matchBelowMd && "none",
+            }}
+          >
+            <Logo />
+          </Box>
+        }
         <Box sx={{ backgroundColor: "#D9D9D9", padding: 2 }}>
           <Stack direction={"row"} justifyContent={"center"} spacing={1}>
             <RSTypography>{text}</RSTypography>

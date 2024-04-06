@@ -97,7 +97,7 @@ function Index({
         </Grid> */}
         <Grid item xs={12} mt={2}>
           <Box>
-            <CreditCardForm />
+            <CreditCardForm formik={formik} />
           </Box>
         </Grid>
       </Grid>

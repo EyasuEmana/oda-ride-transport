@@ -1,12 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { mock_host_url, remote_host } from "../../globalVariable";
+import { remote_host } from "../../globalVariable";
+import { authHeader } from "../../util/getAuthHeader";
 
 export const book = createAsyncThunk(
   "book/apply-book",
   async (values, thunkAPI) => {
     const { rideInfo, contact, tripDetail, vehicle, travelType } = values;
     var res = null;
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+    };
     const body = {
       pickupPhysicalAddress: rideInfo?.pickupPhysicalAddress,
       pickupLongitude: rideInfo?.pickupLongitude,
@@ -20,18 +27,13 @@ export const book = createAsyncThunk(
         tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
       specialInstructions: tripDetail?.instruction,
       bookingFor: contact?.bookingFor,
+      additionalStopId: tripDetail.additionalStopId || 0,
+      additionalStopOnTheWayDescription:
+        tripDetail.additionalStopOnTheWayDescription,
       passengerFullName: contact?.passengerFullName,
       passengerCellPhone: contact?.passengerCellPhone,
       carId: vehicle?.vehicle,
       extraOptions: vehicle.extraOptions,
-    };
-    const isRoundTrip = () => {
-      var tripType = body.tripType;
-      return (
-        tripType == "Round-Trip" ||
-        tripType == "Ride to the airport(round trip)" ||
-        tripType == "Ride from the airport(round trip)"
-      );
     };
     if (rideInfo?.tripType == "Round-Trip") {
       body.returnPickupDateTime =
@@ -55,7 +57,8 @@ export const book = createAsyncThunk(
 
         res = await axios.post(
           remote_host + "/api/v1/point-to-point-books",
-          body
+          body,
+          headers
         );
       } else if (travelType == 2) {
         const body = {
@@ -75,8 +78,9 @@ export const book = createAsyncThunk(
             tripDetail?.formattedPickupTime,
           distanceInMiles: rideInfo?.distanceInMiles,
           carId: vehicle?.vehicle,
-          additionalStopId: 1,
-          additionalStopOnTheWayDescription: "hello",
+          additionalStopId: tripDetail.additionalStopId || 0,
+          additionalStopOnTheWayDescription:
+            tripDetail.additionalStopOnTheWayDescription,
           pickupPreferenceId: tripDetail?.pickupPreference,
           extraOptions: extraOptions,
           bookingFor: contact?.bookingFor,
@@ -92,18 +96,78 @@ export const book = createAsyncThunk(
             " " +
             tripDetail?.formattedReturnPickupTime;
         }
-        res = await axios.post(remote_host + "/api/v1/airport-books", body);
+        res = await axios.post(
+          remote_host + "/api/v1/airport-books",
+          body,
+          headers
+        );
         return res.data;
       } else if (travelType == 3) {
         body.selectedHours = rideInfo?.hour;
         body.occasion = tripDetail?.occation;
         res = await axios.post(
           remote_host + "/api/v1/hourly-charter-books",
-          body
+          body,
+          headers
         );
       }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      const errorText = error?.response
+        ? error?.response.data.message
+        : "Network Error";
+      return thunkAPI.rejectWithValue(errorText);
     }
+  }
+);
+
+export const getPassengerBooks = createAsyncThunk(
+  "book/get-passenger-books",
+  async (values, thunkAPI) => {
+    const books = [];
+    await axios
+      .get(`${remote_host}/api/v1/users/bookings/mine`, authHeader())
+      .then((result) => {
+        console.log("data: ", result.data);
+        const { pointToPointBookings, hourlyCharterBookings, airportBookings } =
+          result.data;
+        pointToPointBookings.forEach((pointToPointBook) => {
+          const book = {
+            travelType: "Point To Point",
+            travelType: pointToPointBook.tripType,
+            serviceFee: pointToPointBook?.serviceFee || 200,
+            status: pointToPointBook.bookingStatus,
+          };
+          books.push(book);
+        });
+
+        hourlyCharterBookings.forEach((hourlyBook) => {
+          const book = {
+            travelType: "Hourly",
+            travelType: null,
+            serviceFee: hourlyBook?.serviceFee || 200,
+            hour: hourlyBook.hour,
+            status: hourlyBook.bookingStatus,
+          };
+          books.push(book);
+        });
+
+        airportBookings.forEach((airportBook) => {
+          const book = {
+            travelType: "Airport",
+            travelType: airportBook.tripType,
+            serviceFee: airportBook?.serviceFee || 200,
+            status: airportBook.bookingStatus,
+          };
+
+          books.push(book);
+        });
+      })
+      .catch((error) => {
+        const errorText = error?.response
+          ? error?.response.data.message
+          : "Network Error";
+        return thunkAPI.rejectWithValue(errorText);
+      });
+    return books;
   }
 );

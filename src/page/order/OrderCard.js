@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-export default function OrderCard() {
+export default function OrderCard({ serviceFee, status, travelType }) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -17,15 +17,19 @@ export default function OrderCard() {
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          Round Trip
+          {travelType}
         </Typography>
         <Stack direction={"row"} justifyContent={"space-between"}>
+          <Typography>Trip Type</Typography>
+          <Typography>Airport</Typography>
+        </Stack>
+        <Stack direction={"row"} justifyContent={"space-between"}>
           <Typography>Fee</Typography>
-          <Typography>$2000</Typography>
+          <Typography>${serviceFee}</Typography>
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Typography>Status</Typography>
-          <Typography>PENDING</Typography>
+          <Typography>{status}</Typography>
         </Stack>
       </CardContent>
       <CardActions>
