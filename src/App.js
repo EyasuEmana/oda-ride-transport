@@ -1,9 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./page/landingPage/index";
+import HomePage from "./page/homePage/index";
+import Dashboard from "./components/Dashboard/Dashboard";
+
+import ErrorMessage from "./components/errorMessage";
+import Header from "./components/Appbar";
 import theme from "./assets/theme";
 import { ThemeProvider } from "@mui/material";
 import Footer from "./components/footer";
-import Dashboard from "./components/Dashboard/Dashboard";
-import Header from "./components/Appbar";
+import RideGoogleMap from "./page/homePage/components/googleMap";
+import Order from "./page/order";
+import ResetPassword from "./page/landingPage/component/auth/ResetPassword";
+import ForgetPassword from "./page/landingPage/component/auth/ForgetPassword";
 import Cars from "./page/UserManagement/DataTable/Car/Car";
 import PointToPointBooks from "./page/UserManagement/DataTable/PointToPointBook/PointToPointBook";
 import Users from "./page/UserManagement/DataTable/User/User";
@@ -27,20 +36,67 @@ import AirportDetail from "./page/UserManagement/DataTable/AirportBook/airports/
 import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
 
 function App() {
-  const queryClient = new QueryClient();
+  const [usernameFocus, setUsernameFocus] = useState(false);
+  const isAuthenticated = () => {
+    const accessToken = sessionStorage.getItem("access_token");
+    return accessToken !== null;
+  };
 
+  const handleUsernameFocus = () => {
+    setUsernameFocus(true);
+  };
+
+  const PrivateRoute = ({ children }) => {
+    return isAuthenticated() ? (
+      <>{children}</>
+    ) : (
+      <Navigate to="/error" replace />
+    );
+  };
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <Header />
+          <Header handleUsernameFocus={handleUsernameFocus} />
           <Routes>
-            {/* <Route path="/" element={<LandingPage />}></Route>
-          <Route path="/home/:id" element={<HomePage />}></Route>
-          <Route path="/map" element={<RideGoogleMap />}></Route>
-          <Route path={"*"} element={<ErrorMessage />}></Route> */}
+            <Route
+              path="/"
+              element={
+                <LandingPage
+                  usernameFocus={usernameFocus}
+                  setUsernameFocus={setUsernameFocus}
+                  handleUsernameFocus={handleUsernameFocus}
+                />
+              }
+            />
 
-            <Route path="/" element={<Users />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
+            <Route
+              path="/home/:id"
+              element={
+                <PrivateRoute>
+                  <HomePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/map"
+              element={
+                <PrivateRoute>
+                  <RideGoogleMap />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-order"
+              element={
+                <PrivateRoute>
+                  <Order />
+                </PrivateRoute>
+              }
+            />
+            <Route path="users/" element={<Users />} />
             <Route path="/dashboard" name="dashboard" element={<Dashboard />}>
               <Route index element={<Cars />}></Route>
               <Route path={"cars"} element={<Cars />}></Route>
@@ -105,6 +161,7 @@ function App() {
 
               <Route path={"airportbook"} element={<AirportBooks />}></Route>
             </Route>
+            <Route path="*" element={<ErrorMessage />} />
           </Routes>
           <Footer />
         </QueryClientProvider>

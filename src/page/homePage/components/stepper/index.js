@@ -17,7 +17,6 @@ const steps = [
 ];
 
 export default function CustomStepper({ step }) {
-  const theme = useTheme();
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`& .${stepConnectorClasses.line}`]: {
       borderColor: "#CCC",
@@ -40,9 +39,10 @@ export default function CustomStepper({ step }) {
       fontFamily: "Roboto Helvetica Arial sans-serif",
     },
     ".css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed": {
-      color: theme.palette.info.main,
+      color: "#03930A",
     },
   });
+
   const CustomStepLabel = styled(StepLabel)({
     ".Mui-active": {
       color: "#000",

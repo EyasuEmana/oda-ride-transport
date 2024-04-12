@@ -56,10 +56,6 @@ function Index() {
           <RSTypography txtcolor={white} fontsize={"15px"}>
             About Us
           </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            User Management
-          </RSTypography>
-
         </Grid>
 
         <Grid item xs={2}>
