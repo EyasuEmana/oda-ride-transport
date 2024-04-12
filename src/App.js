@@ -14,9 +14,14 @@ import ResetPassword from "./page/landingPage/component/auth/ResetPassword";
 import ForgetPassword from "./page/landingPage/component/auth/ForgetPassword";
 
 function App() {
+  const [usernameFocus, setUsernameFocus] = useState(false);
   const isAuthenticated = () => {
     const accessToken = sessionStorage.getItem("access_token");
     return accessToken !== null;
+  };
+
+  const handleUsernameFocus = () => {
+    setUsernameFocus(true);
   };
 
   const PrivateRoute = ({ children }) => {
@@ -29,12 +34,20 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <Header />
+        <Header handleUsernameFocus={handleUsernameFocus} />
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/"
+            element={
+              <LandingPage
+                usernameFocus={usernameFocus}
+                setUsernameFocus={setUsernameFocus}
+                handleUsernameFocus={handleUsernameFocus}
+              />
+            }
+          />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
-
           <Route
             path="/home/:id"
             element={

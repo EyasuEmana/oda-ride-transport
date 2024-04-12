@@ -1,10 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import CustomTab from "./CustomTab";
-function Index() {
+function Index({ usernameFocus }) {
   return (
     <Box>
-      <CustomTab />
+      <CustomTab usernameFocus={usernameFocus} />
     </Box>
   );
 }

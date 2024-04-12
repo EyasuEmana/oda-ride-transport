@@ -15,7 +15,7 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../../../../store/actions/authAction";
 import { Link, useNavigate } from "react-router-dom";
-function Index() {
+function Index({ usernameFocus }) {
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
   const [openFailSnackbar, setOpenFailSnackbar] = useState(false);
   const dispatch = useDispatch();
@@ -64,6 +64,7 @@ function Index() {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <RSTextField
+            focused={usernameFocus}
             label="Email"
             color="info"
             fullWidth

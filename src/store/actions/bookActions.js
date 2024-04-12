@@ -55,6 +55,11 @@ export const book = createAsyncThunk(
         body.tripType = rideInfo?.tripType;
         body.distanceInMiles = rideInfo?.distanceInMiles;
 
+        if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
+          delete body.additionalStopId;
+          delete body.additionalStopOnTheWayDescription;
+        }
+
         res = await axios.post(
           remote_host + "/api/v1/point-to-point-books",
           body,
@@ -96,6 +101,10 @@ export const book = createAsyncThunk(
             " " +
             tripDetail?.formattedReturnPickupTime;
         }
+        if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
+          delete body.additionalStopId;
+          delete body.additionalStopOnTheWayDescription;
+        }
         res = await axios.post(
           remote_host + "/api/v1/airport-books",
           body,
@@ -103,6 +112,10 @@ export const book = createAsyncThunk(
         );
         return res.data;
       } else if (travelType == 3) {
+        if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
+          delete body.additionalStopId;
+          delete body.additionalStopOnTheWayDescription;
+        }
         body.selectedHours = rideInfo?.hour;
         body.occasion = tripDetail?.occation;
         res = await axios.post(
@@ -128,7 +141,6 @@ export const getPassengerBooks = createAsyncThunk(
       await axios
         .get(`${remote_host}/api/v1/users/bookings/mine`, authHeader())
         .then((result) => {
-          console.log("data: ", result.data);
           const {
             pointToPointBookings,
             hourlyCharterBookings,

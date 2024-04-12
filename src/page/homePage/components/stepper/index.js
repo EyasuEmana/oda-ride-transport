@@ -17,7 +17,6 @@ const steps = [
 ];
 
 export default function CustomStepper({ step }) {
-  const theme = useTheme();
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`& .${stepConnectorClasses.line}`]: {
       borderColor: "#CCC",

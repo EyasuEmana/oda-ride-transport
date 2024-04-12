@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Grid } from "@mui/material";
 import ServiceCard from "./component/serviceCard/index";
 import car from "../../assets/images/car.png";
@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 
-function Index() {
+function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,9 +53,17 @@ function Index() {
       // navigate("/");
     }
   };
+
   useEffect(() => {
     checkSessionExpiration();
   }, [location]);
+
+  useEffect(() => {
+    return () => {
+      setUsernameFocus(false);
+    };
+  }, []);
+
   return (
     <Box py={10}>
       <Grid
@@ -75,6 +83,7 @@ function Index() {
               sx={{ width: 200 }}
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
+              onClick={handleUsernameFocus}
             >
               Unlock your ride
               <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
@@ -88,12 +97,13 @@ function Index() {
                 imgUrl={service.imgUrl}
                 text={service.text}
                 id={service.id}
+                handleUsernameFocus={handleUsernameFocus}
               />
             ))}
           </Stack>
         </Grid>
         <Grid item container xs={10} justifyContent={"center"}>
-          <Auth />
+          <Auth usernameFocus={usernameFocus} />
         </Grid>
       </Grid>
     </Box>

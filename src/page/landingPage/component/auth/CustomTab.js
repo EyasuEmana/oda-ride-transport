@@ -35,7 +35,7 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function FullWidthTabs() {
+export default function FullWidthTabs({ usernameFocus }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
@@ -110,7 +110,7 @@ export default function FullWidthTabs() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <Signin />
+          <Signin usernameFocus={usernameFocus} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <Register />

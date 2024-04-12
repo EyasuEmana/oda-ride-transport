@@ -40,7 +40,7 @@ const authNavbarMenus = [
   { title: "My Order", link: "/my-order" },
 ];
 
-function Header() {
+function Header({ handleUsernameFocus }) {
   const [value, setValue] = useState(0);
   const [open, setOpen] = React.useState(false);
   const [openChangePasswordPopup, setOpenChangePasswordPopup] =
@@ -222,6 +222,7 @@ function Header() {
               borderradius={"5px"}
               variant="contained"
               backgroundcolor={"#4D4C4C"}
+              onClick={handleUsernameFocus}
             >
               Login / SignUp
             </RSButton>

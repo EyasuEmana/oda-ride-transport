@@ -5,7 +5,7 @@ import RSButton from "../../../../components/RSButton";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 
-function Index({ imgUrl, text, id }) {
+function Index({ imgUrl, text, id, handleUsernameFocus }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const Logo = () => (
@@ -39,7 +39,8 @@ function Index({ imgUrl, text, id }) {
             <RSButton
               backgroundcolor={theme.palette.info.main}
               radius={5}
-              onClick={() => navigate(`/home/${id}`)}
+              onClick={() => handleUsernameFocus()}
+              // onClick={() => navigate(`/home/${id}`)}
             >
               Book Now
             </RSButton>
