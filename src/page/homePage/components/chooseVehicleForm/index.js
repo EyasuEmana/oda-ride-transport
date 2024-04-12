@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useCallback } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -15,20 +15,23 @@ import CarComponent from "./CarComponent";
 import { useDispatch, useSelector } from "react-redux";
 import RSTypography from "../../../../components/RSTypography";
 import ExtraOptionComponent from "./ExtraOptionComponent";
-import { getExtraOptions } from "../../../../store/actions/extraOptions";
-import { getAllCars } from "../../../../store/actions/carAction";
 import { updateCars } from "../../../../store/reducers/carReducer";
-import Summary from "./SummaryTillVehicle";
 import StepSummary from "../StepSummary";
-import { adFee } from "../../../../store/reducers/bookReducers";
+import {
+  adCarFee,
+  addExtraOptionFee,
+  reduceExtraOptionFee,
+} from "../../../../store/reducers/bookReducers";
 import { updateExtraOption } from "../../../../store/reducers/extraOptionReducer";
+import { useLocation } from "react-router-dom";
 
-function Index({ formik, rideSummaryData }) {
+function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const dispatch = useDispatch();
+  const location = useLocation();
+  var travelType = location.pathname.split("/").pop();
   const [carType, setCarType] = useState("All Vehicles");
   const { cars, loading } = useSelector((state) => state.carReducer);
   const { fee } = useSelector((state) => state.bookReducer);
-  const bookReducer = useSelector((state) => state.bookReducer);
   const { extraOptions, loading_extra_option } = useSelector(
     (state) => state.extraOptionReducer
   );
@@ -45,20 +48,20 @@ function Index({ formik, rideSummaryData }) {
     const updatedCars = cars.map((car) => {
       if (car.carId == selectedCarId && formik?.vehicle != car.carId) {
         const prevSelectedCarFee = formik.values.vehicleFee;
-        const addedFee = fee - prevSelectedCarFee + parseInt(car.pricePerHour);
-        console.log(
-          "fee: " +
-            fee +
-            " - prevSelectedCarFee: " +
-            prevSelectedCarFee +
-            "+ selected car price: ",
-          parseInt(car.pricePerHour) + " = ",
-          addedFee
-        );
-      
-        dispatch(adFee(addedFee));
+        var calculatedCarFee = 0;
+        if (travelType == "1" || travelType == "2") {
+          calculatedCarFee =
+            fee -
+            prevSelectedCarFee * distanceInMiles +
+            parseFloat(car.pricePerMile) * distanceInMiles;
+        } else if (travelType == "3") {
+          calculatedCarFee =
+            fee -
+            prevSelectedCarFee * hour +
+            parseFloat(car.pricePerHour) * hour;
+        }
+        dispatch(adCarFee(calculatedCarFee));
       }
-
       return {
         ...car,
         isSelected: car.carId == selectedCarId,
@@ -69,26 +72,32 @@ function Index({ formik, rideSummaryData }) {
 
   const handleExtraOptionSelect = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
-      if (selectedOptionId == option.extraOptionId)
-        return {
-          ...option,
-          itemQuantity: 1,
-          isSelected: selectedOptionId == option.extraOptionId,
-        };
-      else return option;
+      if (selectedOptionId == option.extraOptionId) {
+        {
+          const pricePerExtraOption = parseFloat(option.pricePerItem);
+          dispatch(addExtraOptionFee(pricePerExtraOption));
+          return {
+            ...option,
+            itemQuantity: 1,
+            isSelected: selectedOptionId == option.extraOptionId,
+          };
+        }
+      } else return option;
     });
     dispatch(updateExtraOption(updatedExtraOptions));
   };
 
   const handleExtraOptionUnSelect = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
-      if (selectedOptionId == option.extraOptionId)
+      if (selectedOptionId == option.extraOptionId) {
+        const pricePerExtraOption = parseFloat(option.pricePerItem);
+        dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
           itemQuantity: 0,
           isSelected: false,
         };
-      else return option;
+      } else return option;
     });
     dispatch(updateExtraOption(updatedExtraOptions));
   };
@@ -96,6 +105,10 @@ function Index({ formik, rideSummaryData }) {
   const addExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
+        const pricePerExtraOption = parseFloat(option.pricePerItem);
+        const totoalExtraOptionFee =
+          pricePerExtraOption * (option.itemQuantity + 1) - pricePerExtraOption;
+        dispatch(addExtraOptionFee(totoalExtraOptionFee));
         return {
           ...option,
           itemQuantity: option.itemQuantity + 1,
@@ -110,6 +123,10 @@ function Index({ formik, rideSummaryData }) {
   const reduceExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
+        const pricePerExtraOption = parseFloat(option.pricePerItem);
+        const totoalExtraOptionFee =
+          pricePerExtraOption * (option.itemQuantity - 1) - pricePerExtraOption;
+        dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
           itemQuantity: option.itemQuantity - 1,

@@ -52,8 +52,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const [accomodationtLatLng, setAccomodationLatLng] = useState();
   const [directionsResponse, setDirectionsResponse] = useState();
   const [destinationLatLng, setDestinationLatLng] = useState();
-  const [distance, setDistance] = useState();
-  const [duration, setDuration] = useState();
   const theme = useTheme();
   const matchXS = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -61,7 +59,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const travelType = params.id;
   const pickupPhysicalAddressRef = useRef();
   const dropDownAddressRef = useRef();
-  const MILE_TO_KM = 1.60934;
   const center = useMemo(() => ({ lat: 50, lng: -80 }), []);
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const mapRef = useRef();
@@ -110,17 +107,14 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
           travelMode: google.maps.TravelMode["DRIVING"],
         })
         .then((response) => {
-          formik.setFieldValue(
-            "distanceInMiles",
-            (response.routes[0].legs[0].distance.value * 0.001) / MILE_TO_KM
-          );
-          setDirectionsResponse(response);
-          console.log("distance: ", response.routes[0].legs[0].distance.value);
           const distanceInMile =
             response.routes[0].legs[0].distance.value / 1609.344;
-          setDistance(distanceInMile.toFixed(2) + " Mile"); // in mile
-          // setDistance(response.routes[0].legs[0].distance.text); in km
-          setDuration(response.routes[0].legs[0].duration.text);
+          formik.setFieldValue("distanceInMiles", distanceInMile.toFixed(2));
+          setDirectionsResponse(response);
+          formik.setFieldValue(
+            "duration",
+            response.routes[0].legs[0].duration.text
+          );
         });
     }
   };
@@ -139,16 +133,14 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
           travelMode: google.maps.TravelMode["DRIVING"],
         })
         .then((response) => {
-          console.log("response: ", response);
-          formik.setFieldValue(
-            "distanceInMiles",
-            (response.routes[0].legs[0].distance.value * 0.001) / MILE_TO_KM
-          );
-          setDirectionsResponse(response);
           const distanceInMile =
             response.routes[0].legs[0].distance.value / 1609.344;
-          setDistance(distanceInMile.toFixed(2) + " Mile"); // in mile
-          setDuration(response.routes[0].legs[0].duration.text);
+          formik.setFieldValue("distanceInMiles", distanceInMile.toFixed(2));
+          setDirectionsResponse(response);
+          formik.setFieldValue(
+            "duration",
+            response.routes[0].legs[0].duration.text
+          );
         })
         .catch((error) => console.log("error2: ", error));
     }
@@ -527,8 +519,16 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
               direction={{ xs: "column", md: "row" }}
               justifyContent={"space-between"}
             >
-              <RSTypography>Distance: {distance ? distance : "_"}</RSTypography>
-              <RSTypography>Duration: {duration ? duration : "_"}</RSTypography>
+              <RSTypography>
+                Distance:{" "}
+                {formik.values.distanceInMiles
+                  ? formik.values.distanceInMiles + " mile"
+                  : "_"}
+              </RSTypography>
+              <RSTypography>
+                Duration:{" "}
+                {formik.values.duration ? formik.values.duration : "_"}
+              </RSTypography>
             </Stack>
           </Stack>
         </Grid>

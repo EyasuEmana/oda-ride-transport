@@ -5,12 +5,14 @@ const initialState = {
   cars: [],
   isBookPending: false,
   isBookSuccess: false,
-  isError: false,
   errorMessage: "",
   cost: 0,
   fee: 0,
+  prevAirportPickupPreferenceFee: 0,
 
   isGetPassengerBookLoading: false,
+  isGetPassengerBookError: false,
+  getPassengerBookErrorMessage: "",
   passengerBooks: [],
 };
 
@@ -18,11 +20,40 @@ const UserSlice = createSlice({
   name: "book",
   initialState,
   reducers: {
-    adFee: (state, action) => {
-      state.fee = state.fee + action.payload;
+    adCarFee: (state, action) => {
+      state.fee = action.payload;
+    },
+    addExtraOptionFee: (state, action) => {
+      const fee = state.fee + action.payload;
+      return {
+        ...state,
+        fee: fee,
+      };
+    },
+    reduceExtraOptionFee: (state, action) => {
+      return {
+        ...state,
+        fee: state.fee - action.payload,
+      };
     },
     reducefee: (state, action) => {
       state.fee = state.fee - action.payload;
+    },
+    addAirportPreferenceFee: (state, action) => {
+      const { prefFee, prevPrefFee } = action.payload;
+      state.fee = state.fee - prevPrefFee + prefFee;
+    },
+    addAdditionalStopFee: (state, action) => {
+      const { stopOnWayFee, prevAddtionalStopOnTheWayFee } = action.payload;
+      state.fee = state.fee - prevAddtionalStopOnTheWayFee + stopOnWayFee;
+    },
+    removeAdditionalStopFee: (state, action) => {
+      const { stopOnWayFee, prevAddtionalStopOnTheWayFee } = action.payload;
+      state.fee = state.fee - prevAddtionalStopOnTheWayFee + stopOnWayFee;
+    },
+    reduceAirportPreferenceFee: (state, action) => {
+      const { prevAirportPickupPreferenceFee, fee } = state;
+      fee = fee - prevAirportPickupPreferenceFee;
     },
   },
   extraReducers: (builder) => {
@@ -46,16 +77,28 @@ const UserSlice = createSlice({
       return {
         ...state,
         isGetPassengerBookLoading: false,
+        isGetPassengerBookError: false,
         passengerBooks: action.payload,
       };
     });
     builder.addCase(getPassengerBooks.rejected, (state, action) => {
-      state.isGetPassengerBookLoading = false;
-      state.errorMessage = action.payload;
-      state.isError = true;
+      return {
+        ...state,
+        isGetPassengerBookError: true,
+        getPassengerBookErrorMessage: action.payload,
+        isGetPassengerBookLoading: false,
+      };
     });
   },
 });
 
-export const { adFee, reduceCost } = UserSlice.actions;
+export const {
+  adCarFee,
+  reduceCost,
+  addExtraOptionFee,
+  reduceExtraOptionFee,
+  addAirportPreferenceFee,
+  reduceAirportPreferenceFee,
+  addAdditionalStopFee,
+} = UserSlice.actions;
 export default UserSlice.reducer;

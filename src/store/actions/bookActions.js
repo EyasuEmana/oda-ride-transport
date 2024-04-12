@@ -66,9 +66,9 @@ export const book = createAsyncThunk(
           airportId: rideInfo?.airPortId,
           numberOfPassengers: vehicle?.numberOfPassengers,
           numberOfSuitcases: vehicle?.numberOfSuitcases,
-          accommodationAddress: "123 Main St, Anytown, USA",
-          accommodationLongitude: -73.935242,
-          accommodationLatitude: 40.73061,
+          accommodationAddress: rideInfo?.accommodationAddress,
+          accommodationLongitude: rideInfo?.accommodationLongitude,
+          accommodationLatitude: rideInfo?.accommodationLatitude,
           airline: tripDetail?.airline,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
@@ -78,7 +78,7 @@ export const book = createAsyncThunk(
             tripDetail?.formattedPickupTime,
           distanceInMiles: rideInfo?.distanceInMiles,
           carId: vehicle?.vehicle,
-          additionalStopId: tripDetail.additionalStopId || 0,
+          additionalStopId: tripDetail.additionalStopId,
           additionalStopOnTheWayDescription:
             tripDetail.additionalStopOnTheWayDescription,
           pickupPreferenceId: tripDetail?.pickupPreference,
@@ -124,50 +124,51 @@ export const getPassengerBooks = createAsyncThunk(
   "book/get-passenger-books",
   async (values, thunkAPI) => {
     const books = [];
-    await axios
-      .get(`${remote_host}/api/v1/users/bookings/mine`, authHeader())
-      .then((result) => {
-        console.log("data: ", result.data);
-        const { pointToPointBookings, hourlyCharterBookings, airportBookings } =
-          result.data;
-        pointToPointBookings.forEach((pointToPointBook) => {
-          const book = {
-            travelType: "Point To Point",
-            travelType: pointToPointBook.tripType,
-            serviceFee: pointToPointBook?.serviceFee || 200,
-            status: pointToPointBook.bookingStatus,
-          };
-          books.push(book);
-        });
+    try {
+      await axios
+        .get(`${remote_host}/api/v1/users/bookings/mine`, authHeader())
+        .then((result) => {
+          console.log("data: ", result.data);
+          const {
+            pointToPointBookings,
+            hourlyCharterBookings,
+            airportBookings,
+          } = result.data;
+          pointToPointBookings.forEach((pointToPointBook) => {
+            const book = {
+              ...pointToPointBook,
+              travelType: "Point To Point",
+              tripType: pointToPointBook.tripType,
+            };
+            books.push(book);
+          });
 
-        hourlyCharterBookings.forEach((hourlyBook) => {
-          const book = {
-            travelType: "Hourly",
-            travelType: null,
-            serviceFee: hourlyBook?.serviceFee || 200,
-            hour: hourlyBook.hour,
-            status: hourlyBook.bookingStatus,
-          };
-          books.push(book);
-        });
+          hourlyCharterBookings.forEach((hourlyBook) => {
+            const book = {
+              ...hourlyBook,
+              travelType: "Hourly",
+              tripType: "Hourly",
+            };
+            books.push(book);
+          });
 
-        airportBookings.forEach((airportBook) => {
-          const book = {
-            travelType: "Airport",
-            travelType: airportBook.tripType,
-            serviceFee: airportBook?.serviceFee || 200,
-            status: airportBook.bookingStatus,
-          };
+          airportBookings.forEach((airportBook) => {
+            const book = {
+              ...airportBook,
+              travelType: "Airport",
+              tripType: airportBook.tripType,
+            };
 
-          books.push(book);
+            books.push(book);
+          });
         });
-      })
-      .catch((error) => {
-        const errorText = error?.response
-          ? error?.response.data.message
-          : "Network Error";
-        return thunkAPI.rejectWithValue(errorText);
-      });
-    return books;
+      return books;
+    } catch (error) {
+      const errorText = error?.response
+        ? error?.response.data.message
+        : "Network Error";
+      console.log("error");
+      return thunkAPI.rejectWithValue(errorText);
+    }
   }
 );

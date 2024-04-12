@@ -23,12 +23,11 @@ import Success from "./components/Success";
 import { getAllCars } from "../../store/actions/carAction";
 import { getExtraOptions } from "../../store/actions/extraOptions";
 import { getAirports } from "../../store/actions/airportAction";
-import { setIsAuthenticated } from "../../store/reducers/authReducer";
 function Index() {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
   const dispatch = useDispatch();
-  
+
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
@@ -79,7 +78,8 @@ function Index() {
       dropoffLongitude: 0,
       dropoffLatitude: 0,
       distanceInMiles: 0,
-      hour: 0,
+      duration: null,
+      hour: 1,
       airPortId: null,
       airportName: "",
       airportAddressLongitude: 0,
@@ -181,6 +181,9 @@ function Index() {
       airline: "",
       occation: "",
       pickupPreference: 1,
+      prevPickupPrefValue: 0,
+      prevAddtionalStopOnTheWayFee: 0,
+      stopOnWayFee: 0,
     },
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
@@ -424,6 +427,8 @@ function Index() {
             )}
             {activeStep === 1 && (
               <ChooseVehicleForm
+                hour={formikRideInfo.values.hour}
+                distanceInMiles={formikRideInfo.values.distanceInMiles}
                 formik={formikChooseVehicle}
                 rideSummaryData={formikRideInfo.values}
               />

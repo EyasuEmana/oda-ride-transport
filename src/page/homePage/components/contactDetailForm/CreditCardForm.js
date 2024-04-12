@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Cards from "react-credit-cards-2";
+import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import { Alert } from "@mui/material";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
-import { host, remote_host } from "../../../../globalVariable";
+import { remote_host } from "../../../../globalVariable";
 const CreditCardForm = ({ formik }) => {
   const [errorResponse, setErrorresponse] = useState({
     isError: false,
@@ -11,6 +12,7 @@ const CreditCardForm = ({ formik }) => {
   });
   const [successResponse, setSuccessresponse] = useState({
     isSuccess: false,
+    isLoading: false,
     successMessage: "",
   });
   const [cardInfo, setCardInfo] = useState({
@@ -46,7 +48,10 @@ const CreditCardForm = ({ formik }) => {
       expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
       securityCode: cardInfo.cvc, //"123",
     };
-    console.log("body: ", body);
+    setSuccessresponse((prev) => ({
+      ...prev,
+      isLoading: true,
+    }));
     await axios
       .post(`${remote_host}/api/v1/users/payment-detail/validate-card`, body)
       .then((result) => {
@@ -73,6 +78,10 @@ const CreditCardForm = ({ formik }) => {
           });
         }
       });
+    setSuccessresponse((prev) => ({
+      ...prev,
+      isLoading: false,
+    }));
   };
 
   return (
@@ -138,7 +147,13 @@ const CreditCardForm = ({ formik }) => {
             </div>
           </div>
           <div className="d-grid">
-            <button className="btn btn-dark">Confirm</button>
+            <button className="btn btn-dark">
+              {successResponse.isLoading ? (
+                <CircularProgress size={20} sx={{ color: "#FFF" }} />
+              ) : (
+                "Confirm"
+              )}
+            </button>
           </div>
         </form>
       </div>

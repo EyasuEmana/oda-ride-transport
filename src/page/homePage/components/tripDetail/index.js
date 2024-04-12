@@ -26,9 +26,14 @@ import RSRadio from "../../../../components/RSRadio";
 import StepSummary from "../StepSummary";
 import { getAllPreferences } from "../../../../store/actions/preferenceAction";
 import { remote_host } from "../../../../globalVariable";
+import {
+  addAdditionalStopFee,
+  addAirportPreferenceFee,
+} from "../../../../store/reducers/bookReducers";
 function Index({ formik, vehicleSummaryData, rideSummaryData }) {
   const [stopOnWay, setStopOnWay] = useState(false);
   const [additionalStopsOnTheWay, setAdditionalStopsOnTheWay] = useState([]);
+  const { fee } = useSelector((state) => state.bookReducer);
   const getFormattdTime = (time) => {
     return time.format().substring(11, 19);
   };
@@ -71,6 +76,14 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
 
   const handleStopOnWayChange = (event) => {
     formik.setFieldValue("additionalStopId", event.target.value);
+    var stopOnWayFee = parseFloat(event.target.name);
+    var prevAddtionalStopOnTheWayFee =
+      formik.values.prevAddtionalStopOnTheWayFee;
+    formik.setFieldValue("stopOnWayFee", stopOnWayFee);
+    dispatch(
+      addAdditionalStopFee({ stopOnWayFee, prevAddtionalStopOnTheWayFee })
+    );
+    formik.setFieldValue("prevAddtionalStopOnTheWayFee", stopOnWayFee);
   };
   useEffect(() => {
     getAdditionalAtStopOnTheWay();
@@ -249,43 +262,54 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
               multiline
               rows={4}
             />
+            {isAirportTravel && (
+              <FormControl fullWidth>
+                <FormLabel sx={{ color: "info" }}>
+                  Airport Pickup Preference :
+                </FormLabel>
+                <RadioGroup
+                  row
+                  defaultValue={1}
+                  name="pickupPreference"
+                  onBlur={formik.handleBlur}
+                  label="Special pickupPreferences"
+                  value={formik.values.pickupPreference}
+                  onChange={(e) => {
+                    formik.setFieldValue("pickupPreference", e.target.value);
+                    const prefFee = parseFloat(
+                      preferences[e.target.name].preferencePrice
+                    );
+                    const prevPrefFee = formik.values.prevPickupPrefValue;
+                    dispatch(addAirportPreferenceFee({ prefFee, prevPrefFee }));
+                    formik.setFieldValue("prevPickupPrefValue", prefFee);
+                  }}
+                  error={
+                    formik.touched.pickupPreference &&
+                    Boolean(formik.errors.pickupPreference)
+                  }
+                  helperText={
+                    formik.touched.pickupPreference &&
+                    formik.errors.pickupPreference
+                  }
+                >
+                  {preferences?.map((preference, key) => (
+                    <FormControlLabel
+                      value={preference.pickupPreferenceId}
+                      name={key}
+                      control={<RSRadio />}
+                      label={`${preference.preferenceName} ($${preference.preferencePrice})`}
+                    />
+                  ))}
+                </RadioGroup>
 
-            <FormControl fullWidth>
-              <FormLabel sx={{ color: "info" }}>
-                Airport Pickup Preference :
-              </FormLabel>
-              <RadioGroup
-                row
-                defaultValue={1}
-                name="pickupPreference"
-                onBlur={formik.handleBlur}
-                label="Special pickupPreferences"
-                value={formik.values.pickupPreference}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.pickupPreference &&
-                  Boolean(formik.errors.pickupPreference)
-                }
-                helperText={
-                  formik.touched.pickupPreference &&
-                  formik.errors.pickupPreference
-                }
-              >
-                {preferences?.map((preference) => (
-                  <FormControlLabel
-                    value={preference.pickupPreferenceId}
-                    control={<RSRadio />}
-                    label={`${preference.preferenceName} ($${preference.preferencePrice})`}
-                  />
-                ))}
-              </RadioGroup>
+                {formik.touched.pickupPreference && (
+                  <FormHelperText sx={{ color: "red" }}>
+                    {formik.errors.pickupPreference}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
 
-              {formik.touched.pickupPreference && (
-                <FormHelperText sx={{ color: "red" }}>
-                  {formik.errors.pickupPreference}
-                </FormHelperText>
-              )}
-            </FormControl>
             {isHourlyTravel && (
               <FormControl fullWidth color="info">
                 <InputLabel id="occation">Occation</InputLabel>
@@ -319,12 +343,27 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                     <Checkbox
                       checked={stopOnWay}
                       onChange={(e) => {
+                        const isChecked = e.target.checked;
                         setStopOnWay(e.target.checked);
                         formik.setFieldValue("additionalStopId", null);
                         formik.setFieldValue(
                           "additionalStopOnTheWayDescription",
                           ""
                         );
+                        if (!isChecked) {
+                          var stopOnWayFee = formik.values.stopOnWayFee;
+                          dispatch(
+                            addAdditionalStopFee({
+                              stopOnWayFee: 0,
+                              prevAddtionalStopOnTheWayFee: stopOnWayFee,
+                            })
+                          );
+                          formik.setFieldValue(
+                            "prevAddtionalStopOnTheWayFee",
+                            0
+                          );
+                          formik.setFieldValue("stopOnWayFee", 0);
+                        }
                       }}
                     />
                   }
@@ -336,7 +375,6 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                       <FormControl>
                         <RadioGroup
                           aria-labelledby="demo-radio-buttons-group-label"
-                          // defaultValue={1}
                           name="radio-buttons-group"
                           onChange={handleStopOnWayChange}
                         >
@@ -348,6 +386,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                               !stopOnWay.hidden && (
                                 <FormControlLabel
                                   value={stopOnWay.additionalStopId}
+                                  name={stopOnWay.additionalStopPrice}
                                   control={<RSRadio />}
                                   label={
                                     stopOnWay.stopType +
