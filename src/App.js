@@ -37,6 +37,7 @@ import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
 
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
+  const queryClient = new QueryClient();
   const isAuthenticated = () => {
     const accessToken = sessionStorage.getItem("access_token");
     return accessToken !== null;
@@ -96,8 +97,16 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="users/" element={<Users />} />
-            <Route path="/dashboard" name="dashboard" element={<Dashboard />}>
+            <Route path="/users" element={<Users />} />
+            <Route
+              path="/dashboard"
+              name="dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            >
               <Route index element={<Cars />}></Route>
               <Route path={"cars"} element={<Cars />}></Route>
               <Route
