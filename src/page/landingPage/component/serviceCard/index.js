@@ -11,8 +11,8 @@ function Index({ imgUrl, text, id, handleUsernameFocus }) {
   const Logo = () => (
     <img
       style={{
-        width: "66px",
-        height: "58px",
+        width: "76px",
+        height: "70px",
       }}
       alt="logo "
       src={imgUrl}
@@ -42,7 +42,7 @@ function Index({ imgUrl, text, id, handleUsernameFocus }) {
               onClick={() => handleUsernameFocus()}
               // onClick={() => navigate(`/home/${id}`)}
             >
-              Book Now
+              Book
             </RSButton>
           </Stack>
         </Box>

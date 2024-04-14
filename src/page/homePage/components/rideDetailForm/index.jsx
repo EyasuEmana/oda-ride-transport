@@ -22,6 +22,7 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
+  Alert,
 } from "@mui/material";
 
 import {
@@ -36,7 +37,7 @@ import { GrLocation } from "react-icons/gr";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
 import RSRadio from "../../../../components/RSRadio";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import RSTypography from "../../../../components/RSTypography";
 const libraries = ["places"];
 
@@ -56,6 +57,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   const matchXS = useMediaQuery(theme.breakpoints.down("md"));
 
   const params = useParams();
+  const navigate = useNavigate();
   const travelType = params.id;
   const pickupPhysicalAddressRef = useRef();
   const dropDownAddressRef = useRef();
@@ -69,8 +71,10 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     libraries: libraries,
   });
   useEffect(() => {
-    getRoundTripMenuData();
-  }, [selectedTripType]);
+    return () => {
+      formik.handleReset();
+    };
+  }, []);
 
   useEffect(() => {
     if (originLatLng && destinationLatLng) {
@@ -173,6 +177,10 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     });
   };
 
+  useEffect(() => {
+    getRoundTripMenuData();
+  }, [selectedTripType]);
+
   const getRoundTripMenuData = () => {
     const tripType = getTripType();
     switch (tripType) {
@@ -187,12 +195,24 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
         break;
     }
   };
+  const checkServiceLocation = (addressComponents) => {
+    var country = addressComponents.find((component) =>
+      component.types.includes("country")
+    )?.short_name;
+    var administrativeArea = addressComponents.find((component) =>
+      component.types.includes("administrative_area_level_1")
+    )?.short_name;
+
+    var isInCalifornia = country === "US" && administrativeArea === "CA";
+    if (!isInCalifornia) navigate("/not-in-california");
+  };
 
   function onOriginChanged() {
     if (searchOriginResult != null) {
       const place = searchOriginResult.getPlace();
+      const address_components = place.address_components;
+      checkServiceLocation(address_components);
       const pickupPhysicalAddress = place.formatted_address;
-
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
@@ -201,9 +221,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       formik.setFieldValue("pickupLatitude", latlng?.lat);
       formik.setFieldValue("pickupLongitude", latlng?.lng);
       setOriginLatLng(latlng);
-      // const name = place.name;
-      // const status = place.business_status;
-      // const formattedAddress = place.formatted_address;
     } else {
       alert("Please enter text");
     }
@@ -212,6 +229,8 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   function onDestinationChanged() {
     if (searchDestinationResult != null) {
       const place = searchDestinationResult.getPlace();
+      const address_components = place.address_components;
+      checkServiceLocation(address_components);
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
@@ -230,12 +249,12 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
   function onAccommodationChange() {
     if (searchAccomodationResult != null) {
       const place = searchAccomodationResult.getPlace();
+      const address_components = place.address_components;
+      checkServiceLocation(address_components);
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       };
-      console.log("place: ", place);
-      // const accommodationAddress = place.formatted_address;
       const accommodationAddress = place.name;
       formik.setFieldValue("hotel", accommodationAddress);
       formik.setFieldValue("accommodationAddress", accommodationAddress);

@@ -12,6 +12,7 @@ import RideGoogleMap from "./page/homePage/components/googleMap";
 import Order from "./page/order";
 import ResetPassword from "./page/landingPage/component/auth/ResetPassword";
 import ForgetPassword from "./page/landingPage/component/auth/ForgetPassword";
+import NotInCaliforniaError from "./components/NotInCaliforniaError";
 
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
@@ -64,6 +65,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/not-in-california" element={<NotInCaliforniaError />} />
           <Route
             path="/my-order"
             element={

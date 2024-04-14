@@ -9,6 +9,7 @@ import RSButton from "../../components/RSButton";
 import { MdOutlineSend } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import Faq from "./component/FAQ";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 
@@ -18,16 +19,20 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.authReducer);
   const serviceCardData = [
-    { id: 1, imgUrl: car, text: "Transport Description will fall here ..." },
+    {
+      id: 1,
+      imgUrl: car,
+      text: "From doorstep to destination, we cater to your needs, everywhere and anytime.",
+    },
     {
       id: 2,
       imgUrl: plane,
-      text: "Transport Description will fall here ...",
+      text: "Reserve transportation to and from the airport in advance for tranquility.",
     },
     {
       id: 3,
       imgUrl: clock,
-      text: "Transport Description will fall here ...",
+      text: "We're here for you, for as long as you require. Accessible within your locality.",
     },
   ];
 
@@ -104,6 +109,9 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
         </Grid>
         <Grid item container xs={10} justifyContent={"center"}>
           <Auth usernameFocus={usernameFocus} />
+        </Grid>
+        <Grid item container xs={12} justifyContent={"center"} mx={2}>
+          <Faq />
         </Grid>
       </Grid>
     </Box>

@@ -27,20 +27,13 @@ function Index() {
   );
   return (
     <Box sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }}>
-      <Grid container justifyContent={"center"} mb={3}>
-        <Grid item xs={1.5}>
-          <RSTypography txtcolor={white} fontsize={"18px"}>
-            Explore
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            What we do
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            Ride Transport
-          </RSTypography>
-        </Grid>
-
-        <Grid item xs={2}>
+      <Grid
+        container
+        justifyContent={{ xs: "start", md: "center" }}
+        mb={3}
+        spacing={2}
+      >
+        <Grid item md={2} xs={6}>
           <RSTypography txtcolor={white} fontsize={"18px"}>
             About Us
           </RSTypography>
@@ -58,9 +51,12 @@ function Index() {
           </RSTypography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item md={2} xs={6}>
           <RSTypography txtcolor={white} fontsize={"18px"}>
-          Minnesota, USA
+            Contact Us
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            California, USA
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             Bemidji
@@ -72,67 +68,21 @@ function Index() {
             powered by Oda Transport
           </RSTypography>
         </Grid>
+
+        <Grid item md={1.5} xs={6}>
+          <RSTypography txtcolor={white} fontsize={"18px"}>
+            Explore
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            What we do
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            Oda Transportation
+          </RSTypography>
+        </Grid>
       </Grid>
       <Box>
         <Grid container justifyContent={"space-between"} alignItems={"center"}>
-          <Grid item>
-            <Box
-              sx={{
-                boxSizing: "border-box",
-                position: "relative",
-                width: isMatch ? "325px" : "425px",
-                height: "70px",
-                border: "3px solid #FFFFFF",
-                borderRadius: "35px",
-              }}
-            >
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems={"center"}
-              >
-                <TextField
-                  variant="standard"
-                  margin="normal"
-                  marginLeft={2}
-                  id="email"
-                  name="email"
-                  fullWidth
-                  autoComplete="email"
-                  placeholder="Email address"
-                  InputProps={{
-                    style: {
-                      marginLeft: 10,
-                      color: "#FFF",
-                      fontSize: "20px",
-                    },
-                    disableUnderline: true,
-                  }}
-                />
-                <Button
-                  sx={{
-                    boxSizing: "border-box",
-                    width: "89px",
-                    height: "57px",
-                    marginTop: 0.5,
-                    marginRight: 0.5,
-                    background: "#FFFFFF",
-                    border: "4px solid #FFFFFF",
-                    color: "info.main",
-                    borderRadius: "0px 35px 35px 0px",
-                    " &:hover": {
-                      borderColor: "#00adef",
-                      border: "4px solid #FFFFFF",
-                      color: "#FFF",
-                    },
-                  }}
-                >
-                  Send
-                </Button>
-              </Stack>
-            </Box>
-          </Grid>
-
           <Box>
             <Stack direction={"row"} spacing={2}>
               <Box>
@@ -145,7 +95,6 @@ function Index() {
                 <SocalMediaIcon url={twitter} />
                 <SocalMediaIcon url={instagram} />
                 <SocalMediaIcon url={facebook} />
-                <SocalMediaIcon url={slack} />
               </Stack>
             </Stack>
           </Box>
@@ -156,7 +105,7 @@ function Index() {
       />
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <RSTypography txtcolor={white}>
-        © Oda Transportation Ride service. All rights reserved!
+          © Oda Transportation service. All rights reserved!
         </RSTypography>
       </Box>
     </Box>
