@@ -70,11 +70,6 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
     libraries: libraries,
   });
-  useEffect(() => {
-    return () => {
-      formik.handleReset();
-    };
-  }, []);
 
   useEffect(() => {
     if (originLatLng && destinationLatLng) {
@@ -482,7 +477,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
               <Autocomplete
                 onPlaceChanged={onAccommodationChange}
                 onLoad={onLoadAccomodationFunc}
-                types={["lodging"]}
+                // types={["lodging"]}
               >
                 <TextField
                   label="Select Hotel"

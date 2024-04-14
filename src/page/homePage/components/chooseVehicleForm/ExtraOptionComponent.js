@@ -119,19 +119,19 @@ function ExtraOptionComponent({
           </Stack>
         </Grid>
 
-        <Grid item xs={5}>
+        <Grid item xs={11} md={6} mt={{ xs: 2, md: 0 }}>
           {isSelected ? (
             <RSButton
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
-              sx={{ width: 200 }}
+              sx={{ width: { md: 200, xs: "100%" } }}
               onClick={handleUnselect}
             >
               Selected
             </RSButton>
           ) : (
             <RSButton
-              sx={{ width: 200 }}
+              sx={{ width: { md: 200, xs: "100%" } }}
               variant="outlined"
               txtcolor={theme.palette.warning.main}
               bordercolor={theme.palette.warning.main}

@@ -178,7 +178,11 @@ function StepSummary({
                   <Field key={index} label={field.label} value={field.value} />
                 )
             )}
-            <Field key={"fee"} label={"Service Fee"} value={fee.toFixed(2)} />
+            <Field
+              key={"fee"}
+              label={"Service Fee"}
+              value={"$" + fee.toFixed(2)}
+            />
           </Stack>
         )}
       </Box>

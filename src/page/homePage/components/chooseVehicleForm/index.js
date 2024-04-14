@@ -44,16 +44,31 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
     "Van",
   ]);
 
+  const isRoundTrip = () => {
+    var tripType = rideSummaryData.tripType;
+    return (
+      tripType == "Round-Trip" ||
+      tripType == "Ride to the airport(round trip)" ||
+      tripType == "Ride from the airport(round trip)"
+    );
+  };
   const handleCarSelect = (selectedCarId) => {
     const updatedCars = cars.map((car) => {
       if (car.carId == selectedCarId && formik?.vehicle != car.carId) {
         const prevSelectedCarFee = formik.values.vehicleFee;
         var calculatedCarFee = 0;
         if (travelType == "1" || travelType == "2") {
-          calculatedCarFee =
-            fee -
-            prevSelectedCarFee * distanceInMiles +
-            parseFloat(car.pricePerMile) * distanceInMiles;
+          if (isRoundTrip()) {
+            calculatedCarFee =
+              fee -
+              prevSelectedCarFee * distanceInMiles * 2 +
+              parseFloat(car.pricePerMile) * distanceInMiles * 2;
+          } else {
+            calculatedCarFee =
+              fee -
+              prevSelectedCarFee * distanceInMiles +
+              parseFloat(car.pricePerMile) * distanceInMiles;
+          }
         } else if (travelType == "3") {
           calculatedCarFee =
             fee -
