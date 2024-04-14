@@ -52,9 +52,15 @@ const menus = [
     title: "hourly-book",
     icon: <HourglassBottom />,
   },
-
   {
     index: 6,
+    link: "/dashboard/UpdateContent",
+    title: "Footer Content",
+    icon: <HourglassBottom />,
+  },
+
+  {
+    index: 7,
     title: "AirP Booking",
     icon: <LocalAirport />,
     subItems: [

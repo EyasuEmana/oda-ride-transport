@@ -34,6 +34,7 @@ import AdditionalStopDetail from "./page/UserManagement/DataTable/AdditionalStop
 import AirportPickupPreferenceDetail from "./page/UserManagement/DataTable/AirportBook/airportPickupPereference/AirportPickupPreferenceDetail";
 import AirportDetail from "./page/UserManagement/DataTable/AirportBook/airports/AirportDetail";
 import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
+import Content from "./page/UserManagement/DataTable/UpdateContent/UpdateContent";
 
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
@@ -151,6 +152,8 @@ function App() {
                 path={"hourlycharacter"}
                 element={<HourlyCharacter />}
               ></Route>
+              <Route path={"UpdateContent"} element={<Content />}></Route>
+              <Route path={"Content/ContentDetails"} element={<Content />}></Route>
               <Route path={"airportbooking"} element={<Airports />}></Route>
               <Route path={"airports"} element={<Airports />}></Route>
               <Route

@@ -1,0 +1,77 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import usePostData from "../../../../store/hooks/usePostData";
+import usePutData from "../../../../store/hooks/usePutData";
+import useDeleteData from "../../../../store/hooks/useDeleteData";
+import { columns } from "./Columns";
+import useGetData from "../../../../store/hooks/useGetData";
+import MDataTable from "../MDataTable";
+
+function Content() {
+    const [carId, setCarId] = React.useState(null);
+    const navigate = useNavigate();
+  
+    let endpoint = `/api/v1/footer-contents`;
+    
+    const {
+      data: response,
+      isLoading: isLoadingGet,
+      isError: isErrorGet,
+      isFetching: isFetchingTax,
+      error: errorGet,
+    } = useGetData(endpoint);
+  
+    const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
+    const handleNewAdd = async ({ values, table }) => {
+      mutate(values);
+  
+      table.setCreatingRow(null);
+    };
+  
+    const {
+      mutate: update,
+      isLoading: isLoadingUpdate,
+      isError: isErrorUpdate,
+      isSuccess: setSuccessUpdate,
+      error: errorupdate,
+    } = usePutData(endpoint,carId, data);
+  
+    const handleEdit = async ({ row, values, table }) => {
+      update({
+        endpoint: endpoint,
+        Id: row.original.carId,
+        data: values,
+      });
+      table.setEditingRow(null);
+    };
+  
+    const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(endpoint, carId);
+  
+    const openDeleteConfirmModal = (row) => {
+      if (window.confirm("Are you sure you want to delete this Car?")) {
+        deleteData({ endpoint: endpoint, Id: row.original.carId });
+      }
+    };
+    const handleViewClick = (rowData) =>{
+      navigate('/dashboard/Content/ContentDetails',{state:{rowData}})
+    }
+    return (
+      <div>
+        <MDataTable
+          headerTitle="Footer Content"
+          add="Content"
+          openDeleteConfirmModal={openDeleteConfirmModal}
+          handleNewAdd={handleNewAdd}
+          handleEdit={handleEdit}
+          editable={true}
+          columns={columns}
+          data={response || []}
+          isLoading={isLoadingGet}
+          isError={isErrorGet}
+          title={"Content"}
+          handleViewClick={handleViewClick}
+        />
+      </div>
+    );
+  }
+  export default Content;
