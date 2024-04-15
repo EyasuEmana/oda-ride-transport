@@ -46,6 +46,7 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 const drawerStyle = {
   ".MuiDrawer-paper": {
+    zIndex: 0,
     backgroundColor: "#F2F2F2",
     marginTop: "5px",
     paddingX: 0,
@@ -125,7 +126,7 @@ export default function Dashboard() {
         <Box
           sx={{
             backgroundColor: "#FFF",
-             flexGrow: 1,
+            flexGrow: 1,
             height: "100vh",
             overflow: "auto",
           }}

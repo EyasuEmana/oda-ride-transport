@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -14,7 +14,10 @@ import twitter from "../../assets/images/twitter.png";
 import instagram from "../../assets/images/instagram.png";
 import facebook from "../../assets/images/facebook.png";
 import slack from "../../assets/images/slack.png";
+import axios from "axios";
+import { remote_host } from "../../globalVariable";
 function Index() {
+  const [footerData, setFooterData] = useState();
   const theme = useTheme();
   const white = theme.palette.text.main;
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
@@ -25,8 +28,21 @@ function Index() {
       style={{ width: "24px", height: "24px" }}
     />
   );
+  const getFooterData = async () => {
+    await axios
+      .get(`${remote_host}/api/v1/footer-contents`)
+      .then((response) => {
+        setFooterData(response.data);
+      });
+  };
+  useEffect(() => {
+    getFooterData();
+  }, []);
   return (
-    <Box sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }} id="footer">
+    <Box
+      sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }}
+      id="footer"
+    >
       <Grid
         container
         justifyContent={{ xs: "start", md: "center" }}
@@ -65,17 +81,21 @@ function Index() {
             Contact Us
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            California, USA
+            {footerData?.addressState}
+            {/* California, USA */}
           </RSTypography>
-          
+
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            ZIP: 96162
+            ZIP: {footerData?.addressZipCode}
+            {/* ZIP: 96162 */}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            mail: info@odatransportation.com
+            mail: {footerData?.contactEmail}
+            {/* mail: info@odatransportation.com */}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            tel: 714-313-4269 or 1-800-714-4992
+            tel: {footerData?.contactPhoneNumber}
+            {/* tel: 714-313-4269 or 1-800-714-4992 */}
           </RSTypography>
         </Grid>
       </Grid>

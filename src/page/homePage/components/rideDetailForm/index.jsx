@@ -39,6 +39,7 @@ import { MdOutlineHotel } from "react-icons/md";
 import RSRadio from "../../../../components/RSRadio";
 import { useNavigate, useParams } from "react-router-dom";
 import RSTypography from "../../../../components/RSTypography";
+import { checkServiceLocation } from "../../../../util/locationUtil";
 const libraries = ["places"];
 
 function Index({ formik, handleChangeTripType, selectedTripType }) {
@@ -190,23 +191,26 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
         break;
     }
   };
-  const checkServiceLocation = (addressComponents) => {
-    var country = addressComponents.find((component) =>
-      component.types.includes("country")
-    )?.short_name;
-    var administrativeArea = addressComponents.find((component) =>
-      component.types.includes("administrative_area_level_1")
-    )?.short_name;
+  // const checkServiceLocation = (addressComponents) => {
+  //   var country = addressComponents.find((component) =>
+  //     component.types.includes("country")
+  //   )?.short_name;
+  //   var administrativeArea = addressComponents.find((component) =>
+  //     component.types.includes("administrative_area_level_1")
+  //   )?.short_name;
 
-    var isInCalifornia = country === "US" && administrativeArea === "CA";
-    if (!isInCalifornia) navigate("/not-in-california");
-  };
+  //   var isInCalifornia = country === "US" && administrativeArea === "CA";
+  //   if (!isInCalifornia) navigate("/not-in-california");
+  // };
 
   function onOriginChanged() {
     if (searchOriginResult != null) {
       const place = searchOriginResult.getPlace();
       const address_components = place.address_components;
-      checkServiceLocation(address_components);
+
+      const isInCalifornia = checkServiceLocation(address_components);
+      if (!isInCalifornia) navigate("/not-in-california");
+      
       const pickupPhysicalAddress = place.formatted_address;
       const latlng = {
         lat: place.geometry.location.lat(),
@@ -225,7 +229,10 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     if (searchDestinationResult != null) {
       const place = searchDestinationResult.getPlace();
       const address_components = place.address_components;
-      checkServiceLocation(address_components);
+
+      const isInCalifornia = checkServiceLocation(address_components);
+      if (!isInCalifornia) navigate("/not-in-california");
+
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
@@ -245,7 +252,10 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
     if (searchAccomodationResult != null) {
       const place = searchAccomodationResult.getPlace();
       const address_components = place.address_components;
-      checkServiceLocation(address_components);
+
+      const isInCalifornia = checkServiceLocation(address_components);
+      if (!isInCalifornia) navigate("/not-in-california");
+
       const latlng = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
