@@ -14,10 +14,10 @@ import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 
 function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
-  const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.authReducer);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.authReducer);
   const serviceCardData = [
     {
       id: 1,
@@ -39,29 +39,6 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   useEffect(() => {
     dispatch(setIsAuthenticated());
   }, []);
-  if (isAuthenticated) {
-    navigate("/home/1");
-  }
-  const checkSessionExpiration = () => {
-    const sessionExpiration = sessionStorage.getItem("session_expiration");
-    const currentTime = new Date().getTime();
-    // console.log("sessionExpiration:", sessionExpiration);
-    // console.log("Parsed sessionExpiration:", parseInt(sessionExpiration, 10));
-    // console.log("Current time:", currentTime);
-
-    if (
-      sessionExpiration &&
-      parseInt(currentTime, 10) > parseInt(sessionExpiration, 10)
-    ) {
-      // sessionStorage.removeItem("access_token");
-      // sessionStorage.removeItem("session_expiration");
-      // navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    checkSessionExpiration();
-  }, [location]);
 
   useEffect(() => {
     return () => {
@@ -70,7 +47,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   }, []);
 
   return (
-    <Box py={10}>
+    <Box py={10} id="home">
       <Grid
         container
         alignItems={"flex-start"}
@@ -88,7 +65,10 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
               sx={{ width: 200 }}
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
-              onClick={handleUsernameFocus}
+              onClick={() => {
+                if (isAuthenticated) navigate(`/home/1`);
+                else handleUsernameFocus();
+              }}
             >
               Unlock your ride
               <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
@@ -107,10 +87,10 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
             ))}
           </Stack>
         </Grid>
-        <Grid item container xs={10} justifyContent={"center"}>
+        <Grid item container xs={10} justifyContent={"center"} id="auth">
           <Auth usernameFocus={usernameFocus} />
         </Grid>
-        <Grid item container xs={12} justifyContent={"center"} mx={2}>
+        <Grid item container xs={11} justifyContent={"center"}>
           <Faq />
         </Grid>
       </Grid>
