@@ -26,7 +26,7 @@ function Index() {
     />
   );
   return (
-    <Box sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }}>
+    <Box sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }} id="footer">
       <Grid
         container
         justifyContent={{ xs: "start", md: "center" }}
@@ -46,27 +46,6 @@ function Index() {
           <RSTypography txtcolor={white} fontsize={"15px"}>
             Terms and conditions
           </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            About Us
-          </RSTypography>
-        </Grid>
-
-        <Grid item md={2} xs={6}>
-          <RSTypography txtcolor={white} fontsize={"18px"}>
-            Contact Us
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            California, USA
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            Bemidji
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            ZIP: 56146
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            powered by Oda Transport
-          </RSTypography>
         </Grid>
 
         <Grid item md={1.5} xs={6}>
@@ -78,6 +57,25 @@ function Index() {
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             Oda Transportation
+          </RSTypography>
+        </Grid>
+
+        <Grid item md={3} xs={12}>
+          <RSTypography txtcolor={white} fontsize={"18px"}>
+            Contact Us
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            California, USA
+          </RSTypography>
+          
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            ZIP: 96162
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            mail: info@odatransportation.com
+          </RSTypography>
+          <RSTypography txtcolor={white} fontsize={"15px"}>
+            tel: 714-313-4269 or 1-800-714-4992
           </RSTypography>
         </Grid>
       </Grid>

@@ -30,10 +30,10 @@ import { logout, setIsAuthenticated } from "../../store/reducers/authReducer";
 import ChangePasswordDrawer from "./ChangePassword";
 import { useLocation } from "react-router-dom";
 const publicNavbarMenus = [
-  { title: "Home", link: "/" },
-  { title: "About Us", link: "/about-us" },
-  { title: "Contact Us", link: "/contact-us" },
-  { title: "FAQ", link: "/faq" },
+  { title: "Home", link: "/", scrollLink: "home" },
+  { title: "About Us", link: "/about-us", scrollLink: "footer" },
+  { title: "Contact Us", link: "/contact-us", scrollLink: "footer" },
+  { title: "FAQ", link: "/faq", scrollLink: "faq" },
 ];
 const authNavbarMenus = [
   { title: "Home", link: "/home/1" },
@@ -49,6 +49,7 @@ function Header({ handleUsernameFocus }) {
   const { isSigninSuccess, isAuthenticated } = useSelector(
     (state) => state.authReducer
   );
+
   const dispatch = useDispatch();
   const location = useLocation();
   const theme = useTheme();
@@ -152,9 +153,11 @@ function Header({ handleUsernameFocus }) {
               width: "107px",
               height: "74px",
               left: "0px",
+              cursor: "pointer",
             }}
             alt="logo "
             src={logo}
+            onClick={() => navigate("/")}
           />
           {isMatch ? (
             <IconButton onClick={() => setOpen(true)}>
@@ -173,8 +176,11 @@ function Header({ handleUsernameFocus }) {
                   label={menu.title}
                   key={menu.title}
                   onClick={() => {
-                    scrollToSection(`section${index + 1}`);
-                    navigate(menu.link);
+                    if (isAuthenticated) {
+                      navigate(menu.link);
+                    } else {
+                      scrollToSection(menu.scrollLink);
+                    }
                   }}
                 />
               ))}
@@ -222,7 +228,10 @@ function Header({ handleUsernameFocus }) {
               borderradius={"5px"}
               variant="contained"
               backgroundcolor={"#4D4C4C"}
-              onClick={handleUsernameFocus}
+              onClick={() => {
+                scrollToSection("auth");
+                handleUsernameFocus();
+              }}
             >
               Login / SignUp
             </RSButton>
@@ -235,11 +244,11 @@ function Header({ handleUsernameFocus }) {
             <ListItem key={key}>
               <ListItemButton>
                 <Link
-                  to="section1"
                   onClick={() => {
                     if (isAuthenticated) {
                       navigate(menu.link);
                     } else {
+                      scrollToSection(menu.scrollLink);
                     }
                   }}
                   smooth={true}

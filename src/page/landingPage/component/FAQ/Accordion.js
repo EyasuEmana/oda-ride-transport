@@ -20,7 +20,7 @@ export default function FaqAccordion() {
   return (
     <div
       style={{
-        width: isMatch ? "80%" : "100%",
+        width:  "100%",
         marginLeft: !isMatch && "20px",
         marginRight: !isMatch && "20px",
       }}
@@ -36,7 +36,7 @@ export default function FaqAccordion() {
             aria-controls="panel1bh-content"
             id="panel1bh-header"
           >
-            <Typography sx={{ width: "33%", flexShrink: 0 }}>
+            <Typography sx={{ width: "100%", flexShrink: 0 }}>
               {data.summary}
             </Typography>
           </AccordionSummary>

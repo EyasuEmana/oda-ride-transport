@@ -87,7 +87,7 @@ export default function FullWidthTabs({ usernameFocus }) {
     }
   }, [isSignUpFail]);
   return (
-    <Box sx={{ width: { xs: "100%", md: 700 } }}>
+    <Box sx={{ width: { xs: "100%", md: 700 } }} >
       <Tabs
         value={value}
         onChange={handleChange}
