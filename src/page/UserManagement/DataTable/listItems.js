@@ -5,7 +5,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Collapse, List } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
-import { ConnectingAirports } from "@mui/icons-material";
 import { HourglassBottom } from "@mui/icons-material";
 import { Stop } from "@mui/icons-material";
 import { Portrait } from "@mui/icons-material";
@@ -14,6 +13,13 @@ import { LocalAirport } from "@mui/icons-material";
 import { DirectionsCar, Inbox as InboxIcon, ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { FlightTakeoff } from "@mui/icons-material";
+import UpdateIcon from "@mui/icons-material/Update";
+import ContentIcon from "@mui/icons-material/ContactEmergency";
+
+import AdminIcon from "@mui/icons-material/AdminPanelSettingsTwoTone";
+
+
+
 
 const menus = [
   {
@@ -30,37 +36,49 @@ const menus = [
   },
   {
     index: 2,
+    link: "/dashboard/add-Admin",
+    title: "Admin",
+    icon: <AdminIcon />,
+  },
+  {
+    index: 3,
     link: "/dashboard/extraOptions",
     title: "extraOptions",
     icon: <TimeIcon />,
   },
   {
-    index: 3,
+    index: 4,
     link: "/dashboard/pointToPointBookss",
     title: "pointToPointBooks",
     icon: <LocationOnIcon />,
   },
   {
-    index: 4,
+    index: 5,
     link: "/dashboard/additionalstop",
     title: "additional-stop",
     icon: <Stop />,
   },
   {
-    index: 5,
+    index: 6,
     link: "/dashboard/hourlycharacter",
     title: "hourly-book",
     icon: <HourglassBottom />,
   },
   {
-    index: 6,
-    link: "/dashboard/UpdateContent",
-    title: "Footer Content",
-    icon: <HourglassBottom />,
+    index: 7,
+    link: "/dashboard/add-Content",
+    title: "Add  Content",
+    icon: <UpdateIcon />,
+  },
+  {
+    index: 8,
+    link: "/dashboard/Content/ContentDetails",
+    title: "Footer detail",
+    icon: <ContentIcon />,
   },
 
   {
-    index: 7,
+    index: 9,
     title: "AirP Booking",
     icon: <LocalAirport />,
     subItems: [

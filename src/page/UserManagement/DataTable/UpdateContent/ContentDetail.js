@@ -1,18 +1,24 @@
 import { useLocation } from "react-router-dom";
+import {
+  Grid,
+  Typography,
+  Stack,
+} from "@mui/material";
+import useGetData from "../../../../store/hooks/useGetData";
+// import { const } from './../../../../store/reducers/extraOptionReducer';
 
 function ContentDetail (props){
-    const location = useLocation();
 
+    const endpoint = `/api/v1/footer-contents`;
     const {
-      contactEmail,
-      contactPhoneNumber,
-      addressZipCode,
-      addressState,
-      aboutUsDescription,
-
-    } = location.state?.rowData || {};
-    
-
+      data: response,
+      isLoading: isLoadingGet,
+      isError: isErrorGet,
+      isFetching: isFetchingTax,
+      error: errorGet,
+    } = useGetData(endpoint);
+    // console.log("response", response)
+// console.log("object", location.state?.rowData)
     const Field = ({ label, value }) => {
       return (
         <Grid item xs={6}>
@@ -33,12 +39,15 @@ function ContentDetail (props){
     return (
       <Grid container justifyContent={"center"} alignItems={"center"}>
         <Grid item container xs={11} lg={8} spacing={2} mt={2}>
-          <Field label="Contact Phone Number" value={contactPhoneNumber} />
-          <Field label="Contact Email" value={contactEmail} />
-          <Field label="Address Zip-Code" value={addressZipCode} />
-          <Field label="Address State" value={addressState} />
-          <Field label="About-Us Description" value={aboutUsDescription} />
-
+          {response && (
+            <>
+              <Field label="Contact Phone Number" value={response.contactPhoneNumber} />
+              <Field label="Contact Email" value={response.contactEmail} />
+              <Field label="Address Zip-Code" value={response.addressZipCode} />
+              <Field label="Address State" value={response.addressState} />
+              <Field label="About-Us Description" value={response.aboutUsDescription} />
+            </>
+          )}
         </Grid>
       </Grid>
     );

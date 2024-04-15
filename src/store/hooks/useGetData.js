@@ -6,6 +6,8 @@ const fetchData = async (endpoint) => {
 
   try {
     const response = await BACKEND_API.get(endpoint);
+    // console.log("data", response.data)
+
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch data from the ${endpoint}.`);

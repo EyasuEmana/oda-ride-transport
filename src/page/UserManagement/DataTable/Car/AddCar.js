@@ -151,7 +151,7 @@ export default function AddCar() {
       <Box>
         <Grid
           container
-          justifyContent={"flex-start"}
+          // justifyContent={"flex-start"}
           alignItems={"center"}
           spacing={2}
         >

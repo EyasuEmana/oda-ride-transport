@@ -114,10 +114,10 @@ export default function Dashboard() {
                 {/* Pass userRoles as a prop to ListItems */}
                 <ListItems />
               </Box>
-              <Button variant="contained" sx={logoutIconStyle}>
+              {/* <Button variant="contained" sx={logoutIconStyle}>
                 <LogoutIcon />
                 <Link href="/">logout</Link>
-              </Button>
+              </Button> */}
             </Stack>
           </List>
         </Drawer>
