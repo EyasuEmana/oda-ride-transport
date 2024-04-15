@@ -33,7 +33,9 @@ import AdditionalStopDetail from "./page/UserManagement/DataTable/AdditionalStop
 import AirportPickupPreferenceDetail from "./page/UserManagement/DataTable/AirportBook/airportPickupPereference/AirportPickupPreferenceDetail";
 import AirportDetail from "./page/UserManagement/DataTable/AirportBook/airports/AirportDetail";
 import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
-import Content from "./page/UserManagement/DataTable/UpdateContent/UpdateContent";
+import ContentDetail from "./page/UserManagement/DataTable/UpdateContent/ContentDetail";
+import AddAdmin from "./page/UserManagement/DataTable/AddAdmin";
+import AddContent from "./page/UserManagement/DataTable/UpdateContent/AddContent";
 import NotInCaliforniaError from "./components/NotInCaliforniaError";
 import { isAdminAuthenticated, isUserAuthenticated } from "./util/authUtil";
 
@@ -121,6 +123,7 @@ function App() {
                 path={"car/cardetails"}
                 element={<ViewCarDetail />}
               ></Route>
+              <Route path={"add-Admin"} element={<AddAdmin />}></Route>
               <Route
                 path={"book/book-detail"}
                 element={<ViewBookDetail />}
@@ -159,11 +162,9 @@ function App() {
                 path={"hourlycharacter"}
                 element={<HourlyCharacter />}
               ></Route>
-              <Route path={"UpdateContent"} element={<Content />}></Route>
-              <Route
-                path={"Content/ContentDetails"}
-                element={<Content />}
-              ></Route>
+              <Route path={"Content/ContentDetails"} element={<ContentDetail/>}></Route>
+              <Route path={"add-Content"} element={<AddContent/>}></Route>
+
               <Route path={"airportbooking"} element={<Airports />}></Route>
               <Route path={"airports"} element={<Airports />}></Route>
               <Route
