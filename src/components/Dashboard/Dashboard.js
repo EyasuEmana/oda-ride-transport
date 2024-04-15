@@ -14,7 +14,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItems from "../../page/UserManagement/DataTable/listItems";
 import { Outlet, useLocation } from "react-router-dom";
 import { Button, Stack } from "@mui/material";
-import logoutIcon  from "../../assets/images/logoutIcon.png";
+import logoutIcon from "../../assets/images/logoutIcon.png";
 
 const drawerWidth = 240;
 
@@ -48,7 +48,7 @@ const drawerStyle = {
   ".MuiDrawer-paper": {
     backgroundColor: "#F2F2F2",
     marginTop: "5px",
-    paddingX: 2,
+    paddingX: 0,
   },
 };
 export default function Dashboard() {
@@ -96,7 +96,7 @@ export default function Dashboard() {
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon
                 sx={{
-                  rotate: open ? "180deg" : "0deg",
+                  rotate: open ? "0deg" : "180deg",
                   transition: "0.4s ease-in-out",
                 }}
               />
@@ -114,10 +114,10 @@ export default function Dashboard() {
                 {/* Pass userRoles as a prop to ListItems */}
                 <ListItems />
               </Box>
-              <Button variant="contained" sx={logoutIconStyle}>
+              {/* <Button variant="contained" sx={logoutIconStyle}>
                 <LogoutIcon />
                 <Link href="/">logout</Link>
-              </Button>
+              </Button> */}
             </Stack>
           </List>
         </Drawer>
@@ -125,7 +125,7 @@ export default function Dashboard() {
         <Box
           sx={{
             backgroundColor: "#FFF",
-            flexGrow: 1,
+             flexGrow: 1,
             height: "100vh",
             overflow: "auto",
           }}
@@ -133,9 +133,9 @@ export default function Dashboard() {
           <Container maxWidth="100" sx={{ mt: 2, mb: 4 }}>
             {/* <Grid container spacing={3}>
               <Grid item xs={12}> */}
-                {/* Render nested routes */}
-                <Outlet />
-              {/* </Grid>
+            {/* Render nested routes */}
+            <Outlet />
+            {/* </Grid>
             </Grid> */}
           </Container>
         </Box>

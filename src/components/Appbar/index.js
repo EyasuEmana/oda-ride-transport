@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import { logout, setIsAuthenticated } from "../../store/reducers/authReducer";
 import ChangePasswordDrawer from "./ChangePassword";
 import { useLocation } from "react-router-dom";
+import { getUserRole } from "../../util/authUtil";
 const publicNavbarMenus = [
   { title: "Home", link: "/", scrollLink: "home" },
   { title: "About Us", link: "/about-us", scrollLink: "footer" },
@@ -83,7 +84,11 @@ function Header({ handleUsernameFocus }) {
   };
 
   const getNavbarMenu = () => {
-    return isAuthenticated ? authNavbarMenus : publicNavbarMenus;
+    return isAuthenticated
+      ? getUserRole() === "user"
+        ? authNavbarMenus
+        : []
+      : publicNavbarMenus;
   };
 
   const handleOpenUserMenu = (event) => {
