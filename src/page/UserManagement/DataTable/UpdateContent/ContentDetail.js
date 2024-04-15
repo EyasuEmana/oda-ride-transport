@@ -38,14 +38,14 @@ function ContentDetail (props){
     };
     return (
       <Grid container justifyContent={"center"} alignItems={"center"}>
-        <Grid item container xs={11} lg={8} spacing={2} mt={2}>
+        <Grid item container  lg={12} spacing={2} mt={2}>
           {response && (
             <>
               <Field label="Contact Phone Number" value={response.contactPhoneNumber} />
               <Field label="Contact Email" value={response.contactEmail} />
               <Field label="Address Zip-Code" value={response.addressZipCode} />
               <Field label="Address State" value={response.addressState} />
-              <Field label="About-Us Description" value={response.aboutUsDescription} />
+              <Field  value={response.aboutUsDescription} />
             </>
           )}
         </Grid>
