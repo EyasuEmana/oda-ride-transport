@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../../../../store/actions/authAction";
 import { Link, useNavigate } from "react-router-dom";
+import { disableIsSigninSuccess } from "../../../../../store/reducers/authReducer";
 function Index({ usernameFocus }) {
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
   const [openFailSnackbar, setOpenFailSnackbar] = useState(false);
@@ -50,6 +51,9 @@ function Index({ usernameFocus }) {
     if (isSigninSuccess) {
       setOpenSuccessSnackbar(true);
       navigate("/home/1");
+    }
+    return ()=>{
+      dispatch(disableIsSigninSuccess())
     }
   }, [isSigninSuccess]);
 

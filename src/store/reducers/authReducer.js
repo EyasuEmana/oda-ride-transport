@@ -43,7 +43,9 @@ const UserSlice = createSlice({
     login: (state, action) => {
       state.isLoggedIn = true;
     },
-
+    disableIsSigninSuccess: (state, action) => {
+      state.isSigninSuccess = false;
+    },
     logout: (state) => {
       sessionStorage.removeItem("access_token");
       sessionStorage.removeItem("session_expiration");
@@ -131,6 +133,12 @@ const UserSlice = createSlice({
   },
 });
 
-export const { login, logout, setIsAuthenticated, setRole, setMenuAction } =
-  UserSlice.actions;
+export const {
+  login,
+  logout,
+  setIsAuthenticated,
+  setRole,
+  setMenuAction,
+  disableIsSigninSuccess,
+} = UserSlice.actions;
 export default UserSlice.reducer;
