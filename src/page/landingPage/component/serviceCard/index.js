@@ -4,21 +4,24 @@ import RSTypography from "../../../../components/RSTypography";
 import RSButton from "../../../../components/RSButton";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { Link, scroller } from "react-scroll";
 function Index({ imgUrl, text, id, handleUsernameFocus }) {
   const theme = useTheme();
+  const { isAuthenticated } = useSelector((state) => state.authReducer);
+
   const navigate = useNavigate();
   const Logo = () => (
     <img
       style={{
-        width: "66px",
-        height: "58px",
+        width: "76px",
+        height: "70px",
       }}
       alt="logo "
       src={imgUrl}
     />
   );
-  const matchBelowMd = useMediaQuery(theme.breakpoints.down("md"));
+  const matchBelowMd = useMediaQuery(theme.breakpoints.down("1239"));
   return (
     <Box>
       <Stack direction={"row"} alignItems={"center"}>
@@ -39,10 +42,20 @@ function Index({ imgUrl, text, id, handleUsernameFocus }) {
             <RSButton
               backgroundcolor={theme.palette.info.main}
               radius={5}
-              onClick={() => handleUsernameFocus()}
-              // onClick={() => navigate(`/home/${id}`)}
+              onClick={() => {
+                if (isAuthenticated) navigate(`/home/${id}`);
+                else {
+                  scroller.scrollTo("auth", {
+                    smooth: true,
+                    duration: 300,
+                    offset: -50,
+                  });
+                  handleUsernameFocus();
+                }
+              }}
+              //
             >
-              Book Now
+              Book
             </RSButton>
           </Stack>
         </Box>

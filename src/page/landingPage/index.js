@@ -9,54 +9,36 @@ import RSButton from "../../components/RSButton";
 import { MdOutlineSend } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import Faq from "./component/FAQ";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 
 function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
-  const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.authReducer);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.authReducer);
   const serviceCardData = [
-    { id: 1, imgUrl: car, text: "Transport Description will fall here ..." },
+    {
+      id: 1,
+      imgUrl: car,
+      text: "From doorstep to destination, we cater to your needs, everywhere and anytime.",
+    },
     {
       id: 2,
       imgUrl: plane,
-      text: "Transport Description will fall here ...",
+      text: "Reserve transportation to and from the airport in advance for tranquility.",
     },
     {
       id: 3,
       imgUrl: clock,
-      text: "Transport Description will fall here ...",
+      text: "We're here for you, for as long as you require. Accessible within your locality.",
     },
   ];
 
   useEffect(() => {
     dispatch(setIsAuthenticated());
   }, []);
-  if (isAuthenticated) {
-    navigate("/home/1");
-  }
-  const checkSessionExpiration = () => {
-    const sessionExpiration = sessionStorage.getItem("session_expiration");
-    const currentTime = new Date().getTime();
-    // console.log("sessionExpiration:", sessionExpiration);
-    // console.log("Parsed sessionExpiration:", parseInt(sessionExpiration, 10));
-    // console.log("Current time:", currentTime);
-
-    if (
-      sessionExpiration &&
-      parseInt(currentTime, 10) > parseInt(sessionExpiration, 10)
-    ) {
-      // sessionStorage.removeItem("access_token");
-      // sessionStorage.removeItem("session_expiration");
-      // navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    checkSessionExpiration();
-  }, [location]);
 
   useEffect(() => {
     return () => {
@@ -65,7 +47,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   }, []);
 
   return (
-    <Box py={10}>
+    <Box py={10} id="home">
       <Grid
         container
         alignItems={"flex-start"}
@@ -83,7 +65,10 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
               sx={{ width: 200 }}
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
-              onClick={handleUsernameFocus}
+              onClick={() => {
+                if (isAuthenticated) navigate(`/home/1`);
+                else handleUsernameFocus();
+              }}
             >
               Unlock your ride
               <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
@@ -102,8 +87,11 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
             ))}
           </Stack>
         </Grid>
-        <Grid item container xs={10} justifyContent={"center"}>
+        <Grid item container xs={10} justifyContent={"center"} id="auth">
           <Auth usernameFocus={usernameFocus} />
+        </Grid>
+        <Grid item container xs={11} justifyContent={"center"}>
+          <Faq />
         </Grid>
       </Grid>
     </Box>

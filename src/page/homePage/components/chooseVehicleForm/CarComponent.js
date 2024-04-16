@@ -100,7 +100,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container justifyContent={"center"}>
               <Grid item xs={6}>
                 <RSTypography fontsize={"25px"}>
                   {travelType == "3" && pricePerHour + "/hr"}
@@ -108,18 +108,18 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                     pricePerMile + "/mile"}
                 </RSTypography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={11} md={6} mt={{ xs: 2, md: 0 }}>
                 {isSelected ? (
                   <RSButton
                     backgroundcolor={"#FF0013"}
                     txtcolor={"#FFF"}
-                    sx={{ width: 200 }}
+                    sx={{ width: { md: 200, xs: "100%" } }}
                   >
                     Selected
                   </RSButton>
                 ) : (
                   <RSButton
-                    sx={{ width: 200 }}
+                    sx={{ width: { md: 200, xs: "100%" } }}
                     variant="outlined"
                     txtcolor={theme.palette.warning.main}
                     bordercolor={theme.palette.warning.main}

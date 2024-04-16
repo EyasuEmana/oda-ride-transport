@@ -10,7 +10,13 @@ import { Stop } from "@mui/icons-material";
 import { Portrait } from "@mui/icons-material";
 import { TimeIcon } from "@mui/x-date-pickers";
 import { LocalAirport } from "@mui/icons-material";
-import { DirectionsCar, Inbox as InboxIcon, ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
+import {
+  DirectionsCar,
+  Inbox as InboxIcon,
+  ExpandLess,
+  ExpandMore,
+  StarBorder,
+} from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { FlightTakeoff } from "@mui/icons-material";
 import UpdateIcon from "@mui/icons-material/Update";
@@ -87,21 +93,18 @@ const menus = [
         link: "/dashboard/airports",
         title: "Airports",
         icon: <Portrait />,
-
       },
       {
         index: 1,
         link: "/dashboard/airportPickupPreference",
         title: "Port Preference",
-        icon: <FlightTakeoff/>,
-
+        icon: <FlightTakeoff />,
       },
       {
         index: 2,
         link: "/dashboard/airportbook",
         title: "Airport Booking",
-        icon: <LocalAirport/>,
-
+        icon: <LocalAirport />,
       },
     ],
   },
@@ -109,6 +112,7 @@ const menus = [
 
 function ListItems() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedSubIndex, setSelectedSubIndex] = useState();
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -133,7 +137,8 @@ function ListItems() {
   };
 
   const handleSubItemClick = (event, link, index) => {
-    setSelectedIndex(index);
+    setSelectedIndex(null);
+    setSelectedSubIndex(index);
     navigate(link);
   };
 
@@ -147,7 +152,7 @@ function ListItems() {
                 color: "#488550",
                 backgroundColor: "#FFF",
                 borderRadius: "21.5px",
-                paddingRight: "6px"
+                paddingRight: "6px",
               },
             }}
             selected={selectedIndex === menu.index}
@@ -157,11 +162,13 @@ function ListItems() {
               handleClick(event, index);
             }}
           >
-            <ListItemIcon sx={{ color: selectedIndex === menu.index && "#488550" }}>
+            <ListItemIcon
+              sx={{ color: selectedIndex === menu.index && "#488550" }}
+            >
               {menu.icon}
             </ListItemIcon>
             <ListItemText primary={menu.title} />
-            {menu.subItems && (open ? <ExpandLess /> : <ExpandMore />) }
+            {menu.subItems && (open ? <ExpandLess /> : <ExpandMore />)}
           </ListItemButton>
           {menu.subItems && (
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -175,15 +182,15 @@ function ListItems() {
                         color: "#488550",
                         backgroundColor: "#FFF",
                         borderRadius: "21.5px",
-                        paddingRight: "6px"
+                        paddingRight: "6px",
                       },
                     }}
-                    selected={selectedIndex === subItem.index}
-                    onClick={(event) => handleSubItemClick(event, subItem.link, subItem.index)}
+                    selected={selectedSubIndex === subItem.index}
+                    onClick={(event) =>
+                      handleSubItemClick(event, subItem.link, subItem.index)
+                    }
                   >
-                    <ListItemIcon>
-                      {subItem.icon}
-                    </ListItemIcon>
+                    <ListItemIcon>{subItem.icon}</ListItemIcon>
                     <ListItemText primary={subItem.title} />
                   </ListItemButton>
                 ))}

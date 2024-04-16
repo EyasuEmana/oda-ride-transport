@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./page/landingPage/index";
 import HomePage from "./page/homePage/index";
 import Dashboard from "./components/Dashboard/Dashboard";
-
 import ErrorMessage from "./components/errorMessage";
 import Header from "./components/Appbar";
 import theme from "./assets/theme";
@@ -37,21 +36,25 @@ import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
 import ContentDetail from "./page/UserManagement/DataTable/UpdateContent/ContentDetail";
 import AddAdmin from "./page/UserManagement/DataTable/AddAdmin";
 import AddContent from "./page/UserManagement/DataTable/UpdateContent/AddContent";
+import NotInCaliforniaError from "./components/NotInCaliforniaError";
+import { isAdminAuthenticated, isUserAuthenticated } from "./util/authUtil";
 
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
   const queryClient = new QueryClient();
-  const isAuthenticated = () => {
-    const accessToken = sessionStorage.getItem("access_token");
-    return accessToken !== null;
-  };
 
   const handleUsernameFocus = () => {
     setUsernameFocus(true);
   };
-
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated() ? (
+  const PrivateUserRoute = ({ children }) => {
+    return isUserAuthenticated() ? (
+      <>{children}</>
+    ) : (
+      <Navigate to="/error" replace />
+    );
+  };
+  const PrivateAdminRoute = ({ children }) => {
+    return isAdminAuthenticated() ? (
       <>{children}</>
     ) : (
       <Navigate to="/error" replace />
@@ -79,25 +82,29 @@ function App() {
             <Route
               path="/home/:id"
               element={
-                <PrivateRoute>
+                <PrivateUserRoute>
                   <HomePage />
-                </PrivateRoute>
+                </PrivateUserRoute>
               }
             />
             <Route
               path="/map"
               element={
-                <PrivateRoute>
+                <PrivateUserRoute>
                   <RideGoogleMap />
-                </PrivateRoute>
+                </PrivateUserRoute>
               }
+            />
+            <Route
+              path="/not-in-california"
+              element={<NotInCaliforniaError />}
             />
             <Route
               path="/my-order"
               element={
-                <PrivateRoute>
+                <PrivateUserRoute>
                   <Order />
-                </PrivateRoute>
+                </PrivateUserRoute>
               }
             />
             <Route path="/users" element={<Users />} />
@@ -105,12 +112,12 @@ function App() {
               path="/dashboard"
               name="dashboard"
               element={
-                <PrivateRoute>
+                <PrivateAdminRoute>
                   <Dashboard />
-                </PrivateRoute>
+                </PrivateAdminRoute>
               }
             >
-              <Route index element={<Cars />}></Route>
+              <Route index element={<Users />}></Route>
               <Route path={"cars"} element={<Cars />}></Route>
               <Route
                 path={"car/cardetails"}

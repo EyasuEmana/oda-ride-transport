@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { remote_host } from "../../globalVariable";
-import { authHeader } from "../../util/getAuthHeader";
+import { authHeader } from "../../util/authUtil";
 
 export const book = createAsyncThunk(
   "book/apply-book",
