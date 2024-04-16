@@ -8,7 +8,7 @@ const Constants = {
     // darkblue: '#1D267D',
     // lightGray: '#f5f5f5',
     // baseURL: "https://payroll-ms.onrender.com",
-    baseURL: "http://api.odatransportation.com"
+    baseURL: "https://api.odatransportation.com"
 }
 
 export default Constants

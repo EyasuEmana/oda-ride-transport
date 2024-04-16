@@ -10,6 +10,7 @@ import { MdOutlineSend } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import Faq from "./component/FAQ";
+import AboutUs from "./component/about_us";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 
@@ -90,6 +91,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
         <Grid item container xs={10} justifyContent={"center"} id="auth">
           <Auth usernameFocus={usernameFocus} />
         </Grid>
+        {/* <AboutUs /> */}
         <Grid item container xs={11} justifyContent={"center"}>
           <Faq />
         </Grid>

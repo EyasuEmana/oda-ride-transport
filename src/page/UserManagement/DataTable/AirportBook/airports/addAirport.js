@@ -81,7 +81,7 @@ export default function AddAirPort() {
   };
   const handleSubmit = async () => {
     const result = await axios
-      .post("http://api.odatransportation.com/api/v1/airports", airportData)
+      .post("https://api.odatransportation.com/api/v1/airports", airportData)
       .then((result) => console.log("data: ", result.data));
   };
   if (!isLoaded) return <>loading</>;

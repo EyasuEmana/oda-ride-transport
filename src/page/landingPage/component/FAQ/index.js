@@ -12,7 +12,7 @@ function Index() {
           position: "absolute",
           background: `linear-gradient(180deg, #E8E8E8 0%, rgba(217, 217, 217, 0) 100%)`,
           width: "90vw",
-          height: "652px",
+          height: "500px",
         }}
       ></Box>
       <Grid container justifyContent={"center"} alignItems={"center"}>

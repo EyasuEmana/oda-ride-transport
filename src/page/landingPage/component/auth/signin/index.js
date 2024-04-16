@@ -105,7 +105,7 @@ function Index({ usernameFocus }) {
         </Grid>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between">
-            <Link to={"/forget-password"}>forget password</Link>
+            <Link to={"/forget-password"}>Forgot password?</Link>
 
             <Button
               sx={{ backgroundColor: "#FF0013" }}

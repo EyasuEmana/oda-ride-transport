@@ -51,51 +51,31 @@ function Index() {
       >
         <Grid item md={2} xs={6}>
           <RSTypography txtcolor={white} fontsize={"18px"}>
-            About Us
+            Useful Links
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             Trust and safety
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            Help and support
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             Terms and conditions
           </RSTypography>
         </Grid>
 
-        <Grid item md={1.5} xs={6}>
-          <RSTypography txtcolor={white} fontsize={"18px"}>
-            Explore
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            What we do
-          </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
-            Oda Transportation
-          </RSTypography>
-        </Grid>
-
-        <Grid item md={3} xs={12}>
+        <Grid item md={2} xs={6}>
           <RSTypography txtcolor={white} fontsize={"18px"}>
             Contact Us
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             {footerData?.addressState}
-            {/* California, USA */}
           </RSTypography>
-
           <RSTypography txtcolor={white} fontsize={"15px"}>
             ZIP: {footerData?.addressZipCode}
-            {/* ZIP: 96162 */}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             mail: {footerData?.contactEmail}
-            {/* mail: info@odatransportation.com */}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
             tel: {footerData?.contactPhoneNumber}
-            {/* tel: 714-313-4269 or 1-800-714-4992 */}
           </RSTypography>
         </Grid>
       </Grid>
