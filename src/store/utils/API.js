@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an Axios instance with a base URL
 export const BACKEND_API = axios.create({
-  baseURL: "http://api.odatransportation.com",
+  baseURL: "https://api.odatransportation.com",
 });
 
 // Add a request interceptor to modify headers before requests are sent
