@@ -8,6 +8,8 @@ import {
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import { checkServiceLocation } from "../../../../../util/locationUtil";
+import { useNavigate } from "react-router-dom";
 const libraries = ["places"];
 
 export default function AddAirPort() {
@@ -22,6 +24,7 @@ export default function AddAirPort() {
   const [directionsResponse, setDirectionsResponse] = useState();
   const [center, setCenter] = useState({ lat: 50, lng: -80 });
   const mapRef = useRef();
+  const navigate = useNavigate();
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
@@ -30,6 +33,11 @@ export default function AddAirPort() {
   function onAirportChanged() {
     if (searchAirportResult != null) {
       const place = searchAirportResult.getPlace();
+      const address_components = place.address_components;
+
+      const isInCalifornia = checkServiceLocation(address_components);
+      if (!isInCalifornia) navigate("/not-in-california");
+
       const airportPhysicalAddress = place.formatted_address;
       const longitude = place.geometry.location.lng();
       const latitude = place.geometry.location.lat();
@@ -73,7 +81,7 @@ export default function AddAirPort() {
   };
   const handleSubmit = async () => {
     const result = await axios
-      .post("http://api.odatransportation.com/api/v1/airports", airportData)
+      .post("https://api.odatransportation.com/api/v1/airports", airportData)
       .then((result) => console.log("data: ", result.data));
   };
   if (!isLoaded) return <>loading</>;

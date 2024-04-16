@@ -5,7 +5,7 @@ import colors from "../../assets/theme/colors";
 const RSTypography = styled(Typography)((props) => {
   const { fontweight, fontsize, txtcolor } = props;
   return {
-    ...props,
+    // ...props,
     fontWeight: fontweight,
     fontSize: fontsize,
     color: txtcolor,

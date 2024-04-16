@@ -105,7 +105,6 @@ const MDataTable = (props) => {
     },
     renderCreateRowDialogContent: props?.add
       ? ({ table, row, internalEditComponents }) => {
-          console.log("internalEditComponents", internalEditComponents);
 
           return (
             <>
@@ -241,7 +240,7 @@ const MDataTable = (props) => {
                 Export All Data
               </Button>
 
-              <Button
+              {/* <Button
                 disabled={
                   !table.getIsSomeRowsSelected() &&
                   !table.getIsAllRowsSelected()
@@ -257,7 +256,7 @@ const MDataTable = (props) => {
                 startIcon={<FileDownloadIcon />}
               >
                 Export Selected Rows
-              </Button>
+              </Button> */}
             </Box>
           </Box>
         )

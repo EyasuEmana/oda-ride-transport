@@ -1,57 +1,119 @@
-import React from "react";
-import { useTheme } from "@emotion/react";
-import { Box, TextField, Grid, Stack, InputAdornment } from "@mui/material";
-import { BsCreditCard2BackFill } from "react-icons/bs";
-import { BiBarcodeReader } from "react-icons/bi";
-import { MdOutlineDateRange } from "react-icons/md";
-
-import axios from "axios";
-import RSButton from "../../../../../components/RSButton";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Grid,
+  Stack,
+  CircularProgress,
+  Alert,
+  Button,
+  Snackbar,
+} from "@mui/material";
 import RSTextField from "../../../../../components/RSTextField";
 import RSTypography from "../../../../../components/RSTypography";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { signup } from "../../../../../store/actions/authAction";
 function Index() {
-  const theme = useTheme();
-  // const register = async () => {
-  //   const response = axios.post(
-  //     "http://localhost:8765/user-manager-service/api/users/register",
-  //     {
-  //       username: "0947736471",
-  //       password: "@eyasu123",
-  //       fullName: "Tola A",
-  //       roleName: "FARMER",
-  //     }
-  //   );
-  // };
-  const styleTextField = {
-    ".css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
-      border: "2px solid #4CB051",
-      "&:focus": {
-        border: "none",
-        boxShadow: "0 0 0 0.2rem rgba(0, 200, 0, 0.2)",
-      },
+  const dispatch = useDispatch();
+  const { signupLoanding, signUpSuccessMessage, isSignupSuccess } = useSelector(
+    (state) => state.authReducer
+  );
+  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  const signInValidationSchema = yup.object({
+    firstname: yup.string().required("first name required"),
+    lastname: yup.string().required("lastname required"),
+    email: yup.string().email("invalid email").required("email required"),
+    phone: yup
+      .string()
+      .matches(phoneRegex, "Invalid phone number format")
+      .required("phone num. required"),
+    password: yup.string().required("password required"),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Password must match")
+      .required("confirm password required"),
+  });
+  const formikSignup = useFormik({
+    initialValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
     },
-  };
+    validationSchema: signInValidationSchema,
+    onSubmit: (values) => {
+      dispatch(signup(values));
+    },
+  });
+
   return (
     <Box>
       <Grid container item spacing={2}>
-        {/* <Grid item xs={12} > */}
-        <RSTypography>Personal Details</RSTypography>
-        {/* </Grid> */}
+        {/* <RSTypography>Personal Details</RSTypography> */}
         <Grid item container spacing={2}>
           <Grid item xs={6}>
-            <RSTextField label="first name" color={"info"} fullWidth />
+            <RSTextField
+              label="first name"
+              color={"info"}
+              fullWidth
+              {...formikSignup.getFieldProps("firstname")}
+              error={
+                formikSignup.touched.firstname &&
+                Boolean(formikSignup.errors.firstname)
+              }
+              helperText={
+                formikSignup.touched.firstname && formikSignup.errors.firstname
+              }
+            />
           </Grid>
           <Grid item xs={6}>
-            <RSTextField label="last name" color={"info"} fullWidth />
+            <RSTextField
+              label="last name"
+              color={"info"}
+              fullWidth
+              {...formikSignup.getFieldProps("lastname")}
+              error={
+                formikSignup.touched.lastname &&
+                Boolean(formikSignup.errors.lastname)
+              }
+              helperText={
+                formikSignup.touched.lastname && formikSignup.errors.lastname
+              }
+            />
           </Grid>
         </Grid>
 
         <Grid item container spacing={2}>
           <Grid item xs={6}>
-            <RSTextField label="phone" color={"info"} fullWidth />
+            <RSTextField
+              label="phone"
+              color={"info"}
+              fullWidth
+              {...formikSignup.getFieldProps("phone")}
+              error={
+                formikSignup.touched.phone && Boolean(formikSignup.errors.phone)
+              }
+              helperText={
+                formikSignup.touched.phone && formikSignup.errors.phone
+              }
+            />
           </Grid>
           <Grid item xs={6}>
-            <RSTextField label="email" color={"info"} fullWidth />
+            <RSTextField
+              label="email"
+              color={"info"}
+              fullWidth
+              {...formikSignup.getFieldProps("email")}
+              error={
+                formikSignup.touched.email && Boolean(formikSignup.errors.email)
+              }
+              helperText={
+                formikSignup.touched.email && formikSignup.errors.email
+              }
+            />
           </Grid>
         </Grid>
 
@@ -62,6 +124,14 @@ function Index() {
               type="password"
               color={"info"}
               fullWidth
+              {...formikSignup.getFieldProps("password")}
+              error={
+                formikSignup.touched.password &&
+                Boolean(formikSignup.errors.password)
+              }
+              helperText={
+                formikSignup.touched.password && formikSignup.errors.password
+              }
             />
           </Grid>
           <Grid item xs={6}>
@@ -70,23 +140,35 @@ function Index() {
               type="password"
               color={"info"}
               fullWidth
+              {...formikSignup.getFieldProps("confirmPassword")}
+              error={
+                formikSignup.touched.confirmPassword &&
+                Boolean(formikSignup.errors.confirmPassword)
+              }
+              helperText={
+                formikSignup.touched.confirmPassword &&
+                formikSignup.errors.confirmPassword
+              }
             />
           </Grid>
         </Grid>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="flex-end">
-            <RSButton
-              sx={{ width: 200 }}
-              backgroundcolor={"#FF0013"}
-              txtcolor={"#FFF"}
+            <Button
+              sx={{ backgroundColor: "#FF0013" }}
+              variant="contained"
+              onClick={formikSignup.handleSubmit}
             >
-              Register
-            </RSButton>
+              {signupLoanding ? (
+                <CircularProgress size={25} sx={{ color: "#FFF" }} />
+              ) : (
+                <>Register</>
+              )}
+            </Button>
           </Stack>
         </Grid>
       </Grid>
-
-      {/* <RSButton onClick={() => register()} variant="outlined">Register</RSButton> */}
+     
     </Box>
   );
 }

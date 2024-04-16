@@ -4,7 +4,7 @@ import useDeleteData from "../../../../store/hooks/useDeleteData";
 import useGetData from "../../../../store/hooks/useGetData";
 import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
-import MyComponent, { columns } from './columns';
+import MyComponent, { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
 
 function Cars() {
@@ -12,7 +12,7 @@ function Cars() {
   const navigate = useNavigate();
 
   let endpoint = `/api/v1/cars`;
-  
+
   const {
     data: response,
     isLoading: isLoadingGet,
@@ -34,7 +34,7 @@ function Cars() {
     isError: isErrorUpdate,
     isSuccess: setSuccessUpdate,
     error: errorupdate,
-  } = usePutData(endpoint,carId, data);
+  } = usePutData(endpoint, carId, data);
 
   const handleEdit = async ({ row, values, table }) => {
     update({
@@ -45,16 +45,19 @@ function Cars() {
     table.setEditingRow(null);
   };
 
-  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(endpoint, carId);
+  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(
+    endpoint,
+    carId
+  );
 
   const openDeleteConfirmModal = (row) => {
     if (window.confirm("Are you sure you want to delete this Car?")) {
       deleteData({ endpoint: endpoint, Id: row.original.carId });
     }
   };
-  const handleViewClick = (rowData) =>{
-    navigate('/dashboard/car/cardetails',{state:{rowData}})
-  }
+  const handleViewClick = (rowData) => {
+    navigate("/dashboard/car/cardetails", { state: { rowData } });
+  };
   return (
     <div>
       <MDataTable

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Box,
   Grid,
-  Button,
   Typography,
   Switch,
   FormControlLabel,
   Stack,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { Height } from "@mui/icons-material";
 import { BACKEND_API } from "../../../../store/utils/API";
 function ViewCarDetail(props) {
   const location = useLocation();

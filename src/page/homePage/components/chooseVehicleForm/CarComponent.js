@@ -7,36 +7,43 @@ import {
   Badge,
   useMediaQuery,
 } from "@mui/material";
-import hyundaiVenue from "../../../../assets/images/Hyundail Venue.webp";
 import RSTypography from "../../../../components/RSTypography";
 import RSButton from "../../../../components/RSButton";
 import { BsPeople } from "react-icons/bs";
 import { PiSuitcaseDuotone } from "react-icons/pi";
+import { useLocation } from "react-router-dom";
 
 function CarComponent({ carDetail, formik, handleCarSelect }) {
   const {
-    id,
-    carTitle,
-    imgUrl,
-    cost,
-    peopleCapacity,
-    suitcaseCapacity,
+    carName,
+    carImageUrl,
+    pricePerMile,
+    pricePerHour,
+    maxPassengers,
+    maxSuitcases,
     isSelected,
   } = carDetail;
-
   const theme = useTheme();
+  const location = useLocation();
+  var travelType = location.pathname.split("/").pop();
   const matchSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const CarImg = () => {
     return (
       <img
         style={{ width: "100%", height: "auto", objectFit: "contain" }}
-        src={imgUrl}
+        src={carImageUrl}
       />
     );
   };
   const handleSelect = () => {
-    formik.setFieldValue("vehicle", carDetail.id);
-    handleCarSelect(carDetail.id);
+    formik.setFieldValue("vehicle", carDetail.carId);
+    formik.setFieldValue("vehicleName", carDetail.carName);
+    if (travelType == "1" || travelType == "2") {
+      formik.setFieldValue("vehicleFee", parseFloat(carDetail.pricePerMile));
+    } else if (travelType == "3") {
+      formik.setFieldValue("vehicleFee", parseFloat(carDetail.pricePerHour));
+    }
+    handleCarSelect(carDetail.carId);
   };
   return (
     <Box
@@ -46,7 +53,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
         paddingBottom: matchSmallScreen && 4,
       }}
     >
-      <Grid container justifyContent={"space-between"} >
+      <Grid container justifyContent={"space-between"}>
         <Grid item md={5.5} xs={12}>
           <CarImg />
         </Grid>
@@ -66,7 +73,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                   fontsize={"25px"}
                   txtcolor={theme.palette.warning.main}
                 >
-                  {carTitle}
+                  {carName}
                 </RSTypography>
               </Grid>
               <Grid item xs={5}>
@@ -75,7 +82,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                     <Stack direction={"row"} justifyContent={"flex-start"}>
                       <Badge
                         color={theme.palette.info.main}
-                        badgeContent={peopleCapacity}
+                        badgeContent={maxPassengers}
                       >
                         <BsPeople size={30} />
                       </Badge>
@@ -83,7 +90,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                     <Stack direction={"row"} justifyContent={"flex-end"}>
                       <Badge
                         color={theme.palette.info.main}
-                        badgeContent={suitcaseCapacity}
+                        badgeContent={maxSuitcases}
                       >
                         <PiSuitcaseDuotone size={30} />
                       </Badge>
@@ -93,33 +100,33 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container justifyContent={"center"}>
               <Grid item xs={6}>
-                <RSTypography fontsize={"25px"}>{cost}$</RSTypography>
+                <RSTypography fontsize={"25px"}>
+                  {travelType == "3" && pricePerHour + "/hr"}
+                  {(travelType == "1" || travelType == "2") &&
+                    pricePerMile + "/mile"}
+                </RSTypography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={11} md={6} mt={{ xs: 2, md: 0 }}>
                 {isSelected ? (
-                  <>
-                    <RSButton
-                      backgroundcolor={"#FF0013"}
-                      txtcolor={"#FFF"}
-                      sx={{ width: 200 }}
-                    >
-                      Selected
-                    </RSButton>
-                  </>
+                  <RSButton
+                    backgroundcolor={"#FF0013"}
+                    txtcolor={"#FFF"}
+                    sx={{ width: { md: 200, xs: "100%" } }}
+                  >
+                    Selected
+                  </RSButton>
                 ) : (
-                  <>
-                    <RSButton
-                      sx={{ width: 200 }}
-                      variant="outlined"
-                      txtcolor={theme.palette.warning.main}
-                      bordercolor={theme.palette.warning.main}
-                      onClick={handleSelect}
-                    >
-                      Select
-                    </RSButton>
-                  </>
+                  <RSButton
+                    sx={{ width: { md: 200, xs: "100%" } }}
+                    variant="outlined"
+                    txtcolor={theme.palette.warning.main}
+                    bordercolor={theme.palette.warning.main}
+                    onClick={handleSelect}
+                  >
+                    Select
+                  </RSButton>
                 )}
               </Grid>
             </Grid>

@@ -1,9 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./page/landingPage/index";
+import HomePage from "./page/homePage/index";
+import Dashboard from "./components/Dashboard/Dashboard";
+import ErrorMessage from "./components/errorMessage";
+import Header from "./components/Appbar";
 import theme from "./assets/theme";
 import { ThemeProvider } from "@mui/material";
 import Footer from "./components/footer";
-import Dashboard from "./components/Dashboard/Dashboard";
-import Header from "./components/Appbar";
+import RideGoogleMap from "./page/homePage/components/googleMap";
+import Order from "./page/order";
+import ResetPassword from "./page/landingPage/component/auth/ResetPassword";
+import ForgetPassword from "./page/landingPage/component/auth/ForgetPassword";
 import Cars from "./page/UserManagement/DataTable/Car/Car";
 import PointToPointBooks from "./page/UserManagement/DataTable/PointToPointBook/PointToPointBook";
 import Users from "./page/UserManagement/DataTable/User/User";
@@ -25,29 +33,97 @@ import AdditionalStopDetail from "./page/UserManagement/DataTable/AdditionalStop
 import AirportPickupPreferenceDetail from "./page/UserManagement/DataTable/AirportBook/airportPickupPereference/AirportPickupPreferenceDetail";
 import AirportDetail from "./page/UserManagement/DataTable/AirportBook/airports/AirportDetail";
 import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
+import ContentDetail from "./page/UserManagement/DataTable/UpdateContent/ContentDetail";
+import AddAdmin from "./page/UserManagement/DataTable/AddAdmin";
+import AddContent from "./page/UserManagement/DataTable/UpdateContent/AddContent";
+import NotInCaliforniaError from "./components/NotInCaliforniaError";
+import { isAdminAuthenticated, isUserAuthenticated } from "./util/authUtil";
 
 function App() {
+  const [usernameFocus, setUsernameFocus] = useState(false);
   const queryClient = new QueryClient();
 
+  const handleUsernameFocus = () => {
+    setUsernameFocus(true);
+  };
+  const PrivateUserRoute = ({ children }) => {
+    return isUserAuthenticated() ? (
+      <>{children}</>
+    ) : (
+      <Navigate to="/error" replace />
+    );
+  };
+  const PrivateAdminRoute = ({ children }) => {
+    return isAdminAuthenticated() ? (
+      <>{children}</>
+    ) : (
+      <Navigate to="/error" replace />
+    );
+  };
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <Header />
+          <Header handleUsernameFocus={handleUsernameFocus} />
           <Routes>
-            {/* <Route path="/" element={<LandingPage />}></Route>
-          <Route path="/home/:id" element={<HomePage />}></Route>
-          <Route path="/map" element={<RideGoogleMap />}></Route>
-          <Route path={"*"} element={<ErrorMessage />}></Route> */}
+            <Route
+              path="/"
+              element={
+                <LandingPage
+                  usernameFocus={usernameFocus}
+                  setUsernameFocus={setUsernameFocus}
+                  handleUsernameFocus={handleUsernameFocus}
+                />
+              }
+            />
 
-            <Route path="/" element={<Users />} />
-            <Route path="/dashboard" name="dashboard" element={<Dashboard />}>
-              <Route index element={<Cars />}></Route>
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
+            <Route
+              path="/home/:id"
+              element={
+                <PrivateUserRoute>
+                  <HomePage />
+                </PrivateUserRoute>
+              }
+            />
+            <Route
+              path="/map"
+              element={
+                <PrivateUserRoute>
+                  <RideGoogleMap />
+                </PrivateUserRoute>
+              }
+            />
+            <Route
+              path="/not-in-california"
+              element={<NotInCaliforniaError />}
+            />
+            <Route
+              path="/my-order"
+              element={
+                <PrivateUserRoute>
+                  <Order />
+                </PrivateUserRoute>
+              }
+            />
+            <Route path="/users" element={<Users />} />
+            <Route
+              path="/dashboard"
+              name="dashboard"
+              element={
+                <PrivateAdminRoute>
+                  <Dashboard />
+                </PrivateAdminRoute>
+              }
+            >
+              <Route index element={<Users />}></Route>
               <Route path={"cars"} element={<Cars />}></Route>
               <Route
                 path={"car/cardetails"}
                 element={<ViewCarDetail />}
               ></Route>
+              <Route path={"add-Admin"} element={<AddAdmin />}></Route>
               <Route
                 path={"book/book-detail"}
                 element={<ViewBookDetail />}
@@ -86,6 +162,9 @@ function App() {
                 path={"hourlycharacter"}
                 element={<HourlyCharacter />}
               ></Route>
+              <Route path={"Content/ContentDetails"} element={<ContentDetail/>}></Route>
+              <Route path={"add-Content"} element={<AddContent/>}></Route>
+
               <Route path={"airportbooking"} element={<Airports />}></Route>
               <Route path={"airports"} element={<Airports />}></Route>
               <Route
@@ -105,6 +184,7 @@ function App() {
 
               <Route path={"airportbook"} element={<AirportBooks />}></Route>
             </Route>
+            <Route path="*" element={<ErrorMessage />} />
           </Routes>
           <Footer />
         </QueryClientProvider>
