@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Grid, Typography, Stack } from "@mui/material";
 import { useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 function ExtraOptionDetail(props) {
   const location = useLocation();
   const {
@@ -12,7 +13,7 @@ function ExtraOptionDetail(props) {
     hasMaxAllowedLimit,
     maxAllowedItems,
     status,
- 
+
   } = location.state?.rowData || {};
   const Field = ({ label, value }) => {
     return (
@@ -55,9 +56,9 @@ function ExtraOptionDetail(props) {
         <Field label="Has Max Allowed Limit" value={hasMaxAllowedLimit}/>
         <Field label="Max Allowed Items" value={maxAllowedItems}/>
         <Field label="status" value={status}/>
-
-
       </Grid>
+      <ToastContainer/>
+
       {/* <Grid item container xs={12} md={6}>
         
       </Grid> */}

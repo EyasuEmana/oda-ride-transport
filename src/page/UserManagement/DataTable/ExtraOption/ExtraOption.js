@@ -6,12 +6,13 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function ExtraOptions() {
   const [extraOptionId, setExtraOptionId] = React.useState(null);
   const navigate = useNavigate();
   let endpoint = `/api/v1/extra-options`;
-  
+
   const {
     data: response,
     isLoading: isLoadingGet,
@@ -33,7 +34,7 @@ function ExtraOptions() {
     isError: isErrorUpdate,
     isSuccess: setSuccessUpdate,
     error: errorupdate,
-  } = usePutData(endpoint,extraOptionId, data);
+  } = usePutData(endpoint, extraOptionId, data);
   const handleViewClick = (rowData) => {
     navigate("/dashboard/extra/extra-detail", { state: { rowData } });
   };
@@ -46,7 +47,10 @@ function ExtraOptions() {
     table.setEditingRow(null);
   };
 
-  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(endpoint, extraOptionId);
+  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(
+    endpoint,
+    extraOptionId
+  );
 
   const openDeleteConfirmModal = (row) => {
     if (window.confirm("Are you sure you want to delete this Extra_option?")) {
@@ -70,6 +74,7 @@ function ExtraOptions() {
         title={"Extra Option"}
         handleViewClick={handleViewClick}
       />
+      <ToastContainer />
     </div>
   );
 }

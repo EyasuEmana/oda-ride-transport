@@ -18,6 +18,11 @@ export default function BookingStatusPoup({
 }) {
   const [status, setStatus] = useState("PENDING_APPROVAL"); // Default value
   const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const bookingStatusOptions = [
     "PENDING_APPROVAL",
     "UNDER_REVIEW",
@@ -37,6 +42,8 @@ export default function BookingStatusPoup({
 
   const endpoint = `/api/v1/`
   const handleBook = async () => {
+    setLoading(true);
+
     try {
       // Make PUT request using the BACKEND_API instance
       const response = await BACKEND_API.put(
@@ -45,7 +52,8 @@ export default function BookingStatusPoup({
           status: status,
         }
       );
-  
+      setSuccessMessage(response.data.message || "Admin created successfully!");
+
       // Handle response
       if (response.status === 200) {
         handleClose();
@@ -54,10 +62,17 @@ export default function BookingStatusPoup({
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      console.error("Error occurred while rejecting book:", error);
-      // Handle error if needed
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage("Failed to create admin");
+      }
+      console.error("Error creating admin:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   const handleSnackbarClose = () => {
     setIsUpdated(false);

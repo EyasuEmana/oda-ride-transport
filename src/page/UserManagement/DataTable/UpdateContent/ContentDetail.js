@@ -5,6 +5,7 @@ import {
   Stack,
 } from "@mui/material";
 import useGetData from "../../../../store/hooks/useGetData";
+import { ToastContainer } from "react-toastify";
 // import { const } from './../../../../store/reducers/extraOptionReducer';
 
 function ContentDetail (props){
@@ -46,10 +47,16 @@ function ContentDetail (props){
               <Field label="Address Zip-Code" value={response.addressZipCode} />
               <Field label="Address State" value={response.addressState} />
               <Field  value={response.aboutUsDescription} />
+              <Field  value={response.safetyandTrust} />
+              <Field  value={response.termsAndCondition} />
+
             </>
           )}
         </Grid>
+        <ToastContainer/>
+
       </Grid>
+
     );
   }
   export default ContentDetail;
