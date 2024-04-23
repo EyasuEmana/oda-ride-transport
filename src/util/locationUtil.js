@@ -5,5 +5,6 @@ export const checkServiceLocation = (addressComponents) => {
   var administrativeArea = addressComponents.find((component) =>
     component.types.includes("administrative_area_level_1")
   )?.short_name;
-  return country === "US" && administrativeArea === "CA";
+  // return country === "US" && administrativeArea === "CA";
+  return country === "US";
 };

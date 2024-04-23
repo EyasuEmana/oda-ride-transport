@@ -43,15 +43,16 @@ function Index({ imgUrl, text, id, handleUsernameFocus }) {
               backgroundcolor={theme.palette.info.main}
               radius={5}
               onClick={() => {
-                if (isAuthenticated) navigate(`/home/${id}`);
-                else {
-                  scroller.scrollTo("auth", {
-                    smooth: true,
-                    duration: 300,
-                    offset: -50,
-                  });
-                  handleUsernameFocus();
-                }
+                navigate(`/home/${id}`);
+                // if (isAuthenticated) navigate(`/home/${id}`);
+                // else {
+                //   scroller.scrollTo("auth", {
+                //     smooth: true,
+                //     duration: 300,
+                //     offset: -50,
+                //   });
+                //   handleUsernameFocus();
+                // }
               }}
               //
             >

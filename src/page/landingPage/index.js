@@ -61,14 +61,12 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
               "Discover the safest and most customer-friendly ride system in our
               city!"
             </RSTypography>
-
             <RSButton
               sx={{ width: 200 }}
               backgroundcolor={"#FF0013"}
               txtcolor={"#FFF"}
               onClick={() => {
-                if (isAuthenticated) navigate(`/home/1`);
-                else handleUsernameFocus();
+                navigate(`/home/1`);
               }}
             >
               Unlock your ride

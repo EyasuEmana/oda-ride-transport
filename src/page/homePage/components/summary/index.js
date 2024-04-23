@@ -7,7 +7,6 @@ import {
   FormControl,
   FormHelperText,
 } from "@mui/material";
-import { useSelector } from "react-redux";
 import { GiCheckMark } from "react-icons/gi";
 import { MdRadioButtonUnchecked } from "react-icons/md";
 import StepSummary from "../StepSummary";

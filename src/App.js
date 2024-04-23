@@ -50,7 +50,7 @@ function App() {
     return isUserAuthenticated() ? (
       <>{children}</>
     ) : (
-      <Navigate to="/error" replace />
+      <>{children}</>
     );
   };
   const PrivateAdminRoute = ({ children }) => {

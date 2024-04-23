@@ -22,7 +22,7 @@ function Index() {
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const signInValidationSchema = yup.object({
     firstname: yup.string().required("first name required"),
-    lastname: yup.string().required("lastname required"),
+    lastname: yup.string().required("last name required"),
     email: yup.string().email("invalid email").required("email required"),
     phone: yup
       .string()
@@ -90,6 +90,7 @@ function Index() {
           <Grid item xs={6}>
             <RSTextField
               label="phone"
+              type="tel"
               color={"info"}
               fullWidth
               {...formikSignup.getFieldProps("phone")}
@@ -104,6 +105,7 @@ function Index() {
           <Grid item xs={6}>
             <RSTextField
               label="email"
+              type="mail"
               color={"info"}
               fullWidth
               {...formikSignup.getFieldProps("email")}
@@ -168,7 +170,6 @@ function Index() {
           </Stack>
         </Grid>
       </Grid>
-     
     </Box>
   );
 }

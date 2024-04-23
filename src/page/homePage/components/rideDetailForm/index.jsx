@@ -42,7 +42,15 @@ import RSTypography from "../../../../components/RSTypography";
 import { checkServiceLocation } from "../../../../util/locationUtil";
 const libraries = ["places"];
 
-function Index({ formik, handleChangeTripType, selectedTripType }) {
+function Index({
+  formik,
+  handleChangeTripType,
+  selectedTripType,
+  locationChecker,
+  setLocationCkecker,
+  setAccomAddrChecker,
+  accomAddrChecker,
+}) {
   const [trip, setTrip] = React.useState();
   const [latLng, setLatLng] = useState(null);
   const [searchOriginResult, setSearchOriginResult] = useState(null);
@@ -208,9 +216,8 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       const place = searchOriginResult.getPlace();
       const address_components = place.address_components;
 
-      const isInCalifornia = checkServiceLocation(address_components);
-      if (!isInCalifornia) navigate("/not-in-california");
-      
+      const isInUsa = checkServiceLocation(address_components);
+
       const pickupPhysicalAddress = place.formatted_address;
       const latlng = {
         lat: place.geometry.location.lat(),
@@ -220,6 +227,34 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       formik.setFieldValue("pickupLatitude", latlng?.lat);
       formik.setFieldValue("pickupLongitude", latlng?.lng);
       setOriginLatLng(latlng);
+
+      if (!isInUsa) {
+        setLocationCkecker({
+          isUnsupportedLocation: true,
+          errorMessage: "pickup address should be in US",
+        });
+        formik.setFieldValue("isUnsupportedPickupAddr", true);
+      } else if (formik.values.isUnsupportedDropoffAddr) {
+        setLocationCkecker({
+          isUnsupportedLocation: true,
+          errorMessage: "dropoff address should be in US",
+        });
+      }
+
+      if (isInUsa) {
+        if (formik.values.isUnsupportedDropoffAddr) {
+          setLocationCkecker({
+            isUnsupportedLocation: true,
+            errorMessage: "dropoff address should be in US",
+          });
+        } else {
+          setLocationCkecker({
+            isUnsupportedLocation: false,
+            errorMessage: "",
+          });
+        }
+        formik.setFieldValue("isUnsupportedPickupAddr", false);
+      }
     } else {
       alert("Please enter text");
     }
@@ -230,8 +265,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       const place = searchDestinationResult.getPlace();
       const address_components = place.address_components;
 
-      const isInCalifornia = checkServiceLocation(address_components);
-      if (!isInCalifornia) navigate("/not-in-california");
+      const isInUsa = checkServiceLocation(address_components);
 
       const latlng = {
         lat: place.geometry.location.lat(),
@@ -241,8 +275,35 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       formik.setFieldValue("dropoffPhysicalAddress", dropoffPhysicalAddress);
       formik.setFieldValue("dropoffLatitude", latlng?.lat);
       formik.setFieldValue("dropoffLongitude", latlng?.lng);
-
       setDestinationLatLng(latlng);
+
+      if (!isInUsa) {
+        setLocationCkecker({
+          isUnsupportedLocation: true,
+          errorMessage: "dropoff address should be in US",
+        });
+        formik.setFieldValue("isUnsupportedDropoffAddr", true);
+      } else if (formik.values.isUnsupportedPickupAddr) {
+        setLocationCkecker({
+          isUnsupportedLocation: true,
+          errorMessage: "pickup address should be in US",
+        });
+      }
+
+      if (isInUsa) {
+        if (formik.values.isUnsupportedPickupAddr) {
+          setLocationCkecker({
+            isUnsupportedLocation: true,
+            errorMessage: "pickup address should be in US",
+          });
+        } else {
+          setLocationCkecker({
+            isUnsupportedLocation: false,
+            errorMessage: "",
+          });
+        }
+        formik.setFieldValue("isUnsupportedDropoffAddr", false);
+      }
     } else {
       alert("Please enter text");
     }
@@ -253,8 +314,7 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       const place = searchAccomodationResult.getPlace();
       const address_components = place.address_components;
 
-      const isInCalifornia = checkServiceLocation(address_components);
-      if (!isInCalifornia) navigate("/not-in-california");
+      const isInUsa = checkServiceLocation(address_components);
 
       const latlng = {
         lat: place.geometry.location.lat(),
@@ -266,6 +326,22 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
       formik.setFieldValue("accommodationLatitude", latlng?.lat);
       formik.setFieldValue("accommodationLongitude", latlng?.lng);
       setAccomodationLatLng(latlng);
+      console.log("heere1");
+
+      if (!isInUsa) {
+        console.log("heere2");
+        setAccomAddrChecker({
+          isUnsupportedLocation: true,
+          errorMessage: "accommodation address should be in US",
+        });
+      } else {
+        console.log("heere3");
+
+        setAccomAddrChecker({
+          isUnsupportedLocation: false,
+          errorMessage: " ",
+        });
+      }
     } else {
       alert("Please enter text");
     }
@@ -332,6 +408,13 @@ function Index({ formik, handleChangeTripType, selectedTripType }) {
                 />
               </RadioGroup>
             </FormControl>
+            {locationChecker.isUnsupportedLocation &&
+              (travelType === "1" || travelType === "3") && (
+                <Alert severity="error">{locationChecker.errorMessage}</Alert>
+              )}
+            {accomAddrChecker.isUnsupportedLocation && travelType === "2" && (
+              <Alert severity="error">{accomAddrChecker.errorMessage}</Alert>
+            )}
             {(travelType == 1 || travelType == 2) && (
               <FormControl fullWidth color="info">
                 <InputLabel id="demo-simple-select-helper-label">
