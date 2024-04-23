@@ -38,7 +38,7 @@ export const book = createAsyncThunk(
       expirationDate: contact.expirationDate,
       securityCode: contact.securityCode,
     };
-    if (rideInfo?.tripType == "Round-Trip") {
+    if (rideInfo?.tripType == "Round-Trip" && !travelType == "3") {
       body.returnPickupDateTime =
         tripDetail?.formattedReturnPickupDate +
         " " +

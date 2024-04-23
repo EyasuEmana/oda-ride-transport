@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Grid,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Grid, Divider, Stack } from "@mui/material";
 import RSTypography from "../RSTypography";
 import { useTheme } from "@emotion/react";
 import twitter from "../../assets/images/twitter.png";
 import instagram from "../../assets/images/instagram.png";
 import facebook from "../../assets/images/facebook.png";
-import slack from "../../assets/images/slack.png";
+
 import axios from "axios";
 import { remote_host } from "../../globalVariable";
+import { useSelector, useDispatch } from "react-redux";
+import { getFooterData } from "../../store/actions/footerAction";
+import { useNavigate } from "react-router-dom";
 function Index() {
-  const [footerData, setFooterData] = useState();
   const theme = useTheme();
+  const { contactEmail, contactPhoneNumber, addressZipCode, addressState } =
+    useSelector((state) => state.footerReducer);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const white = theme.palette.text.main;
-  const isMatch = useMediaQuery(theme.breakpoints.down("md"));
   const SocalMediaIcon = ({ url }) => (
     <img
       src={url}
@@ -28,15 +25,9 @@ function Index() {
       style={{ width: "24px", height: "24px" }}
     />
   );
-  const getFooterData = async () => {
-    await axios
-      .get(`${remote_host}/api/v1/footer-contents`)
-      .then((response) => {
-        setFooterData(response.data);
-      });
-  };
+
   useEffect(() => {
-    getFooterData();
+    dispatch(getFooterData());
   }, []);
   return (
     <Box
@@ -53,10 +44,20 @@ function Index() {
           <RSTypography txtcolor={white} fontsize={"18px"}>
             Useful Links
           </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
+          <RSTypography
+            txtcolor={white}
+            fontsize={"15px"}
+            sx={{ cursor: "pointer" }}
+            onClick={() => navigate("/trust-and-safety")}
+          >
             Trust and safety
           </RSTypography>
-          <RSTypography txtcolor={white} fontsize={"15px"}>
+          <RSTypography
+            txtcolor={white}
+            fontsize={"15px"}
+            sx={{ cursor: "pointer" }}
+            onClick={() => navigate("/terms-and-conditions")}
+          >
             Terms and conditions
           </RSTypography>
         </Grid>
@@ -66,16 +67,16 @@ function Index() {
             Contact Us
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            {footerData?.addressState}
+            {addressState}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            ZIP: {footerData?.addressZipCode}
+            ZIP: {addressZipCode}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            mail: {footerData?.contactEmail}
+            mail: {contactEmail}
           </RSTypography>
           <RSTypography txtcolor={white} fontsize={"15px"}>
-            tel: {footerData?.contactPhoneNumber}
+            tel: {contactPhoneNumber}
           </RSTypography>
         </Grid>
       </Grid>

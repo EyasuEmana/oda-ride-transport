@@ -43,7 +43,8 @@ import SocialMedia from "./page/UserManagement/DataTable/SocialMedia/SocialMedia
 import SocialMediaDetail from "./page/UserManagement/DataTable/SocialMedia/SocialMediaDetail";
 import Admin from "./page/UserManagement/DataTable/Admin/Admin";
 import AdminDetails from "./page/UserManagement/DataTable/Admin/Admindetails";
-
+import TermAndCondition from "./page/landingPage/component/termCondition";
+import Trust from "./page/landingPage/component/trust";
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
   const queryClient = new QueryClient();
@@ -52,11 +53,7 @@ function App() {
     setUsernameFocus(true);
   };
   const PrivateUserRoute = ({ children }) => {
-    return isUserAuthenticated() ? (
-      <>{children}</>
-    ) : (
-      <>{children}</>
-    );
+    return isUserAuthenticated() ? <>{children}</> : <>{children}</>;
   };
   const PrivateAdminRoute = ({ children }) => {
     return isAdminAuthenticated() ? (
@@ -105,6 +102,14 @@ function App() {
               element={<NotInCaliforniaError />}
             />
             <Route
+              path="/terms-and-conditions"
+              element={<TermAndCondition />}
+            />
+            <Route
+              path="/trust-and-safety"
+              element={<Trust />}
+            />
+            <Route
               path="/my-order"
               element={
                 <PrivateUserRoute>
@@ -129,7 +134,10 @@ function App() {
                 element={<ViewCarDetail />}
               ></Route>
               <Route path={"add-Admin"} element={<Admin />}></Route>
-              <Route path={"admin/admin-detail"} element={<AdminDetails/>}></Route>
+              <Route
+                path={"admin/admin-detail"}
+                element={<AdminDetails />}
+              ></Route>
 
               <Route
                 path={"book/book-detail"}

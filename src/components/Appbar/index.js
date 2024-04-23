@@ -32,7 +32,7 @@ import { useLocation } from "react-router-dom";
 import { getUserRole } from "../../util/authUtil";
 const publicNavbarMenus = [
   { title: "Home", link: "/", scrollLink: "home" },
-  { title: "About Us", link: "/about-us", scrollLink: "footer" },
+  { title: "About Us", link: "/about-us", scrollLink: "aboutus" },
   { title: "Contact Us", link: "/contact-us", scrollLink: "footer" },
   { title: "FAQ", link: "/faq", scrollLink: "faq" },
 ];
@@ -78,8 +78,8 @@ function Header({ handleUsernameFocus }) {
   const scrollToSection = (sectionId) => {
     scroller.scrollTo(sectionId, {
       smooth: true,
-      duration: 500,
-      offset: -50,
+      duration: 300,
+      offset: -100,
     });
   };
 

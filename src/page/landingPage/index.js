@@ -89,7 +89,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
         <Grid item container xs={10} justifyContent={"center"} id="auth">
           <Auth usernameFocus={usernameFocus} />
         </Grid>
-        {/* <AboutUs /> */}
+        <AboutUs />
         <Grid item container xs={11} justifyContent={"center"}>
           <Faq />
         </Grid>
