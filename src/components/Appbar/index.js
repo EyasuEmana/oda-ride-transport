@@ -76,6 +76,7 @@ function Header({ handleUsernameFocus }) {
   }));
 
   const scrollToSection = (sectionId) => {
+    navigate("/");
     scroller.scrollTo(sectionId, {
       smooth: true,
       duration: 300,

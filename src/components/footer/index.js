@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Divider, Stack } from "@mui/material";
+import { Box, Grid, Divider, Stack, IconButton } from "@mui/material";
 import RSTypography from "../RSTypography";
 import { useTheme } from "@emotion/react";
 import twitter from "../../assets/images/twitter.png";
 import instagram from "../../assets/images/instagram.png";
 import facebook from "../../assets/images/facebook.png";
-
+import { FaTelegram } from "react-icons/fa";
+import { FaPinterest } from "react-icons/fa";
+import { FiFacebook } from "react-icons/fi";
+import { FaInstagram } from "react-icons/fa";
+import { RiTwitterXLine } from "react-icons/ri";
 import axios from "axios";
 import { remote_host } from "../../globalVariable";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,11 +17,13 @@ import { getFooterData } from "../../store/actions/footerAction";
 import { useNavigate } from "react-router-dom";
 function Index() {
   const theme = useTheme();
+  const [socialMedias, setSocialMedias] = useState();
   const { contactEmail, contactPhoneNumber, addressZipCode, addressState } =
     useSelector((state) => state.footerReducer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const white = theme.palette.text.main;
+
   const SocalMediaIcon = ({ url }) => (
     <img
       src={url}
@@ -25,10 +31,34 @@ function Index() {
       style={{ width: "24px", height: "24px" }}
     />
   );
-
+  const getSocialMediaLinks = async () => {
+    await axios
+      .get(`${remote_host}/api/v1/social-medias`)
+      .then((res) => setSocialMedias(res.data));
+  };
   useEffect(() => {
+    getSocialMediaLinks();
     dispatch(getFooterData());
   }, []);
+
+  const isSocialMedia = (title, titleName) => {
+    return title.toLowerCase().includes(titleName);
+  };
+
+  const getIcon = (title) => {
+    if (isSocialMedia(title, "facebook")) {
+      return <FiFacebook color="white" size={18} />;
+    } else if (isSocialMedia(title, "twitter")) {
+      return <RiTwitterXLine color="white" size={18} />;
+    } else if (isSocialMedia(title, "telegram")) {
+      return <FaTelegram color="white" size={18} />;
+    } else if (isSocialMedia(title, "instagram")) {
+      return <FaInstagram color="white" size={18} />;
+    } else if (isSocialMedia(title, "pinterest")) {
+      return <FaPinterest color="white" size={18} />;
+    }
+  };
+  
   return (
     <Box
       sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }}
@@ -83,17 +113,21 @@ function Index() {
       <Box>
         <Grid container justifyContent={"space-between"} alignItems={"center"}>
           <Box>
-            <Stack direction={"row"} spacing={2}>
+            <Stack direction={"row"} spacing={2} alignItems={"center"}>
               <Box>
                 <RSTypography fontsize={"15px"} txtcolor={white}>
                   Get in touch |
                 </RSTypography>
               </Box>
 
-              <Stack spacing={1} direction={"row"}>
-                <SocalMediaIcon url={twitter} />
-                <SocalMediaIcon url={instagram} />
-                <SocalMediaIcon url={facebook} />
+              <Stack spacing={1} direction={"row"} alignItems={"center"}>
+                {socialMedias?.map(({ link, title }) => {
+                  return (
+                    <IconButton component="a" href={link} target="_blank">
+                      {getIcon(title)}
+                    </IconButton>
+                  );
+                })}
               </Stack>
             </Stack>
           </Box>
