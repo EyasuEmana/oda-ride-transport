@@ -24,7 +24,7 @@ const postData = async (endpoint, data) => {
 };
 
 const usePostData = (endpoint) => {
- 
+//  console.log("posting")
   const queryClient = useQueryClient();
   const makeRequest = async (data) => {
     return await postData(endpoint,  data);

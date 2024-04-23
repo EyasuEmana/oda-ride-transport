@@ -1,18 +1,27 @@
 import React from "react";
 import MDataTable from "../MDataTable";
 import useDeleteData from "../../../../store/hooks/useDeleteData";
-import useGetData from "../../../../store/hooks/useGetData";
+
 import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import useGetData12 from "../../../../store/hooks/airbook";
 
 function HourlyCharacter() {
   const [hourlyCharacterId, setHourlyCharacterId] = React.useState(null);
   const navigate = useNavigate();
 
   let endpoint = `/api/v1/hourly-charter-books`;
-  
+  const queryParams = {
+    page: 1,
+    pageSize: 7,
+    sortDirection: "ASC",
+    // Add other query parameters here
+  };
+  const getendpoint = `/api/v1/hourly-charter-books?${Object.keys(queryParams)
+    .map((key) => `${key}=${queryParams[key]}`)
+    .join("&")}`;
 
   const {
     data: response,
@@ -20,7 +29,9 @@ function HourlyCharacter() {
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData12(getendpoint);
+
+  console.log("object:", response);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {
@@ -48,7 +59,10 @@ function HourlyCharacter() {
     navigate("/dashboard/book/hourlybook-detail", { state: { rowData } });
   };
 
-  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(endpoint,hourlyCharacterId);
+  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(
+    endpoint,
+    hourlyCharacterId
+  );
 
   const openDeleteConfirmModal = (row) => {
     if (
@@ -78,7 +92,6 @@ function HourlyCharacter() {
         isError={isErrorGet}
         title={"Hourly Character Book"}
         handleViewClick={handleViewClick}
-
       />
     </div>
   );

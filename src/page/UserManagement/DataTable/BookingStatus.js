@@ -9,6 +9,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { BACKEND_API } from "../../../store/utils/API";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function BookingStatusPoup({
   open,
@@ -52,6 +53,12 @@ export default function BookingStatusPoup({
           status: status,
         }
       );
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Successfully added!`, {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        // return response.data;
+      }
       setSuccessMessage(response.data.message || "Admin created successfully!");
 
       // Handle response
@@ -62,12 +69,10 @@ export default function BookingStatusPoup({
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage("Failed to create admin");
-      }
-      console.error("Error creating admin:", error);
+      toast.error(error?.response?.data?.message || "Error...", {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      throw error?.response?.data;
     } finally {
       setLoading(false);
     }
@@ -155,6 +160,8 @@ export default function BookingStatusPoup({
             Summit
           </Button>
         </DialogActions>
+        <ToastContainer/>
+
       </Dialog>
       <Snackbar
         open={isUpdated}

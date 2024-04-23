@@ -6,19 +6,26 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import useGetData12 from "../../../../store/hooks/airbook";
 function PointToPointBooks() {
   const [pointToPointBookId, setPointToPointBookId] = React.useState(null);
 const navigate = useNavigate();
   let endpoint = `/api/v1/point-to-point-books`;
+  const queryParams = {
+    page: 1,
+    pageSize: 7,
+    sortDirection: "ASC",
+    // Add other query parameters here
+  };
+  const getendpoint = `/api/v1/point-to-point-books?${Object.keys(queryParams).map(key => `${key}=${queryParams[key]}`).join("&")}`;
 
-  
   const {
     data: response,
     isLoading: isLoadingGet,
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData12(getendpoint);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {

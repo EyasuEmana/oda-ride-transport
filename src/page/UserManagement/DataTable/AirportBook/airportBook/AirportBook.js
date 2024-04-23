@@ -10,14 +10,14 @@ function AirportBooks() {
   const [airportBookId, setAirportBookId] = React.useState(null);
   const navigate = useNavigate();
   let endpoint = `/api/v1/airport-books`;
+
   const queryParams = {
     page: 1,
     pageSize: 7,
-    paymentStatus: "PAID",
-    bookingStatus: "BOOKED",
     sortDirection: "ASC",
     // Add other query parameters here
   };
+  const getendpoint = `/api/v1/airport-books?${Object.keys(queryParams).map(key => `${key}=${queryParams[key]}`).join("&")}`;
 
   const {
     data: response,
@@ -25,7 +25,7 @@ function AirportBooks() {
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData12(queryParams);
+  } = useGetData12(getendpoint);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {

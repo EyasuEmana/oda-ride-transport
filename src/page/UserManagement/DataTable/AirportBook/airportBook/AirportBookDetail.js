@@ -13,6 +13,7 @@ import ReasonPopup from "../../ReasonPopup";
 import PaymentStatusPopup from "../../PaymentStatus";
 import BookingStatusPoup from "../../BookingStatus";
 import { BACKEND_API } from "../../../../../store/utils/API";
+import { ToastContainer } from "react-toastify";
 function ViewBookDetail(props) {
   const location = useLocation();
   const {
@@ -264,6 +265,7 @@ function ViewBookDetail(props) {
           handleClose={handleClose}
         />
       )}
+      <ToastContainer />
 
       <Snackbar
         open={isAccepted}

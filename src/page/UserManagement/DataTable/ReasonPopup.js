@@ -10,6 +10,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { BACKEND_API } from "../../../store/utils/API";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function ReasonPopup({
   open,
@@ -36,15 +38,22 @@ export default function ReasonPopup({
       );
   
       // Handle response
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Successfully added!`, {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        // return response.data;
+      }
         handleClose();
         setIsRejected(true);
-      }
+      
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      console.error("Error occurred while rejecting book:", error);
-      // Handle error if needed
+      toast.error(error?.response?.data?.message || "Error...", {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      throw error?.response?.data;
     }
   };
 
@@ -114,7 +123,7 @@ export default function ReasonPopup({
             fullWidth onClick={handleReject}>Submit</Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
+      {/* <Snackbar
         open={isRejected}
         autoHideDuration={4000}
         onClose={handleSnackbarClose}
@@ -127,7 +136,9 @@ export default function ReasonPopup({
         >
           Book Rejected Successfully
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
+                  <ToastContainer/>
+
     </React.Fragment>
   );
 }
