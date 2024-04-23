@@ -8,12 +8,10 @@ export const book = createAsyncThunk(
   async (values, thunkAPI) => {
     const { rideInfo, contact, tripDetail, vehicle, travelType } = values;
     var res = null;
-    const headers = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-      },
-    };
+
+    const headers = contact.isGuestBooking ? null : authHeader();
+    console.log("contact: ", contact);
+    console.log("headers: ", headers);
     const body = {
       pickupPhysicalAddress: rideInfo?.pickupPhysicalAddress,
       pickupLongitude: rideInfo?.pickupLongitude,
@@ -31,11 +29,16 @@ export const book = createAsyncThunk(
       additionalStopOnTheWayDescription:
         tripDetail.additionalStopOnTheWayDescription,
       passengerFullName: contact?.passengerFullName,
+      passengerEmail: contact?.email,
+      isGuestBooking: contact.isGuestBooking,
       passengerCellPhone: contact?.passengerCellPhone,
       carId: vehicle?.vehicle,
       extraOptions: vehicle.extraOptions,
+      creditCardNumber: contact.creditCardNumber,
+      expirationDate: contact.expirationDate,
+      securityCode: contact.securityCode,
     };
-    if (rideInfo?.tripType == "Round-Trip") {
+    if (rideInfo?.tripType == "Round-Trip" && !travelType == "3") {
       body.returnPickupDateTime =
         tripDetail?.formattedReturnPickupDate +
         " " +
@@ -77,6 +80,7 @@ export const book = createAsyncThunk(
           airline: tripDetail?.airline,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
+          isGuestBooking: contact.isGuestBooking,
           pickupDateTime:
             tripDetail?.formattedPickupDate +
             " " +
@@ -91,6 +95,10 @@ export const book = createAsyncThunk(
           bookingFor: contact?.bookingFor,
           passengerFullName: contact?.passengerFullName,
           passengerCellPhone: contact?.passengerCellPhone,
+          passengerEmail: contact?.email,
+          creditCardNumber: contact.creditCardNumber,
+          expirationDate: contact.expirationDate,
+          securityCode: contact.securityCode,
         };
         if (
           rideInfo?.tripType == "Ride from the airport(round trip)" ||

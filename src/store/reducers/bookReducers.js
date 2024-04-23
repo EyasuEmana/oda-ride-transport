@@ -20,6 +20,9 @@ const UserSlice = createSlice({
   name: "book",
   initialState,
   reducers: {
+    addMinimumInitialFee: (state, action) => {
+      state.fee = action.payload;
+    },
     adCarFee: (state, action) => {
       state.fee = action.payload;
     },
@@ -100,5 +103,6 @@ export const {
   addAirportPreferenceFee,
   reduceAirportPreferenceFee,
   addAdditionalStopFee,
+  addMinimumInitialFee,
 } = UserSlice.actions;
 export default UserSlice.reducer;

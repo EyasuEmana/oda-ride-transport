@@ -2,6 +2,7 @@ import React from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { Stack, Grid, Box } from "@mui/material";
 import RSTypography from "../../../components/RSTypography";
+import RSButton from "../../../components/RSButton";
 function Success() {
   return (
     <Box>
@@ -19,6 +20,16 @@ function Success() {
         <RSTypography txtcolor="#03930A">
           Thank you for using our service!
         </RSTypography>
+        <RSButton
+          borderradius={"5px"}
+          variant="contained"
+          backgroundcolor={"#4D4C4C"}
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          new order
+        </RSButton>
       </Stack>
     </Box>
   );

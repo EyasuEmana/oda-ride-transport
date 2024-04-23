@@ -11,6 +11,7 @@ import {
 import Stepper from "./components/stepper/index";
 import RideDetailForm from "./components/rideDetailForm";
 import ChooseVehicleForm from "./components/chooseVehicleForm";
+import Guest from "./components/GuestUser";
 import ContactDetailForm from "./components/contactDetailForm";
 import TripDetail from "./components/tripDetail";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,11 +24,28 @@ import Success from "./components/Success";
 import { getAllCars } from "../../store/actions/carAction";
 import { getExtraOptions } from "../../store/actions/extraOptions";
 import { getAirports } from "../../store/actions/airportAction";
+import GuestUser from "./components/GuestUser";
+import axios from "axios";
+import { addMinimumInitialFee } from "../../store/reducers/bookReducers";
+import { remote_host } from "../../globalVariable";
 function Index() {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
-  const dispatch = useDispatch();
+  const [entryAsGuestOptionPage, setEntryAsGuestOptionPage] = useState(false);
+  const [locationChecker, setLocationCkecker] = useState({
+    isUnsupportedLocation: false,
+    errorMessage: "",
+  });
 
+  const [accomAddrChecker, setAccomAddrChecker] = useState({
+    isUnsupportedLocation: false,
+    errorMessage: "",
+  });
+  const dispatch = useDispatch();
+  const { isSigninSuccess, isAuthenticated } = useSelector(
+    (state) => state.authReducer
+  );
+  const { fee } = useSelector((state) => state.bookReducer);
   const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
   const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
@@ -91,7 +109,17 @@ function Index() {
     },
     validationSchema: rideInfoValidationSchema,
     onSubmit: (values) => {
-      handleNext();
+      if (
+        (travelType === "1" || travelType === "3") &&
+        !locationChecker.isUnsupportedLocation
+      ) {
+        handleNext();
+      } else if (
+        travelType === "2" &&
+        !accomAddrChecker.isUnsupportedLocation
+      ) {
+        handleNext();
+      }
     },
   });
   const isRoundTrip = () => {
@@ -188,6 +216,7 @@ function Index() {
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
       handleNext();
+      if (!isAuthenticated) setEntryAsGuestOptionPage(true);
     },
   });
   const contactValidationSchema = yup.object().shape({
@@ -196,21 +225,36 @@ function Index() {
     isValidCardInfo: yup
       .boolean()
       .oneOf([true], "Please, validate your card Info!"),
-    email: yup.string("should be string").email("should be valid email"),
-    /* .required("Email required") */ confirmEmail: yup
-      .string()
-      .oneOf([yup.ref("email"), null], "Emails must match"),
-    /* .required("Confirm email is required") */ cellPhone:
-      yup.string() /* .matches(phoneRegex, "Invalid phone number format") */,
-    passengerFullName: yup
-      .string()
-      .matches(fullNameRegex, "invalid full name")
-      .required("full name required"),
+    email: yup.string().email("invalid email").required("email required"),
+    /* .required("Email required") */
+    // confirmEmail: yup
+    // .string()
+    // .oneOf([yup.ref("email"), null], "Emails must match"),
+    cellPhone: yup.string(),
+    /* .matches(phoneRegex, "Invalid phone number format") */ passengerFullName:
+      yup
+        .string()
+        .matches(fullNameRegex, "invalid full name")
+        .required("full name required"),
     // passengerLastName: yup.string(),
     passengerCellPhone: yup
       .string()
       .matches(phoneRegex, "Invalid phone number format")
       .required("phone num. required"),
+    isGuestBooking: yup.boolean(),
+    // guestEmail: yup
+    //   .string("should be string")
+    //   .email("should be valid email")
+    //   .when("isGuestBooking", {
+    //     is: true,
+    //     then: (schema) =>
+    //       yup
+    //         .string("should be string")
+    //         .email("should be valid email")
+    //         .required("guest email is required"),
+    //     otherwise: (schema) =>
+    //       yup.string("should be string").email("should be valid email"),
+    //   }),
   });
   const formikContact = useFormik({
     initialValues: {
@@ -226,8 +270,13 @@ function Index() {
       isValidCardInfo: false,
       cellPhone: "",
       bookingFor: "Myself",
-      passengerFullName: "Eyasu Emana",
-      passengerCellPhone: "0947736471",
+      passengerFullName: "",
+      passengerCellPhone: "",
+      isGuestBooking: false,
+      entryOptionSelected: false,
+      creditCardNumber: "",
+      expirationDate: "",
+      securityCode: "",
     },
     validationSchema: contactValidationSchema,
     onSubmit: () => {
@@ -235,7 +284,9 @@ function Index() {
     },
   });
   const formikSummary = useFormik({
-    initialValues: { concent: false },
+    initialValues: {
+      concent: false,
+    },
     validationSchema: yup.object({
       concent: yup.boolean().oneOf([true], "You should concent to the summary"),
     }),
@@ -261,13 +312,32 @@ function Index() {
   function setRideDetailFormikData() {
     if (travelType == 1) {
       setrideInfoValidationSchemaObj({
+        isUnsupportedLocation: false,
+        isUnsupportedDropoffAddr: false,
+        isUnsupportedPickupAddr: false,
         tripType: yup.string("Trip Type").required("Trip type is required!"),
         pickupPhysicalAddress: yup
           .string("Pick up address")
           .required("Pick up address is required!"),
-        dropoffPhysicalAddress: yup
+        /*  .when("isUnsupportedLocation", {
+            is: true,
+            then: yup
+              .string("")
+              .required("not providing service at the selected address"),
+            otherwise: yup.string(""),
+          }) */ dropoffPhysicalAddress: yup
           .string("Dropoff address")
           .required("Dropoff address is required!"),
+        /* .when("isUnsupportedLocation", {
+            is: true,
+            then: (schema) =>
+              schema.required(
+                yup.ref("isUnsupportedLocation")
+                  ? "not providing service at the selected address"
+                  : "Dropoff address is required!"
+              ),
+            otherwise: (schema) => schema,
+          }) */
       });
     } else if (travelType == 2) {
       setrideInfoValidationSchemaObj({
@@ -277,13 +347,30 @@ function Index() {
       });
     } else if (travelType == 3) {
       setrideInfoValidationSchemaObj({
+        isUnsupportedLocation: false,
         pickupPhysicalAddress: yup
           .string("Pick up address")
           .required("Pick up address is required!"),
-        dropoffPhysicalAddress: yup
+        /*  .when("isUnsupportedLocation", {
+            is: true,
+            then: (schema) =>
+              schema.required("not providing service at the selected address"),
+            otherwise: (schema) => schema,
+          }) */ dropoffPhysicalAddress: yup
           .string("Dropoff address")
           .required("Dropoff address is required!"),
-        hour: yup.string("Hour to travel").required("Hour is required!"),
+        /* .when("isUnsupportedLocation", {
+            is: true,
+            then: (schema) =>
+              schema.required(
+                yup.ref("isUnsupportedLocation")
+                  ? "not providing service at the selected address"
+                  : "Dropoff address is required!"
+              ),
+            otherwise: (schema) => schema,
+          }) */ hour: yup
+          .string("Hour to travel")
+          .required("Hour is required!"),
       });
     }
   }
@@ -312,6 +399,7 @@ function Index() {
         break;
       case 3:
         formikContact.handleSubmit();
+        break;
       case 4:
         formikSummary.handleSubmit();
         break;
@@ -405,105 +493,132 @@ function Index() {
     }
     if (isError) setOpen((prev) => !prev);
   }, [isBookSuccess, errorMessage, isError]);
+  const addMinFee = async () => {
+    try {
+      await axios.get(`${remote_host}/api/v1/minimum-start-fee`).then((res) => {
+        const minimumFee = parseFloat(res.data.fee);
+        console.log("min fee: ", minimumFee);
 
+        dispatch(addMinimumInitialFee(minimumFee));
+      });
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
   useEffect(() => {
     dispatch(getAllCars());
     dispatch(getAirports());
     dispatch(getExtraOptions());
+    addMinFee();
   }, []);
 
   return (
-    <Box mt={5}>
-      <Stepper step={activeStep} />
-      <Grid container justifyContent={"center"} mt={5}>
-        <Grid item xs={10}>
-          <Box>
-            {activeStep === 0 && (
-              <RideDetailForm
-                formik={formikRideInfo}
-                handleChangeTripType={handleChangeTripType}
-                selectedTripType={selectedTripType}
-              />
-            )}
-            {activeStep === 1 && (
-              <ChooseVehicleForm
-                hour={formikRideInfo.values.hour}
-                distanceInMiles={formikRideInfo.values.distanceInMiles}
-                formik={formikChooseVehicle}
-                rideSummaryData={formikRideInfo.values}
-              />
-            )}
-            {activeStep === 2 && (
-              <TripDetail
-                formik={formikTripDetail}
-                rideSummaryData={formikRideInfo.values}
-                vehicleSummaryData={generateVehicleSummaryData()}
-              />
-            )}
-            {activeStep === 3 && (
-              <ContactDetailForm
-                formik={formikContact}
-                rideSummaryData={formikRideInfo.values}
-                vehicleSummaryData={generateVehicleSummaryData()}
-                tripSummaryData={generateTripSummaryData()}
-              />
-            )}
-            {activeStep === 4 && (
-              <Summary
-                formik={formikSummary}
-                rideSummaryData={formikRideInfo.values}
-                vehicleSummaryData={generateVehicleSummaryData()}
-                tripSummaryData={generateTripSummaryData()}
-                contactSummaryData={generateContactSummaryData()}
-              />
-            )}
-            {activeStep === 5 && <Success />}
-          </Box>
-        </Grid>
-        {activeStep !== 5 && (
-          <Grid item xs={10} mt={3}>
-            <Stack
-              direction={"row"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-            >
-              <Button
-                variant="outlined"
-                onClick={handleBack}
-                disabled={activeStep === 0}
-                color="secondary"
-              >
-                BACK
-              </Button>
-              <Button variant="contained" onClick={handleSubmit}>
-                {isBookPending ? (
-                  <CircularProgress size={25} sx={{ color: "#FFF" }} />
-                ) : (
-                  getNextButtonLabel()
+    <Box>
+      {entryAsGuestOptionPage &&
+      !isAuthenticated &&
+      !formikContact.values.entryOptionSelected ? (
+        <GuestUser
+          setEntryAsGuestOptionPage={setEntryAsGuestOptionPage}
+          formik={formikContact}
+        />
+      ) : (
+        <Box mt={5}>
+          <Stepper step={activeStep} />
+          <Grid container justifyContent={"center"} mt={5}>
+            <Grid item xs={10}>
+              <Box>
+                {activeStep === 0 && (
+                  <RideDetailForm
+                    formik={formikRideInfo}
+                    handleChangeTripType={handleChangeTripType}
+                    locationChecker={locationChecker}
+                    setLocationCkecker={setLocationCkecker}
+                    accomAddrChecker={accomAddrChecker}
+                    setAccomAddrChecker={setAccomAddrChecker}
+                    selectedTripType={selectedTripType}
+                  />
                 )}
-              </Button>
-              {/* )} */}
-            </Stack>
+                {activeStep === 1 && (
+                  <ChooseVehicleForm
+                    hour={formikRideInfo.values.hour}
+                    distanceInMiles={formikRideInfo.values.distanceInMiles}
+                    formik={formikChooseVehicle}
+                    rideSummaryData={formikRideInfo.values}
+                  />
+                )}
+                {activeStep === 2 && (
+                  <TripDetail
+                    formik={formikTripDetail}
+                    rideSummaryData={formikRideInfo.values}
+                    vehicleSummaryData={generateVehicleSummaryData()}
+                  />
+                )}
+                {activeStep === 3 && (
+                  <ContactDetailForm
+                    formik={formikContact}
+                    rideSummaryData={formikRideInfo.values}
+                    vehicleSummaryData={generateVehicleSummaryData()}
+                    tripSummaryData={generateTripSummaryData()}
+                  />
+                )}
+                {activeStep === 4 && (
+                  <Summary
+                    formik={formikSummary}
+                    rideSummaryData={formikRideInfo.values}
+                    vehicleSummaryData={generateVehicleSummaryData()}
+                    tripSummaryData={generateTripSummaryData()}
+                    contactSummaryData={generateContactSummaryData()}
+                  />
+                )}
+                {activeStep === 5 && <Success />}
+              </Box>
+            </Grid>
+            {activeStep !== 5 && (
+              <Grid item xs={10} mt={3}>
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                    color="secondary"
+                  >
+                    BACK
+                  </Button>
+                  <Button variant="contained" onClick={handleSubmit}>
+                    {isBookPending ? (
+                      <CircularProgress size={25} sx={{ color: "#FFF" }} />
+                    ) : (
+                      getNextButtonLabel()
+                    )}
+                  </Button>
+                  {/* )} */}
+                </Stack>
+              </Grid>
+            )}
           </Grid>
-        )}
-      </Grid>
 
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        open={open}
-        onClose={() => setOpen((prev) => !prev)}
-        key={"bottom" + "left"}
-        autoHideDuration={3000}
-      >
-        <Alert
-          onClose={() => setOpen((prev) => !prev)}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+          <Snackbar
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            open={open}
+            onClose={() => setOpen((prev) => !prev)}
+            key={"bottom" + "left"}
+            autoHideDuration={3000}
+          >
+            <Alert
+              onClose={() => setOpen((prev) => !prev)}
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
+      )}
     </Box>
   );
 }

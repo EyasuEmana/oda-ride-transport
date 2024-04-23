@@ -43,6 +43,7 @@ const CreditCardForm = ({ formik }) => {
   }
   const handleCardInfoSubmit = async (e) => {
     e.preventDefault();
+    // Expiration date must be in MM/YYYY format
     const body = {
       creditCardNumber: cardInfo.number,
       expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
@@ -57,6 +58,12 @@ const CreditCardForm = ({ formik }) => {
       .then((result) => {
         if (result.data) {
           formik.setFieldValue("isValidCardInfo", true);
+          formik.setFieldValue("creditCardNumber", cardInfo.number);
+          formik.setFieldValue(
+            "expirationDate",
+            formatDateString(cardInfo.expiry)
+          );
+          formik.setFieldValue("securityCode", cardInfo.cvc);
           setErrorresponse((prev) => ({ ...prev, isError: false }));
           setSuccessresponse({
             isSuccess: true,

@@ -58,9 +58,10 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
 
   const isRoundTrip = () => {
     return (
-      tripType == "Round-Trip" ||
-      tripType == "Ride to the airport(round trip)" ||
-      tripType == "Ride from the airport(round trip)"
+      (tripType == "Round-Trip" ||
+        tripType == "Ride to the airport(round trip)" ||
+        tripType == "Ride from the airport(round trip)") &&
+      !(travelType === "3")
     );
   };
   const getAdditionalAtStopOnTheWay = async () => {

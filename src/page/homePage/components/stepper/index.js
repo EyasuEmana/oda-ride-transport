@@ -10,10 +10,10 @@ import styled from "@emotion/styled";
 
 const steps = [
   "Ride Info",
-  "Choose a Vehicle",
+  "Vehicle",
   "Trip Detail",
-  "Enter Contact Details",
-  "Booking Summary",
+  "Contact Details",
+   "Booking Summary",
 ];
 
 export default function CustomStepper({ step }) {
