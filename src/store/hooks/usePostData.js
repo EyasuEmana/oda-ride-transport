@@ -10,14 +10,14 @@ const postData = async (endpoint, data) => {
 
     if (response.status === 200 || response.status === 201) {
       toast.success(response?.data?.message || `Successfully added!`, {
-        // position: toast.POSITION.TOP_RIGHT,
+        // position: toast.POSITION.TOP_CENTER
       });
-      return response.data;
+      // return response.data;
     }
     return response.data;
   } catch (error) {
     toast.error(error?.response?.data?.message || "Error...", {
-      // position: toast.POSITION.TOP_RIGHT,
+      // position: toast.POSITION.TOP_CENTER
     });
     throw error?.response?.data;
   }

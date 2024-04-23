@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 import {
   Grid,
@@ -108,6 +109,8 @@ function ViewCarDetail(props) {
           label={status ? "Active" : "Inactive"}
         />
       </Grid>
+      <ToastContainer/>
+
     </Grid>
   );
 }

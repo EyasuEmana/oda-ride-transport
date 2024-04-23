@@ -1,10 +1,10 @@
 
 import React from "react"
 export const columns =  [
-    {
-        accessorKey: 'userId',
-        header: 'ID',
-      },    
+    // {
+    //     accessorKey: 'userId',
+    //     header: 'ID',
+    //   },    
       {
         accessorKey: 'fullName',
         header: 'Full Name'

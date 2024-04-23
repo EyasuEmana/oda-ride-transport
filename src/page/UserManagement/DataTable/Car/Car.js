@@ -6,6 +6,7 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import MyComponent, { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function Cars() {
   const [carId, setCarId] = React.useState(null);
@@ -74,6 +75,7 @@ function Cars() {
         title={"Car"}
         handleViewClick={handleViewClick}
       />
+      <ToastContainer />
     </div>
   );
 }

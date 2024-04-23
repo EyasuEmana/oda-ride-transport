@@ -6,20 +6,26 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { useNavigate } from "react-router-dom";
 import { columns } from "./columns";
+import { ToastContainer } from "react-toastify";
 
 function Users() {
   const [userId, setUserId] = React.useState(null);
-  let endpoint = `/api/v1/users`;
+  let postendpoint = `/api/v1/users`;
+  let getendpoint = `/api/v1/users?role=user`;
+  let putendpoint = `/api/v1/users`;
+  let deleteendpoint = `/api/v1/users`;
+
+
   const {
     data: response,
     isLoading: isLoadingGet,
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData(getendpoint);
   const navigate = useNavigate();
 
-  const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
+  const { mutate, isLoading, isError, data, isSuccess } = usePostData(postendpoint);
   const handleNewAdd = async ({ values, table }) => {
     mutate(values);
 
@@ -32,11 +38,11 @@ function Users() {
     isError: isErrorUpdate,
     isSuccess: setSuccessUpdate,
     error: errorupdate,
-  } = usePutData(endpoint,userId, data);
+  } = usePutData(putendpoint,userId, data);
 
   const handleEdit = async ({ row, values, table }) => {
     update({
-      endpoint: endpoint,
+      endpoint: putendpoint,
       Id: row.original.userId,
       data: values,
     });
@@ -46,11 +52,11 @@ function Users() {
     navigate("/dashboard/user/user-detail", { state: { rowData } });
   };
 
-  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(endpoint, userId);
+  const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(deleteendpoint, userId);
 
   const openDeleteConfirmModal = (row) => {
     if (window.confirm("Are you sure you want to delete this User?")) {
-      deleteData({ endpoint: endpoint, Id: row.original.userId });
+      deleteData({ endpoint: deleteendpoint, Id: row.original.userId });
     }
   };
 
@@ -70,6 +76,8 @@ function Users() {
         title={"User"}
         handleViewClick={handleViewClick}
       />
+            <ToastContainer/>
+
     </div>
   );
 }

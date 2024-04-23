@@ -31,7 +31,7 @@ export default function ReasonPopup({
           bookingId: bookingId,
           bookingType: bookingType.toUpperCase(),
           action: "REJECTED",
-          rejectionReason: reason,
+          rejectionReason: reason,  
         }
       );
   

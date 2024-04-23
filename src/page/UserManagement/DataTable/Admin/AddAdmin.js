@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import BACKEND_API from "../../../store/utils/API";
+import BACKEND_API from "../../../../store/utils/API";
 
 export default function AddAdmin() {
   const [loading, setLoading] = useState(false);
@@ -35,14 +35,15 @@ export default function AddAdmin() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const result = await BACKEND_API.post(
-          `/api/v1/users/admin`,
-          values
-        );
+        const result = await BACKEND_API.post(`/api/v1/users/admin`, values);
         setSuccessMessage(result.data.message || "Admin created successfully!");
         formikAdmin.resetForm();
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.message) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
           setErrorMessage(error.response.data.message);
         } else {
           setErrorMessage("Failed to create admin");
@@ -58,7 +59,9 @@ export default function AddAdmin() {
     <Box>
       <Box sx={{ backgroundColor: "#DDD", padding: 2, mb: 2 }}>
         <center>
-          <Typography sx={{ fontSize: 20, color: "#03930A", fontWeight: "bold" }}>
+          <Typography
+            sx={{ fontSize: 20, color: "#03930A", fontWeight: "bold" }}
+          >
             Create Admin
           </Typography>
         </center>
@@ -75,8 +78,13 @@ export default function AddAdmin() {
               fullWidth
               label={"full name"}
               {...formikAdmin.getFieldProps("fullName")}
-              error={formikAdmin.touched.fullName && Boolean(formikAdmin.errors.fullName)}
-              helperText={formikAdmin.touched.fullName && formikAdmin.errors.fullName}
+              error={
+                formikAdmin.touched.fullName &&
+                Boolean(formikAdmin.errors.fullName)
+              }
+              helperText={
+                formikAdmin.touched.fullName && formikAdmin.errors.fullName
+              }
             />
           </Grid>
           <Grid item xs={12} md={4} lg={5}>
@@ -124,9 +132,7 @@ export default function AddAdmin() {
             {successMessage && (
               <Alert severity="success">{successMessage}</Alert>
             )}
-            {errorMessage && (
-              <Alert severity="error">{errorMessage}</Alert>
-            )}
+            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
           </Grid>
           <Grid item xs={12}>
             <Button

@@ -11,7 +11,10 @@ import {
 import * as yup from "yup";
 import { useFormik } from "formik";
 import BACKEND_API from "../../../../store/utils/API";
-import CustomTextarea from './../../../../assets/theme/CustomTextarea';
+import CustomTextarea from "./../../../../assets/theme/CustomTextarea";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function AddContent() {
   const [loading, setLoading] = useState(false);
@@ -33,6 +36,8 @@ export default function AddContent() {
     addressZipCode: yup.string().required("Address Zip-code"),
     addressState: yup.string().required("State Address required"),
     aboutUsDescription: yup.string().required("About us Description required"),
+    termsAndCondition: yup.string().required("Terms and Condition"),
+    safetyandTrust: yup.string().required("Safety and Trust"),
   });
 
   const formikContent = useFormik({
@@ -41,26 +46,26 @@ export default function AddContent() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const result = await BACKEND_API.post(
+        const response = await BACKEND_API.post(
           `/api/v1/footer-contents`,
           values
         );
+        if (response.status === 200 || response.status === 201) {
+          toast.success(response?.data?.message || `Content Updated successfully!`, {
+            // position: toast.POSITION.TOP_CENTER
+          });
+          // return response.data;
+        }
         setSuccessMessage(
-          result.data.message || "Content created successfully!"
+          response.data.message || "Content Updated successfully!"
         );
         // Update local state with form data
         setFormData(values);
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setErrorMessage(error.response.data.message);
-        } else {
-          setErrorMessage("Failed to create content");
-        }
-        console.error("Error creating content:", error);
+      }  catch (error) {
+        toast.error(error?.response?.data?.message || "Error...", {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        throw error?.response?.data;
       } finally {
         setLoading(false);
       }
@@ -73,10 +78,29 @@ export default function AddContent() {
       try {
         // Make API call to fetch existing data
         const response = await BACKEND_API.get(`/api/v1/footer-contents`);
-        console.log("point:", response)
         const existingData = response.data; // Assuming the response contains existing data
-        // Update local state with existing data
-        setFormData(existingData);
+        formikContent.setFieldValue("contactEmail", existingData.contactEmail);
+        formikContent.setFieldValue(
+          "contactPhoneNumber",
+          existingData.contactPhoneNumber
+        );
+        formikContent.setFieldValue(
+          "addressZipCode",
+          existingData.addressZipCode
+        );
+        formikContent.setFieldValue("addressState", existingData.addressState);
+        formikContent.setFieldValue(
+          "aboutUsDescription",
+          existingData.aboutUsDescription
+        );
+        formikContent.setFieldValue(
+          "termsAndCondition",
+          existingData.termsAndCondition
+        );
+        formikContent.setFieldValue(
+          "safetyandTrust",
+          existingData.safetyandTrust
+        );
       } catch (error) {
         console.error("Error fetching existing data:", error);
       }
@@ -92,7 +116,7 @@ export default function AddContent() {
           <Typography
             sx={{ fontSize: 20, color: "#03930A", fontWeight: "bold" }}
           >
-            Add Content
+            Update Content
           </Typography>
         </center>
       </Box>
@@ -165,18 +189,12 @@ export default function AddContent() {
             />
           </Grid>
           <Grid item xs={12} md={4} lg={5}>
-            <CustomTextarea
-              rows={4} // Set the number of rows to display initially
-              placeholder={"About Us Description"} // Placeholder text
-              {...formikContent.getFieldProps("aboutUsDescription")}
-              error={
-                Boolean(formikContent.errors.aboutUsDescription) &&
-                formikContent.touched.aboutUsDescription
-              }
-              sx={{
-                width: "100%", // Set the width to 100%
-                minHeight: "100px", // Set the minimum height to 100px
-                resize: "vertical", // Allow vertical resizing
+            <CKEditor
+              editor={ClassicEditor}
+              data={formikContent.values.aboutUsDescription} // Pass initial data
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                formikContent.setFieldValue("aboutUsDescription", data);
               }}
             />
             {formikContent.touched.aboutUsDescription &&
@@ -186,13 +204,45 @@ export default function AddContent() {
                 </Typography>
               )}
           </Grid>
+          <Grid item xs={12} md={4} lg={5}>
+            <CKEditor
+              editor={ClassicEditor}
+              data={formikContent.values.safetyandTrust} // Pass initial data
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                formikContent.setFieldValue("safetyandTrust", data);
+              }}
+            />
+            {formikContent.touched.safetyandTrust &&
+              formikContent.errors.safetyandTrust && (
+                <Typography variant="caption" color="error">
+                  {formikContent.errors.safetyandTrust}
+                </Typography>
+              )}
+          </Grid>
 
-          <Grid item xs={12}>
+           <Grid item xs={12} md={4} lg={5}>
+            <CKEditor
+              editor={ClassicEditor}
+              data={formikContent.values.termsAndCondition} // Pass initial data
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                formikContent.setFieldValue("termsAndCondition", data);
+              }}
+            />
+            {formikContent.touched.termsAndCondition &&
+              formikContent.errors.termsAndCondition && (
+                <Typography variant="caption" color="error">
+                  {formikContent.errors.termsAndCondition}
+                </Typography>
+              )}
+          </Grid>
+          {/* <Grid item xs={12}>
             {successMessage && (
               <Alert severity="success">{successMessage}</Alert>
             )}
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-          </Grid>
+          </Grid> */}
 
           {/* Other form fields */}
           <Grid item xs={12}>
@@ -214,6 +264,8 @@ export default function AddContent() {
                 "Add Content"
               )}
             </Button>
+            <ToastContainer/>
+
           </Grid>
         </Grid>
       </Box>

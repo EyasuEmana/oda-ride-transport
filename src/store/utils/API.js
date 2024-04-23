@@ -2,9 +2,8 @@ import axios from "axios";
 
 // Create an Axios instance with a base URL
 export const BACKEND_API = axios.create({
-  baseURL: "https://api.odatransportation.com",
+  baseURL: "http://api.odatransportation.com",
 });
-
 // Add a request interceptor to modify headers before requests are sent
 BACKEND_API.interceptors.request.use((config) => {
   // Get the token from sessionStorage
