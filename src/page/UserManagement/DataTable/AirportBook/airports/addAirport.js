@@ -27,7 +27,7 @@ export default function AddAirPort() {
   const navigate = useNavigate();
   const onLoad = useCallback((map) => (mapRef.current = map), []);
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
+    googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
     libraries: libraries,
   });
   function onAirportChanged() {
