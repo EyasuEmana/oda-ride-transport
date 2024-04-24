@@ -212,7 +212,9 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
                 onChange={handleChangeCarType}
               >
                 {carTypes.map((carType, index) => (
-                  <MenuItem value={carType}>{carType}</MenuItem>
+                  <MenuItem key={carType} value={carType}>
+                    {carType}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -310,6 +312,7 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
             {extraOptions &&
               extraOptions.map((option) => (
                 <ExtraOptionComponent
+                  key={option.extraOptionId}
                   option={option}
                   formik={formik}
                   handleExtraOptionSelect={handleExtraOptionSelect}

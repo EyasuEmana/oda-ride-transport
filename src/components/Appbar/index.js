@@ -247,7 +247,7 @@ function Header({ handleUsernameFocus }) {
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <List>
           {getNavbarMenu().map((menu, key) => (
-            <ListItem key={key}>
+            <ListItem key={menu.link}>
               <ListItemButton>
                 <Link
                   onClick={() => {

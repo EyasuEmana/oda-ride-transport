@@ -120,7 +120,12 @@ function Index() {
               <Stack spacing={1} direction={"row"} alignItems={"center"}>
                 {socialMedias?.map(({ link, title }) => {
                   return (
-                    <IconButton component="a" href={link} target="_blank">
+                    <IconButton
+                      key={title}
+                      component="a"
+                      href={link}
+                      target="_blank"
+                    >
                       {getIcon(title)}
                     </IconButton>
                   );

@@ -78,6 +78,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
           <Stack direction={"column"} spacing={2} alignItems={"center"}>
             {serviceCardData.map((service) => (
               <ServiceCard
+                key={service.id}
                 imgUrl={service.imgUrl}
                 text={service.text}
                 id={service.id}

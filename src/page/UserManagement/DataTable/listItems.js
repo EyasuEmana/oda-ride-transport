@@ -5,7 +5,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Collapse, List } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';import LinkIcon from '@mui/icons-material/Link';
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import LinkIcon from "@mui/icons-material/Link";
 import { HourglassBottom } from "@mui/icons-material";
 import { Stop } from "@mui/icons-material";
 import { Portrait } from "@mui/icons-material";
@@ -23,9 +24,6 @@ import { FlightTakeoff } from "@mui/icons-material";
 import UpdateIcon from "@mui/icons-material/Update";
 import ContentIcon from "@mui/icons-material/ContactEmergency";
 import AdminIcon from "@mui/icons-material/AdminPanelSettingsTwoTone";
-
-
-
 
 const menus = [
   {
@@ -158,7 +156,7 @@ function ListItems() {
   return (
     <>
       {menus.map((menu, key) => (
-        <React.Fragment key={key}>
+        <React.Fragment key={menu.link}>
           <ListItemButton
             sx={{
               "&.Mui-selected": {
@@ -188,7 +186,7 @@ function ListItems() {
               <List component="div" disablePadding>
                 {menu.subItems.map((subItem, itemindex) => (
                   <ListItemButton
-                    key={itemindex}
+                    key={subItem.index}
                     sx={{
                       pl: 6,
                       "&.Mui-selected": {

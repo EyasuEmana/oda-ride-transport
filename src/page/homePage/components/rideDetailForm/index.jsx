@@ -76,7 +76,7 @@ function Index({
   const { airports } = useSelector((state) => state.airportReducer);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
-    
+
     libraries: libraries,
   });
 
@@ -432,7 +432,9 @@ function Index({
                   helperText={formik.touched.tripType && formik.errors.tripType}
                 >
                   {trip?.map((key) => (
-                    <MenuItem value={key}>{key}</MenuItem>
+                    <MenuItem value={key} key={key}>
+                      {key}
+                    </MenuItem>
                   ))}
                 </Select>
                 {formik.touched.tripType && (
@@ -461,7 +463,9 @@ function Index({
                   }
                 >
                   {airports?.map((airport, key) => (
-                    <MenuItem value={airport}>{airport.airportName}</MenuItem>
+                    <MenuItem value={airport} key={airport.airportName}>
+                      {airport.airportName}
+                    </MenuItem>
                   ))}
                 </Select>
                 {formik.touched.airportName && (

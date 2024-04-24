@@ -34,7 +34,14 @@ function Order() {
         </Grid>
 
         {passengerBooks?.map((order) => (
-          <Grid item xs={12} md={6} lg={3} justifyItems={"center"}>
+          <Grid
+            key={order.bookId}
+            item
+            xs={12}
+            md={6}
+            lg={3}
+            justifyItems={"center"}
+          >
             <center>
               <OrderCard order={order} />
             </center>
