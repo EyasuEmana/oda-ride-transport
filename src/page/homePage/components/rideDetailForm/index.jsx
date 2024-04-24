@@ -66,7 +66,6 @@ function Index({
   const matchXS = useMediaQuery(theme.breakpoints.down("md"));
 
   const params = useParams();
-  const navigate = useNavigate();
   const travelType = params.id;
   const pickupPhysicalAddressRef = useRef();
   const dropDownAddressRef = useRef();
@@ -76,7 +75,8 @@ function Index({
   const pointToPointTripTypes = useMemo(() => ["One-Way", "Round-Trip"]);
   const { airports } = useSelector((state) => state.airportReducer);
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAPSC6erLz9efudf70AKJlwp4gBjn2R5Qo",
+    googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
+    
     libraries: libraries,
   });
 

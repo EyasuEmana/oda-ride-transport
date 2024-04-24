@@ -34,7 +34,6 @@ import AirportPickupPreferenceDetail from "./page/UserManagement/DataTable/Airpo
 import AirportDetail from "./page/UserManagement/DataTable/AirportBook/airports/AirportDetail";
 import AddCar from "./page/UserManagement/DataTable/Car/AddCar";
 import ContentDetail from "./page/UserManagement/DataTable/UpdateContent/ContentDetail";
-import AddAdmin from "./page/UserManagement/DataTable/Admin/AddAdmin";
 import AddContent from "./page/UserManagement/DataTable/UpdateContent/AddContent";
 import NotInCaliforniaError from "./components/NotInCaliforniaError";
 import { isAdminAuthenticated, isUserAuthenticated } from "./util/authUtil";
@@ -106,7 +105,7 @@ function App() {
               element={<TermAndCondition />}
             />
             <Route
-              path="/trust-and-safety"
+              path="/privacy-policy"
               element={<Trust />}
             />
             <Route
