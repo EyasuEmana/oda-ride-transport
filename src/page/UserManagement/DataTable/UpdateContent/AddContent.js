@@ -281,7 +281,7 @@ export default function AddContent() {
               {loading ? (
                 <CircularProgress size={20} sx={{ color: "#FFF" }} />
               ) : (
-                "Add Content"
+                "Update Content"
               )}
             </Button>
             <ToastContainer />
