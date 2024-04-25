@@ -20,7 +20,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import { TiThMenuOutline } from "react-icons/ti";
-import logo from "../../assets/images/Odaa Transportation - Logo-01.svg";
+import logo from "../../assets/images/OdaaLogo.svg";
 import { useDispatch } from "react-redux";
 import RSButton from "../RSButton";
 import { Link, scroller } from "react-scroll";

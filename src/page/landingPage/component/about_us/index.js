@@ -2,24 +2,33 @@ import React from "react";
 import { Box, Stack, Grid, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import RSTypography from "../../../../components/RSTypography";
-import logoUrl from "../../../../assets/images/Odaa Transportation - Logo-01.svg";
+import logoUrl from "../../../../assets/images/OdaaLogo.svg";
+import logoUrlLowOpacity from "../../../../assets/images/OdaaLogolowOpacity.png";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 function Index() {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.up("1030"));
   const { aboutUsDescription } = useSelector((state) => state.footerReducer);
-
+  const backgroundStyle = {
+    backgroundImage: `url(${logoUrlLowOpacity})`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+  };
   return (
     <Grid
       item
       container
       xs={11}
+      alignItems={"center"}
       justifyContent={"center"}
       sx={{
         borderTop: "2px solid #CCC",
         borderBottom: "2px solid #CCC",
-        paddingY: 5,
+        padding: 5,
         my: 6,
+        backgroundColor: "#EEE",
       }}
       id="aboutus"
     >
@@ -30,11 +39,15 @@ function Index() {
         </Grid>
       )}
 
-      <Grid item xs={8}>
+      <Grid item xs={10} md={8} sx={!isMatch ? backgroundStyle : null}>
         <RSTypography txtcolor={theme.palette.info.light} fontsize={"25px"}>
           About Us
         </RSTypography>
-        <RSTypography>{aboutUsDescription}</RSTypography>
+        <Box>
+          <RSTypography sx={{ textAlign: "justify" }}>
+            {aboutUsDescription}
+          </RSTypography>
+        </Box>
       </Grid>
     </Grid>
   );

@@ -125,6 +125,10 @@ function Index() {
                       component="a"
                       href={link}
                       target="_blank"
+                      sx={{
+                        border: "1px solid #FFF",
+                        "&:hover": { border: "1px solid #CCC" },
+                      }}
                     >
                       {getIcon(title)}
                     </IconButton>

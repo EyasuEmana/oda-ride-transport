@@ -13,26 +13,27 @@ import Faq from "./component/FAQ";
 import AboutUs from "./component/about_us";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
-
+import { motion } from "framer-motion";
 function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
-  const { isAuthenticated } = useSelector((state) => state.authReducer);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const serviceCardData = [
     {
       id: 1,
       imgUrl: car,
+      delay: 0,
       text: "From doorstep to destination, we cater to your needs, everywhere and anytime.",
     },
     {
       id: 2,
       imgUrl: plane,
+      delay: 0.3,
       text: "Reserve transportation to and from the airport in advance for tranquility.",
     },
     {
       id: 3,
       imgUrl: clock,
+      delay: 0.6,
       text: "We're here for you, for as long as you require. Accessible within your locality.",
     },
   ];
@@ -61,17 +62,29 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
               "Discover the safest and most customer-friendly ride system in our
               city!"
             </RSTypography>
-            <RSButton
-              sx={{ width: 200 }}
-              backgroundcolor={"#FF0013"}
-              txtcolor={"#FFF"}
-              onClick={() => {
-                navigate(`/home/1`);
+            <motion.div
+              animate={{ scale: 1 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{
+                repeat: Infinity,
+                type: "spring",
+                bounce: 5,
+                duration: 4,
               }}
+              initial={{ scale: 0.9 }}
             >
-              Unlock your ride
-              <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
-            </RSButton>
+              <RSButton
+                sx={{ width: 200 }}
+                backgroundcolor={"#FF0013"}
+                txtcolor={"#FFF"}
+                onClick={() => {
+                  navigate(`/home/1`);
+                }}
+              >
+                Unlock your ride
+                <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
+              </RSButton>
+            </motion.div>
           </Stack>
         </Grid>
         <Grid item md={5} xs={11}>
@@ -82,7 +95,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
                 imgUrl={service.imgUrl}
                 text={service.text}
                 id={service.id}
-                handleUsernameFocus={handleUsernameFocus}
+                delay={service.delay}
               />
             ))}
           </Stack>
