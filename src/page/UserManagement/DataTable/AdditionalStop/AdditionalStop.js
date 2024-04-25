@@ -82,7 +82,7 @@ function AddtionalStop() {
         title={"Addtional Stop"}
         handleViewClick={handleViewClick}
       />
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }

@@ -14,11 +14,13 @@ import PaymentStatusPopup from "../../PaymentStatus";
 import BookingStatusPoup from "../../BookingStatus";
 import { BACKEND_API } from "../../../../../store/utils/API";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 function ViewBookDetail(props) {
   const location = useLocation();
   const {
     tripType,
     airportId,
+    PaymentDetail,
     numberOfPassengers,
     numberOfSuitcases,
     accommodationAddress,
@@ -41,6 +43,10 @@ function ViewBookDetail(props) {
   } = location.state?.rowData || {};
 
   const airportBookId = location.state?.rowData?.airportBookId;
+  const airportName = location.state?.rowData?.Airport?.airportName;
+  const carName = location.state?.rowData?.Car?.carName;
+  const preferenceName = location.state?.rowData?.AirportPickupPreference?.preferenceName;
+
 
   const [open, setOpen] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
@@ -64,6 +70,11 @@ function ViewBookDetail(props) {
   };
 
   const endpoint = `/api/v1/admin/bookings/approve`;
+  const detailendpoint= `}/api/v1/airport-books/`
+
+
+
+
   const handleAcceptBook = async () => {
     try {
       const response = await BACKEND_API.post(endpoint, {
@@ -165,6 +176,8 @@ function ViewBookDetail(props) {
           </Grid>
           <Field label="Trip Type" value={tripType} />
           <Field label="Airport id" value={airportId} />
+          <Field label="Credit card Number" value={PaymentDetail?.creditCardNumber} />
+
           <Field label="Num. of Passenger" value={numberOfPassengers} />
           <Field label="Num. of Suitcase" value={numberOfSuitcases} />
           <Field label="Accomodation Addr." value={accommodationAddress} />
@@ -176,6 +189,8 @@ function ViewBookDetail(props) {
           <Field label="Pickup DateTime" value={pickupDateTime} />
           <Field label="Arrival Flight Number" value={arrivalFlightNumber} />
           <Field label="distanceInMiles" value={distanceInMiles} />
+          <Field label="airportName" value={airportName} />
+
           <Field
             label="Additional stop on the way descrption"
             value={additionalStopOnTheWayDescription}
