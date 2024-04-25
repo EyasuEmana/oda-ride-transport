@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "react-query";
 import { BACKEND_API } from "../utils/API";
 import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
 
 const postData = async (endpoint, data) => {
   try {
@@ -19,7 +18,7 @@ const postData = async (endpoint, data) => {
     toast.error(error?.response?.data?.message || "Error...", {
       // position: toast.POSITION.TOP_CENTER
     });
-    throw error?.response?.data;
+    // throw error?.response?.data;
   }
 };
 

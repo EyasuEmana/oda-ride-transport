@@ -9,10 +9,18 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_API } from "../../../store/utils/API";
+import { ToastContainer, toast } from "react-toastify";
 
-export default function PaymentStatusPopup({ open, handleClose, bookingId, bookingType }) {
+export default function PaymentStatusPopup({
+  open,
+  handleClose,
+  bookingId,
+  bookingType,
+}) {
   const [status, setStatus] = useState("NOT_PAID"); // Default value
   const [isUpdated, setIsUpdated] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const paymentStatusOptions = [
     "NOT_PAID",
     "AWAITING_PAYMENT",
@@ -20,9 +28,9 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
     "PAID",
     "PENDING_REFUND",
     "REFUNDED",
-    "CANCELLED"
+    "CANCELLED",
   ];
-  const endpoint = `/api/v1/`
+  const endpoint = `/api/v1/`;
   const handleBook = async () => {
     try {
       // Make PUT request using the BACKEND_API instance
@@ -32,17 +40,30 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
           status: status,
         }
       );
-  
+
       // Handle response
-      if (response.status === 200) {
-        handleClose();
-        setIsUpdated(true);
+      if (response.status === 200 || response.status === 201) {
+        toast.success(
+          response?.data?.message || `Payment Updated successfully!`,
+          {
+            autoClose: 6000,
+            // position: toast.POSITION.TOP_CENTER
+          }
+        );
+        //    handleClose();
+        // setIsUpdated(true);
+        // return response.data;
       }
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      console.error("Error occurred while rejecting book:", error);
-      // Handle error if needed
+      toast.error(error?.response?.data?.message ||" Network error...", {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      handleClose();
+      setIsUpdated(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,9 +102,7 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
       >
         <DialogTitle>Change Payment Status</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Please, Select Payment status
-          </DialogContentText>
+          <DialogContentText>Please, Select Payment status</DialogContentText>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -99,7 +118,8 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
           </select>
         </DialogContent>
         <DialogActions>
-          <Button   variant="contained"
+          <Button
+            variant="contained"
             sx={{
               backgroundColor: "red", // Set background color to #03930a
               color: "white", // Set text color to white or any color you prefer
@@ -107,8 +127,13 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
                 backgroundColor: "#027c08", // Change color on hover if needed
               },
             }}
-            fullWidth onClick={handleClose}>Cancel</Button>
-          <Button   variant="contained"
+            fullWidth
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
             sx={{
               backgroundColor: "#03930a", // Set background color to #03930a
               color: "white", // Set text color to white or any color you prefer
@@ -117,23 +142,13 @@ export default function PaymentStatusPopup({ open, handleClose, bookingId, booki
               },
             }}
             fullWidth
-           onClick={handleBook}>Submit</Button>
+            onClick={handleBook}
+          >
+            Submit
+          </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={isUpdated}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Payment Update Successfully
-        </Alert>
-      </Snackbar>
+      <ToastContainer position="top-center" />
     </React.Fragment>
   );
 }

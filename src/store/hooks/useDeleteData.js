@@ -10,7 +10,7 @@ const useDeleteData = () => {
     mutationFn: async ({ endpoint, Id }) => {
       const response = await BACKEND_API.delete(`${endpoint}/${Id}`);
 
-      if (response.status === 200) {
+      if (response.status === 200 || 201) {
         const successMessage =
           response.success && response.message
             ? response?.message

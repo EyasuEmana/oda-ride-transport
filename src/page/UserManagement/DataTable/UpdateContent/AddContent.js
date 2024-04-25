@@ -65,10 +65,10 @@ export default function AddContent() {
         // Update local state with form data
         setFormData(values);
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Error...", {
+        toast.error(error?.response?.data?.message || " Network error...", {
           // position: toast.POSITION.TOP_CENTER
         });
-        throw error?.response?.data;
+        // throw error?.response?.data;
       } finally {
         setLoading(false);
       }
@@ -81,7 +81,9 @@ export default function AddContent() {
       try {
         // Make API call to fetch existing data
         const response = await BACKEND_API.get(`/api/v1/footer-contents`);
-        const existingData = response.data; // Assuming the response contains existing data
+        
+        const existingData = response.data; 
+        // Assuming the response contains existing data
         formikContent.setFieldValue("contactEmail", existingData.contactEmail);
         formikContent.setFieldValue(
           "contactPhoneNumber",
@@ -281,7 +283,7 @@ export default function AddContent() {
               {loading ? (
                 <CircularProgress size={20} sx={{ color: "#FFF" }} />
               ) : (
-                "Add Content"
+                "Update Content"
               )}
             </Button>
             <ToastContainer />

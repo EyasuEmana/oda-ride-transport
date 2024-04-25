@@ -6,6 +6,7 @@ import usePostData from "../../../../../store/hooks/usePostData";
 import usePutData from "../../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function AirportpickupPreference() {
   const [pickupPreferenceId, setPickupPreferenceId] = React.useState(null);
@@ -74,6 +75,7 @@ function AirportpickupPreference() {
         title={"Airport pickup preference"}
         handleViewClick={handleViewClick}
       />
+      <ToastContainer/>
     </div>
   );
 }

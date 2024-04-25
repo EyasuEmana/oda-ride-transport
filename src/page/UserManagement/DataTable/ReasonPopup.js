@@ -20,6 +20,9 @@ export default function ReasonPopup({
   bookingType,
 }) {
   const [reason, setReason] = useState("");
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
   const endpoint = `/api/v1/admin/bookings/approve`
   const navigate = useNavigate();
@@ -39,21 +42,27 @@ export default function ReasonPopup({
   
       // Handle response
       if (response.status === 200 || response.status === 201) {
-        toast.success(response?.data?.message || `Successfully added!`, {
+        toast.success(response?.data?.message || `Action successfully  taken!`, {
+          autoClose: 6000,
+
           // position: toast.POSITION.TOP_CENTER
         });
         // return response.data;
       }
-        handleClose();
-        setIsRejected(true);
+        // handleClose();
+        // setIsRejected(true);
       
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Error...", {
+      toast.error(error?.response?.data?.message || " Network error...", {
+
         // position: toast.POSITION.TOP_CENTER
       });
-      throw error?.response?.data;
+      //  handleClose();
+      //   setIsUpdated(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,21 +132,8 @@ export default function ReasonPopup({
             fullWidth onClick={handleReject}>Submit</Button>
         </DialogActions>
       </Dialog>
-      {/* <Snackbar
-        open={isRejected}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Book Rejected Successfully
-        </Alert>
-      </Snackbar> */}
-                  <ToastContainer/>
+
+      <ToastContainer position="top-center"/>
 
     </React.Fragment>
   );

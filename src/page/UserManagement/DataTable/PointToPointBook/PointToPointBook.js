@@ -7,6 +7,7 @@ import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
 import useGetData12 from "../../../../store/hooks/airbook";
+import { ToastContainer } from "react-toastify";
 function PointToPointBooks() {
   const [pointToPointBookId, setPointToPointBookId] = React.useState(null);
 const navigate = useNavigate();
@@ -88,8 +89,9 @@ const navigate = useNavigate();
         isError={isErrorGet}
         title={"Point to Point Book"}
         handleViewClick={handleViewClick}
-
       />
+            <ToastContainer />
+
     </div>
   );
 }

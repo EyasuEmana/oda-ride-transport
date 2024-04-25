@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Grid, Typography, Stack } from "@mui/material";
 import { useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 function AirportPickupPreferenceDetail(props) {
   const location = useLocation();
   const {
@@ -53,6 +54,7 @@ function AirportPickupPreferenceDetail(props) {
       {/* <Grid item container xs={12} md={6}>
         
       </Grid> */}
+      <ToastContainer/>
     </Grid>
   );
 }
