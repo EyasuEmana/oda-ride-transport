@@ -1,35 +1,43 @@
 import { useQuery, useQueryClient } from "react-query";
 import { BACKEND_API } from "../utils/API";
+import { toast } from "react-toastify";
 
 const fetchData = async (endpoint) => {
   try {
     const response = await BACKEND_API.get(endpoint);
-    return response.data.data;
+    // console.log("data", response.data)
+    if (response.status === 200 || response.status === 201) {
+      toast.success(response?.data?.message || `Successfully Loaded!`, {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      return response.data.data;
+    }
+
+    // return response.data;
   } catch (error) {
-    throw new Error(`Failed to fetch data from the ${endpoint}.`);
+    toast.error(error?.response?.data?.message || " Network error...", {
+      // position: toast.POSITION.TOP_CENTER
+    });
+    // throw error?.response?.data;
   }
 };
 
-const useGetData12 = (endpoint) => {
+const useGetData = (endpoint) => {
   const queryClient = useQueryClient(); // Access queryClient
 
-  return useQuery(
-    ["getData", endpoint], // Unique key for this query
-    async () => {
-      try {
-        const data = await fetchData(endpoint);
-        return data;
-      } catch (error) {
-        throw new Error(`Failed to fetch data.`);
-      }
+  return useQuery([endpoint], () => fetchData(endpoint), {
+    onSuccess: (endpoint) => {
+      // // Display success message only once after successful fetch
+      // if (!queryClient.getQueryData([endpoint])) {
+      //   toast.success(data?.message || `Successfully Loaded!`, {
+      //     // position: toast.POSITION.TOP_CENTER
+      //   });
+      // }
+      // Invalidate queries that depend on this data upon successful fetch
+      queryClient.invalidateQueries([endpoint]);
     },
-    {
-      onSuccess: () => {
-        // Invalidate queries that depend on this data upon successful fetch
-        queryClient.invalidateQueries(["getData", endpoint]);
-      },
-    }
-  );
+    // enabled: !queryClient.getQueryData([endpoint]), // Disable query if data already exists in the cache
+  });
 };
 
-export default useGetData12;
+export default useGetData;

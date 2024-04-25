@@ -10,6 +10,8 @@ import {
 } from "@react-google-maps/api";
 import { checkServiceLocation } from "../../../../../util/locationUtil";
 import { useNavigate } from "react-router-dom";
+import BACKEND_API from "../../../../../store/utils/API";
+import { ToastContainer, toast } from "react-toastify";
 const libraries = ["places"];
 
 export default function AddAirPort() {
@@ -80,9 +82,23 @@ export default function AddAirPort() {
     });
   };
   const handleSubmit = async () => {
-    const result = await axios
-      .post("https://api.odatransportation.com/api/v1/airports", airportData)
-      .then((result) => console.log("data: ", result.data));
+    try {
+      // Use BACKEND_API instance to make the POST request
+      const response = await BACKEND_API.post("/api/v1/airports", airportData);
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Successfully added!`, {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        // return response.data;
+      }
+
+
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error...", {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      // throw error?.response?.data;
+    }
   };
   if (!isLoaded) return <>loading</>;
   return (
@@ -126,6 +142,7 @@ export default function AddAirPort() {
           <DirectionsRenderer directions={directionsResponse} />
         )}
       </GoogleMap>
+      <ToastContainer/>
     </Box>
   );
 }

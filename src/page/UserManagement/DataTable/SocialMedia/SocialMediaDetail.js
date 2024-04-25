@@ -10,11 +10,15 @@ import {
 import { useLocation } from "react-router-dom";
 import { BACKEND_API } from "../../../../store/utils/API";
 import SocialMedia from "./SocialMedia";
+import { ToastContainer, toast } from "react-toastify";
+
 function SocialMediaDetail(props) {
   const location = useLocation();
 
   const { socialMediaId, link, title, status1 } = location.state?.rowData || {};
+  const [isUpdated, setIsUpdated] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(false); // Initialize status as false initially
   useEffect(() => {
     // Set the status based on the initial value from the API
@@ -27,14 +31,18 @@ function SocialMediaDetail(props) {
       const response = await BACKEND_API.put(
         `/api/v1/social-medias/${socialMediaId}/toggle-status`
       );
-      if (response.status === 200) {
-        // Toggle the status in the UI
-        setStatus(!status);
-      } else {
-        console.error("Failed to toggle status");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+        });
+        //  
       }
+      
     } catch (error) {
-      console.error("Error toggling status:", error);
+      toast.error(error?.response?.data?.message || "Error...", {
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,8 +78,10 @@ function SocialMediaDetail(props) {
           />
         </Grid>
       </Grid>
-     
+      <ToastContainer position="top-center" />
+
     </Grid>
+    
   );
 }
 export default SocialMediaDetail;
