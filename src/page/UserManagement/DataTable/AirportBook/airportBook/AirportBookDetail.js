@@ -13,7 +13,7 @@ import ReasonPopup from "../../ReasonPopup";
 import PaymentStatusPopup from "../../PaymentStatus";
 import BookingStatusPoup from "../../BookingStatus";
 import { BACKEND_API } from "../../../../../store/utils/API";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 function ViewBookDetail(props) {
   const location = useLocation();
   const {
@@ -45,6 +45,9 @@ function ViewBookDetail(props) {
   const [open, setOpen] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
   const [popupType, setPopupType] = useState(null);
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const handleClickOpen = (type) => {
     setOpen(true);
@@ -69,13 +72,18 @@ function ViewBookDetail(props) {
         action: "ACCEPTED",
       });
 
-      if (response.status === 200) {
-        setIsAccepted(true);
-        // navigate("/dashboard/airportbook");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+        });
+        //  
       }
-      // console.log("response: ", response);
+      
     } catch (error) {
-      console.error("Error occurred while accepting book:", error);
+      toast.error(error?.response?.data?.message || " Network error...", {
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -214,6 +222,7 @@ function ViewBookDetail(props) {
           >
             REJECT BOOKING
           </Button>
+
         </Grid>
 
         <Grid item sx={5}>
@@ -237,6 +246,8 @@ function ViewBookDetail(props) {
             EDIT PAYMENT STATUS
           </Button>
         </Grid>
+
+
       </Grid>
 
       {popupType === "REJECT" && (
@@ -265,22 +276,9 @@ function ViewBookDetail(props) {
           handleClose={handleClose}
         />
       )}
-      <ToastContainer />
+      <ToastContainer position="top-center" />
 
-      <Snackbar
-        open={isAccepted}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Book Accepted Successfully
-        </Alert>
-      </Snackbar>
+     
     </>
   );
 }

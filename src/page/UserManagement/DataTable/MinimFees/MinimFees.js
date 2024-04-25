@@ -11,6 +11,8 @@ import {
 import * as yup from "yup";
 import { useFormik } from "formik";
 import BACKEND_API from "../../../../store/utils/API";
+import { Toast } from "bootstrap";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function MinimumFees() {
   const [loading, setLoading] = useState(false);
@@ -31,26 +33,24 @@ export default function MinimumFees() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const result = await BACKEND_API.post(
+        const response = await BACKEND_API.post(
           `/api/v1/minimum-start-fee`,
           values
         );
-        setSuccessMessage(
-          result.data.message || "Minimum fee Updated successfully!"
-        );
+        if (response.status === 200 || response.status === 201) {
+          toast.success(response?.data?.message || `Successfully Updated!`, {
+            // position: toast.POSITION.TOP_CENTER
+          });
+          // return response.data;
+        }
+       
         // Update local state with form data
         // setFormData(values);
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setErrorMessage(error.response.data.message);
-        } else {
-          setErrorMessage("Failed to Update fees");
-        }
-        console.error("Error updating fee:", error);
+      }catch (error) {
+        toast.error(error?.response?.data?.message || " Network error...", {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        // throw error?.response?.data;
       } finally {
         setLoading(false);
       }
@@ -66,7 +66,10 @@ export default function MinimumFees() {
         const existingData = response.data; // Assuming the response contains existing data
         formikContent.setFieldValue("fee", existingData.fee);
       } catch (error) {
-        console.error("Error fetching existing data:", error);
+        toast.error(error?.response?.data?.message ||" Network error...", {
+          // position: toast.POSITION.TOP_CENTER
+        });
+        // throw error?.response?.data;
       }
     };
 
@@ -103,12 +106,12 @@ export default function MinimumFees() {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             {successMessage && (
               <Alert severity="success">{successMessage}</Alert>
             )}
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-          </Grid>
+          </Grid> */}
 
           {/* Other form fields */}
           <Grid item xs={12}>
@@ -131,6 +134,7 @@ export default function MinimumFees() {
               )}
             </Button>
           </Grid>
+          <ToastContainer/>
         </Grid>
       </Box>
     </Box>

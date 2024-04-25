@@ -6,6 +6,7 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 
 function AddtionalStop() {
   const [additionalStopId, setAdditionalStopId] = React.useState(null);
@@ -80,8 +81,8 @@ function AddtionalStop() {
         isError={isErrorGet}
         title={"Addtional Stop"}
         handleViewClick={handleViewClick}
-
       />
+      <ToastContainer/>
     </div>
   );
 }

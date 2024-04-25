@@ -20,7 +20,7 @@ const fetchData = async (endpoint) => {
     toast.error(error?.response?.data?.message || "Error...", {
       // position: toast.POSITION.TOP_CENTER
     });
-    throw error?.response?.data;
+    // throw error?.response?.data;
   }
 };
 

@@ -14,6 +14,7 @@ import PaymentStatusPoup from "../PaymentStatus";
 import ReasonPopup from "../ReasonPopup";
 import { BACKEND_API } from "../../../../store/utils/API";
 import PaymentStatusPopup from "../PaymentStatus";
+import { ToastContainer, toast } from "react-toastify";
 
 function ViewHourlyBookDetail(props) {
   const location = useLocation();
@@ -38,6 +39,9 @@ function ViewHourlyBookDetail(props) {
   const hourlyCharterBookId = location.state?.rowData?.hourlyCharterBookId;
 
   const [open, setOpen] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
   const [popupType, setPopupType] = useState(null);
 
@@ -63,13 +67,32 @@ function ViewHourlyBookDetail(props) {
         action: "ACCEPTED",
       });
 
-      if (response.status === 200) {
-        setIsAccepted(true);
-        // navigate("/dashboard/airportbook");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+          // position: toast.POSITION.TOP_CENTER
+        });
+        //    handleClose();
+        // setIsUpdated(true);
+        // return response.data;
       }
-      // console.log("response: ", response);
+      // setSuccessMessage(response.data.message || "Admin created successfully!");
+
+      // Handle response
+      // if (response.status === 200) {
+      //   handleClose();
+      //   setIsUpdated(true);
+      // }
+      // Handle navigation if needed
+      // navigate("/dashboard/airportbook")
     } catch (error) {
-      console.error("Error occurred while accepting book:", error);
+      toast.error(error?.response?.data?.message || " Network error...", {
+        // position: toast.POSITION.TOP_CENTER
+      });
+      // handleClose();
+      // setIsUpdated(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -256,7 +279,9 @@ function ViewHourlyBookDetail(props) {
         />
       )}
 
-      <Snackbar
+      <ToastContainer position="top-center" />
+
+      {/* <Snackbar
         open={isAccepted}
         autoHideDuration={4000}
         onClose={handleSnackbarClose}
@@ -269,7 +294,7 @@ function ViewHourlyBookDetail(props) {
         >
           Book Accepted Successfully
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
     </>
   );
 }

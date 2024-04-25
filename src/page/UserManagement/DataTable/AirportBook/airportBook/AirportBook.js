@@ -6,6 +6,7 @@ import usePostData from "../../../../../store/hooks/usePostData";
 import usePutData from "../../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 function AirportBooks() {
   const [airportBookId, setAirportBookId] = React.useState(null);
   const navigate = useNavigate();
@@ -80,6 +81,8 @@ function AirportBooks() {
         title={"Airport Book"}
         handleViewClick={handleViewClick}
       />
+            <ToastContainer />
+
     </div>
   );
 }

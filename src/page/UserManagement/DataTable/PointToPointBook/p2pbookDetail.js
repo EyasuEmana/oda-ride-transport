@@ -13,6 +13,7 @@ import ReasonPopup from "../ReasonPopup";
 import PaymentStatusPopup from "../PaymentStatus";
 import BookingStatusPoup from "../BookingStatus";
 import { BACKEND_API } from "../../../../store/utils/API";
+import { ToastContainer, toast } from "react-toastify";
 function P2pBookDetail(props) {
   const location = useLocation();
   // const [pointToPointBookId, setPointToPointBookId] = React.useState(null);
@@ -40,6 +41,9 @@ function P2pBookDetail(props) {
 
 
   const [open, setOpen] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
   const [popupType, setPopupType] = useState(null);
   
@@ -66,13 +70,18 @@ function P2pBookDetail(props) {
         action: "ACCEPTED",
       });
 
-      if (response.status === 200) {
-        setIsAccepted(true);
-        // navigate("/dashboard/airportbook");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+        });
+        //  
       }
-      // console.log("response: ", response);
+      
     } catch (error) {
-      console.error("Error occurred while accepting book:", error);
+      toast.error(error?.response?.data?.message || " Network error...", {
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -187,7 +196,7 @@ function P2pBookDetail(props) {
             fullWidth
             onClick={handleAcceptBook}
           >
-            ACCEPT
+            ACCEPT BOOKING
           </Button>
         </Grid>
 
@@ -258,20 +267,8 @@ function P2pBookDetail(props) {
         />
       )}
 
-      <Snackbar
-        open={isAccepted}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Book Accepted Successfully
-        </Alert>
-      </Snackbar>
+<ToastContainer position="top-center" />
+
     </>
   );
 }
