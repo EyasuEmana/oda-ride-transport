@@ -6,6 +6,7 @@ import usePostData from "../../../../../store/hooks/usePostData";
 import usePutData from "../../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function Airports() {
   const [airportId, setAirportId] = React.useState(null);
@@ -73,8 +74,8 @@ function Airports() {
         isError={isErrorGet}
         title={"Air ports"}
         handleViewClick={handleViewClick}
-
       />
+      <ToastContainer/>
     </div>
   );
 }

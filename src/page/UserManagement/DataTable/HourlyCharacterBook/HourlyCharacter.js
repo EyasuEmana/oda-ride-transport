@@ -7,6 +7,7 @@ import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
 import useGetData12 from "../../../../store/hooks/airbook";
+import { ToastContainer } from "react-toastify";
 
 function HourlyCharacter() {
   const [hourlyCharacterId, setHourlyCharacterId] = React.useState(null);
@@ -93,6 +94,8 @@ function HourlyCharacter() {
         title={"Hourly Character Book"}
         handleViewClick={handleViewClick}
       />
+            <ToastContainer />
+
     </div>
   );
 }

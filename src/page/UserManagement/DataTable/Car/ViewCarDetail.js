@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 import {
   Grid,
@@ -31,6 +31,9 @@ function ViewCarDetail(props) {
     fuelType,
     extras,
   } = location.state?.rowData || {};
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const [status, setStatus] = useState(false); // Initialize status as false initially
   useEffect(() => {
@@ -44,14 +47,18 @@ function ViewCarDetail(props) {
       const response = await BACKEND_API.put(
         `/api/v1/cars/${carId}/toggle-status`
       );
-      if (response.status === 200) {
-        // Toggle the status in the UI
-        setStatus(!status);
-      } else {
-        console.error("Failed to toggle status");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+        });
+        //  
       }
+      
     } catch (error) {
-      console.error("Error toggling status:", error);
+      toast.error(error?.response?.data?.message || " Network error...", {
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +116,7 @@ function ViewCarDetail(props) {
           label={status ? "Active" : "Inactive"}
         />
       </Grid>
-      <ToastContainer/>
+      <ToastContainer position="top-center" />
 
     </Grid>
   );

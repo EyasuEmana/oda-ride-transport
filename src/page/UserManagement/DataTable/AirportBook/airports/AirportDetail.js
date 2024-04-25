@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, FormControlLabel, Switch,Grid, Typography,Button, Stack } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { BACKEND_API } from "../../../../../store/utils/API";
+import { ToastContainer, toast } from "react-toastify";
 function AirportDetail(props) {
   const location = useLocation();
   const {
@@ -12,7 +13,10 @@ function AirportDetail(props) {
     airportAddressLatitude,
  
   } = location.state?.rowData || {};
-  const [status, setStatus] = useState(false); // Initialize status as false initially
+  const [status, setStatus] = useState(false); 
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [loading, setLoading] = useState(false);// Initialize status as false initially
   useEffect(() => {
     // Set the status based on the initial value from the API
     setStatus(location.state?.rowData?.status === "Active");
@@ -24,14 +28,18 @@ function AirportDetail(props) {
       const response = await BACKEND_API.put(
         `/api/v1/airports/${airportId}/toggle-status`
       );
-      if (response.status === 200) {
-        // Toggle the status in the UI
-        setStatus(!status);
-      } else {
-        console.error("Failed to toggle status");
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
+        });
+        //  
       }
+      
     } catch (error) {
-      console.error("Error toggling status:", error);
+      toast.error(error?.response?.data?.message || " Network error...", {
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +90,7 @@ function AirportDetail(props) {
           label={status ? "Active" : "Inactive"}
         />
       </Grid>
+      <ToastContainer position="top-center" />
     </Grid>
   );
 }

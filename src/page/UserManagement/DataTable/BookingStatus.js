@@ -41,9 +41,9 @@ export default function BookingStatusPoup({
   ];
   const navigate = useNavigate();
 
-  const endpoint = `/api/v1/`
+  const endpoint = `/api/v1/`;
   const handleBook = async () => {
-    setLoading(true);
+    // setLoading(true);
 
     try {
       // Make PUT request using the BACKEND_API instance
@@ -54,30 +54,34 @@ export default function BookingStatusPoup({
         }
       );
       if (response.status === 200 || response.status === 201) {
-        toast.success(response?.data?.message || `Successfully added!`, {
+        toast.success(response?.data?.message || `Book Updated successfully!`, {
+          autoClose: 6000,
           // position: toast.POSITION.TOP_CENTER
         });
+        //    handleClose();
+        // setIsUpdated(true);
         // return response.data;
       }
-      setSuccessMessage(response.data.message || "Admin created successfully!");
+      // setSuccessMessage(response.data.message || "Admin created successfully!");
 
       // Handle response
-      if (response.status === 200) {
-        handleClose();
-        setIsUpdated(true);
-      }
+      // if (response.status === 200) {
+      //   handleClose();
+      //   setIsUpdated(true);
+      // }
       // Handle navigation if needed
       // navigate("/dashboard/airportbook")
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Error...", {
+      toast.error(error?.response?.data?.message || " Network error...", {
+
         // position: toast.POSITION.TOP_CENTER
       });
-      throw error?.response?.data;
+      //  handleClose();
+      //   setIsUpdated(true);
     } finally {
       setLoading(false);
     }
   };
-
 
   const handleSnackbarClose = () => {
     setIsUpdated(false);
@@ -108,7 +112,6 @@ export default function BookingStatusPoup({
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
             const email = formJson.email;
-            console.log(email);
             handleClose();
           },
         }}
@@ -160,23 +163,10 @@ export default function BookingStatusPoup({
             Summit
           </Button>
         </DialogActions>
-        <ToastContainer/>
-
+        <ToastContainer />
       </Dialog>
-      <Snackbar
-        open={isUpdated}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Book Update Successfully
-        </Alert>
-      </Snackbar>
+
+      <ToastContainer position="top-center"/>
     </React.Fragment>
   );
 }

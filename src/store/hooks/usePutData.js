@@ -26,7 +26,7 @@ const usePutData = () => {
       } catch (error) {
         toast.error(error?.response?.data?.message);
 
-        throw error;
+        // throw error;
       }
     },
   });
