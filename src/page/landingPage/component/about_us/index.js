@@ -15,7 +15,7 @@ function Index() {
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
-  };
+  }; 
   return (
     <Grid
       item
