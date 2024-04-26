@@ -20,7 +20,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import { TiThMenuOutline } from "react-icons/ti";
-import logo from "../../assets/images/Odaa Transportation - Logo-01.svg";
+import logo from "../../assets/images/OdaaLogo.svg";
 import { useDispatch } from "react-redux";
 import RSButton from "../RSButton";
 import { Link, scroller } from "react-scroll";
@@ -190,6 +190,13 @@ function Header({ handleUsernameFocus }) {
                   }}
                 />
               ))}
+              <RSButton
+                variant="text"
+                sx={{ color: "info.main",border:"1px solid info.main" }}
+                 onClick={() => navigate("/home/1")}
+              >
+                Book now
+              </RSButton>
             </StyledTabs>
           )}
         </Stack>
@@ -247,7 +254,7 @@ function Header({ handleUsernameFocus }) {
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <List>
           {getNavbarMenu().map((menu, key) => (
-            <ListItem key={key}>
+            <ListItem key={menu.link}>
               <ListItemButton>
                 <Link
                   onClick={() => {

@@ -295,6 +295,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                 >
                   {preferences?.map((preference, key) => (
                     <FormControlLabel
+                      key={preference.pickupPreferenceId}
                       value={preference.pickupPreferenceId}
                       name={key}
                       control={<RSRadio />}
@@ -386,6 +387,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                             return (
                               !stopOnWay.hidden && (
                                 <FormControlLabel
+                                  key={stopOnWay.additionalStopId}
                                   value={stopOnWay.additionalStopId}
                                   name={stopOnWay.additionalStopPrice}
                                   control={<RSRadio />}

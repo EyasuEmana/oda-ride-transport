@@ -157,6 +157,7 @@ export const getPassengerBooks = createAsyncThunk(
           pointToPointBookings.forEach((pointToPointBook) => {
             const book = {
               ...pointToPointBook,
+              bookId: pointToPointBook.pointToPointBookId,
               travelType: "Point To Point",
               tripType: pointToPointBook.tripType,
             };
@@ -166,6 +167,7 @@ export const getPassengerBooks = createAsyncThunk(
           hourlyCharterBookings.forEach((hourlyBook) => {
             const book = {
               ...hourlyBook,
+              bookId: hourlyBook.hourlyCharterBookId,
               travelType: "Hourly",
               tripType: "Hourly",
             };
@@ -175,6 +177,7 @@ export const getPassengerBooks = createAsyncThunk(
           airportBookings.forEach((airportBook) => {
             const book = {
               ...airportBook,
+              bookId: airportBook.airportBookId,
               travelType: "Airport",
               tripType: airportBook.tripType,
             };

@@ -6,7 +6,7 @@ import StepSummary from "../StepSummary";
 import CreditCardForm from "./CreditCardForm";
 import { remote_host } from "../../../../globalVariable";
 import axios from "axios";
-import { authHeader, getAccessToken } from "../../../../util/authUtil";
+import { authHeader } from "../../../../util/authUtil";
 import { useSelector } from "react-redux";
 function Index({
   formik,
@@ -91,7 +91,7 @@ function Index({
           />
         </Grid>
         <Grid item xs={12}>
-          <Stack direction={{ lg: "row", md: "column" }} spacing={2}>
+          <Stack direction={{ md: "row", xs: "column" }} spacing={2}>
             <RSTextField
               label="Passenger Full Name"
               color={"info"}

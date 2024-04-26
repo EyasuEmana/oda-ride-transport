@@ -148,7 +148,7 @@ function StepSummary({
         {screenType == "large" ? (
           <Grid container spacing={2}>
             {[
-              ...generateSummaryData(),
+              // ...generateSummaryData(),
               ...vehicleSummaryData,
               ...tripSummaryData,
               ...contactSummaryData,
@@ -157,7 +157,7 @@ function StepSummary({
                 field?.isVisible && (
                   <Grid item xs={12} md={6}>
                     <Field
-                      key={index}
+                      key={field.value}
                       label={field.label}
                       value={field.value}
                     />

@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Box, Grid, Divider, Stack, IconButton } from "@mui/material";
 import RSTypography from "../RSTypography";
 import { useTheme } from "@emotion/react";
-import twitter from "../../assets/images/twitter.png";
-import instagram from "../../assets/images/instagram.png";
-import facebook from "../../assets/images/facebook.png";
 import { FaTelegram } from "react-icons/fa";
 import { FaPinterest } from "react-icons/fa";
 import { FiFacebook } from "react-icons/fi";
@@ -58,7 +55,7 @@ function Index() {
       return <FaPinterest color="white" size={18} />;
     }
   };
-  
+
   return (
     <Box
       sx={{ padding: 3, backgroundColor: "info.main", marginTop: 3 }}
@@ -78,9 +75,9 @@ function Index() {
             txtcolor={white}
             fontsize={"15px"}
             sx={{ cursor: "pointer" }}
-            onClick={() => navigate("/trust-and-safety")}
+            onClick={() => navigate("/privacy-policy")}
           >
-            Trust and safety
+            Privacy Policy
           </RSTypography>
           <RSTypography
             txtcolor={white}
@@ -123,7 +120,16 @@ function Index() {
               <Stack spacing={1} direction={"row"} alignItems={"center"}>
                 {socialMedias?.map(({ link, title }) => {
                   return (
-                    <IconButton component="a" href={link} target="_blank">
+                    <IconButton
+                      key={title}
+                      component="a"
+                      href={link}
+                      target="_blank"
+                      sx={{
+                        border: "1px solid #FFF",
+                        "&:hover": { border: "1px solid #CCC" },
+                      }}
+                    >
                       {getIcon(title)}
                     </IconButton>
                   );

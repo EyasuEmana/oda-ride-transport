@@ -20,13 +20,14 @@ export default function FaqAccordion() {
   return (
     <div
       style={{
-        width:  "100%",
+        width: "100%",
         marginLeft: !isMatch && "20px",
         marginRight: !isMatch && "20px",
       }}
     >
       {faqData.map((data, index) => (
         <Accordion
+          key={data.name}
           expanded={expanded === data.name}
           onChange={handleChange(data.name)}
           sx={{ backgroundColor: "#D9D9D9" }}

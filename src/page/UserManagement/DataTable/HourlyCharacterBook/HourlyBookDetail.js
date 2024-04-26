@@ -15,25 +15,35 @@ import ReasonPopup from "../ReasonPopup";
 import { BACKEND_API } from "../../../../store/utils/API";
 import PaymentStatusPopup from "../PaymentStatus";
 import { ToastContainer, toast } from "react-toastify";
+import useGetData from "../../../../store/hooks/useGetData";
 
 function ViewHourlyBookDetail(props) {
   const location = useLocation();
   const {
     pickupPhysicalAddress,
+    pickupLongitude,
+    pickupLatitude,
     dropoffPhysicalAddress,
+    dropoffLongitude,
+    dropoffLatitude,
+    pickupDateTime,
     selectedHours,
     occasion,
     specialInstructions,
+    isGuestBooking,
     bookingFor,
     passengerFullName,
     passengerCellPhone,
+    passengerEmail,
     numberOfPassengers,
     numberOfSuitcases,
     totalTripFeeInDollars,
     paymentStatus,
     bookingStatus,
+    paymentDetailId,
     userId,
     carId,
+    AdditionalStopOnTheWay,
   } = location.state?.rowData || {};
 
   const hourlyCharterBookId = location.state?.rowData?.hourlyCharterBookId;
@@ -59,6 +69,19 @@ function ViewHourlyBookDetail(props) {
     setPopupType(null);
   };
   const endpoint = `/api/v1/admin/bookings/approve`;
+
+  const detailendpoint = `/api/v1/airport-books/${hourlyCharterBookId}`;
+
+  const {
+    data: response,
+    isLoading: isLoadingGet,
+    isError: isErrorGet,
+    isFetching: isFetchingTax,
+    error: errorGet,
+  } = useGetData(detailendpoint);
+
+  console.log("object", response?.PaymentDetail?.creditCardNumber);
+
   const handleAcceptBook = async () => {
     try {
       const response = await BACKEND_API.post(endpoint, {
@@ -72,25 +95,9 @@ function ViewHourlyBookDetail(props) {
           autoClose: 6000,
           // position: toast.POSITION.TOP_CENTER
         });
-        //    handleClose();
-        // setIsUpdated(true);
-        // return response.data;
       }
-      // setSuccessMessage(response.data.message || "Admin created successfully!");
-
-      // Handle response
-      // if (response.status === 200) {
-      //   handleClose();
-      //   setIsUpdated(true);
-      // }
-      // Handle navigation if needed
-      // navigate("/dashboard/airportbook")
     } catch (error) {
-      toast.error(error?.response?.data?.message || " Network error...", {
-        // position: toast.POSITION.TOP_CENTER
-      });
-      // handleClose();
-      // setIsUpdated(true);
+      toast.error(error?.response?.data?.message || " Network error...", {});
     } finally {
       setLoading(false);
     }
@@ -185,15 +192,85 @@ function ViewHourlyBookDetail(props) {
           <Field label="Occasion" value={occasion} />
           <Field label="special Instructions" value={specialInstructions} />
           <Field label="bookingFor" value={bookingFor} />
+          <Field label="pickup Date Time" value={pickupDateTime} />
+          <Field label="Is GuestBooking" value={isGuestBooking} />
+          <Field label="Passenger full name" value={passengerFullName} />
+          <Field label="Passenger cell Phone" value={passengerCellPhone} />
+          <Field label="Passenger Email" value={passengerEmail} />
+          <Field label="Number Of Passengers" value={numberOfPassengers} />
+          <Field label="Number Of Suitcases" value={numberOfSuitcases} />
+          <Field
+            label="Total Trip Fee In Dollars"
+            value={totalTripFeeInDollars}
+          />
+          <Field label="Payment Detail Id" value={paymentDetailId} />
+          <Field label="User Id" value={userId} />
+          <Field label="Car Id" value={carId} />
 
-          {/* <Field label="Length" value={length} />
-        <Field label="Interior Color" value={interiorColor} />
-        <Field label="Exterior Color" value={exteriorColor} />
-        <Field label="Power" value={power} />
-        <Field label="Transmission Type" value={transmissionType} />
-        <Field label="Fuel Type" value={fuelType} />
-        <Field label="Extras" value={extras} /> */}
+          <Field
+            label="Credit Car-Number"
+            value={response?.PaymentDetail?.creditCardNumber}
+          />
+          <Field
+            label="Expiration date"
+            value={response?.PaymentDetail?.expirationDate}
+          />
+          <Field
+            label="Security code"
+            value={response?.PaymentDetail?.securityCode}
+          />
+          <Field
+            label="Additional Stop On the Way "
+            value={AdditionalStopOnTheWay}
+          />
+          <Field
+            label="Car Id"
+            value={response?.Car?.carId}
+          />
+          <Field
+            label="Car Name"
+            value={response?.Car?.carName}
+          />
+          <Field
+            label="Price Per-Mile"
+            value={response?.Car?.pricePerMile}
+          />
+          <Field
+            label="Price Per-Hour"
+            value={response?.Car?.pricePerHour}
+          />
         </Grid>
+
+        <Grid item container lg={8} spacing={2} mt={2}>
+          <Typography variant="h6"> Extra Options:</Typography>
+        </Grid>
+
+        {/* Check if ExtraOptions is available */}
+        {response?.ExtraOptions && response.ExtraOptions.length > 0 && (
+          <>
+            {/* Render Extra Options in a Grid */}
+            {/* <Grid item xs={12}>
+              <Typography variant="h6">Extra Options:</Typography>
+            </Grid> */}
+            {response.ExtraOptions.map((option, index) => (
+              <Grid container item xs={10} spacing={2} key={index}>
+                {/* <Grid item xs={6}> */}
+                <Field label="Extra Option Id" value={option.extraOptionId} />
+                <Field label="Description" value={option.description} />
+                {/* </Grid> */}
+                {/* <Grid item xs={6}> */}
+                <Field label="Name" value={option.name} />
+                <Field label="Price" value={option.pricePerItem} />
+                {/* </Grid> */}
+              </Grid>
+            ))}
+          </>
+        )}
+
+
+
+
+
 
         <Grid item lg={5}>
           <Button

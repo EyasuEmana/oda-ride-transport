@@ -11,7 +11,6 @@ import {
 import Stepper from "./components/stepper/index";
 import RideDetailForm from "./components/rideDetailForm";
 import ChooseVehicleForm from "./components/chooseVehicleForm";
-import Guest from "./components/GuestUser";
 import ContactDetailForm from "./components/contactDetailForm";
 import TripDetail from "./components/tripDetail";
 import { useDispatch, useSelector } from "react-redux";
