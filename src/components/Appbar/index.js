@@ -190,6 +190,13 @@ function Header({ handleUsernameFocus }) {
                   }}
                 />
               ))}
+              <RSButton
+                variant="text"
+                sx={{ color: "info.main",border:"1px solid info.main" }}
+                 onClick={() => navigate("/home/1")}
+              >
+                Book now
+              </RSButton>
             </StyledTabs>
           )}
         </Stack>

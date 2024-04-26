@@ -28,7 +28,7 @@ import axios from "axios";
 import { addMinimumInitialFee } from "../../store/reducers/bookReducers";
 import { remote_host } from "../../globalVariable";
 function Index() {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
   const [entryAsGuestOptionPage, setEntryAsGuestOptionPage] = useState(false);
   const [locationChecker, setLocationCkecker] = useState({
