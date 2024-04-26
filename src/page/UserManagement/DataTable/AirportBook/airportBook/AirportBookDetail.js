@@ -15,38 +15,40 @@ import BookingStatusPoup from "../../BookingStatus";
 import { BACKEND_API } from "../../../../../store/utils/API";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import useGetData from "../../../../../store/hooks/useGetData";
 function ViewBookDetail(props) {
   const location = useLocation();
   const {
     tripType,
-    airportId,
-    PaymentDetail,
     numberOfPassengers,
     numberOfSuitcases,
     accommodationAddress,
-    bookingStatus,
-    paymentStatus,
+    accommodationLongitude,
+    accommodationLatitude,
     airline,
-    arrivalFlightNumber,
     specialInstructions,
     pickupDateTime,
-    totalTripFeeInDollars,
+    returnPickupDateTime,
+    arrivalFlightNumber,
     distanceInMiles,
-    userId,
-    additionalStopId,
     additionalStopOnTheWayDescription,
-    pickupPreferenceId,
-    extraOptions,
+    isGuestBooking,
     bookingFor,
     passengerFullName,
     passengerCellPhone,
+    passengerEmail,
+    totalTripFeeInDollars,
+    paymentStatus,
+    AdditionalStopOnTheWay,
+    bookingStatus,
+    paymentDetailId,
+    userId,
+    additionalStopId,
+    pickupPreferenceId,
   } = location.state?.rowData || {};
 
   const airportBookId = location.state?.rowData?.airportBookId;
   const airportName = location.state?.rowData?.Airport?.airportName;
-  const carName = location.state?.rowData?.Car?.carName;
-  const preferenceName = location.state?.rowData?.AirportPickupPreference?.preferenceName;
-
 
   const [open, setOpen] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
@@ -70,10 +72,17 @@ function ViewBookDetail(props) {
   };
 
   const endpoint = `/api/v1/admin/bookings/approve`;
-  const detailendpoint= `}/api/v1/airport-books/`
+  const detailendpoint = `/api/v1/airport-books/${airportBookId}`;
 
+  const {
+    data: response,
+    isLoading: isLoadingGet,
+    isError: isErrorGet,
+    isFetching: isFetchingTax,
+    error: errorGet,
+  } = useGetData(detailendpoint);
 
-
+  // console.log("object", response?.PaymentDetail?.creditCardNumber);
 
   const handleAcceptBook = async () => {
     try {
@@ -87,12 +96,10 @@ function ViewBookDetail(props) {
         toast.success(response?.data?.message || `Book Updated successfully!`, {
           autoClose: 6000,
         });
-        //  
+        //
       }
-      
     } catch (error) {
-      toast.error(error?.response?.data?.message || " Network error...", {
-      });
+      toast.error(error?.response?.data?.message || " Network error...", {});
     } finally {
       setLoading(false);
     }
@@ -175,9 +182,6 @@ function ViewBookDetail(props) {
             </Typography>
           </Grid>
           <Field label="Trip Type" value={tripType} />
-          <Field label="Airport id" value={airportId} />
-          <Field label="Credit card Number" value={PaymentDetail?.creditCardNumber} />
-
           <Field label="Num. of Passenger" value={numberOfPassengers} />
           <Field label="Num. of Suitcase" value={numberOfSuitcases} />
           <Field label="Accomodation Addr." value={accommodationAddress} />
@@ -189,8 +193,6 @@ function ViewBookDetail(props) {
           <Field label="Pickup DateTime" value={pickupDateTime} />
           <Field label="Arrival Flight Number" value={arrivalFlightNumber} />
           <Field label="distanceInMiles" value={distanceInMiles} />
-          <Field label="airportName" value={airportName} />
-
           <Field
             label="Additional stop on the way descrption"
             value={additionalStopOnTheWayDescription}
@@ -204,7 +206,82 @@ function ViewBookDetail(props) {
           <Field label="userId" value={userId} />
           <Field label="additionalStopId" value={additionalStopId} />
           <Field label="pickupPreferenceId" value={pickupPreferenceId} />
+
+          <Field label="returnPickupDateTime" value={returnPickupDateTime} />
+          <Field label="isGuestBooking" value={isGuestBooking} />
+          <Field label="passengerCellPhone" value={passengerCellPhone} />
+          <Field label="passengerEmail" value={passengerEmail} />
+          <Field label="paymentDetailId" value={paymentDetailId} />
+
+          <Field
+            label="Credit Car-Number"
+            value={response?.PaymentDetail?.creditCardNumber}
+          />
+          <Field
+            label="Expiration date"
+            value={response?.PaymentDetail?.expirationDate}
+          />
+          <Field
+            label="Security code"
+            value={response?.PaymentDetail?.securityCode}
+          />
+
+          <Field label="Airport ID" value={response?.Airport?.airportId} />
+          <Field label="Airport name" value={response?.Airport?.airportName} />
+          <Field
+            label="Airport address"
+            value={response?.Airport?.airportAddress}
+          />
+          <Field
+            label="Additional Stop On the Way "
+            value={AdditionalStopOnTheWay}
+          />
+
+          <Field
+            label="Car Id"
+            value={response?.Car?.carId}
+          />
+          <Field
+            label="Car Name"
+            value={response?.Car?.carName}
+          />
+          <Field
+            label="Price Per-Mile"
+            value={response?.Car?.pricePerMile}
+          />
+          <Field
+            label="Price Per-Hour"
+            value={response?.Car?.pricePerHour}
+          />
+ 
         </Grid>
+
+        <Grid item container lg={8} spacing={2} mt={2}>
+          <Typography variant="h6"> Extra Options:</Typography>
+        </Grid>
+
+        {/* Check if ExtraOptions is available */}
+        {response?.ExtraOptions && response.ExtraOptions.length > 0 && (
+          <>
+            {/* Render Extra Options in a Grid */}
+            {/* <Grid item xs={12}>
+              <Typography variant="h6">Extra Options:</Typography>
+            </Grid> */}
+            {response.ExtraOptions.map((option, index) => (
+              <Grid container item xs={10} spacing={2} key={index}>
+                {/* <Grid item xs={6}> */}
+                <Field label="Extra Option Id" value={option.extraOptionId} />
+                <Field label="Description" value={option.description} />
+                {/* </Grid> */}
+                {/* <Grid item xs={6}> */}
+                <Field label="Name" value={option.name} />
+                <Field label="Price" value={option.pricePerItem} />
+                {/* </Grid> */}
+              </Grid>
+            ))}
+          </>
+        )}
+
         <Grid item lg={5}>
           <Button
             variant="contained"
@@ -237,7 +314,6 @@ function ViewBookDetail(props) {
           >
             REJECT BOOKING
           </Button>
-
         </Grid>
 
         <Grid item sx={5}>
@@ -261,8 +337,6 @@ function ViewBookDetail(props) {
             EDIT PAYMENT STATUS
           </Button>
         </Grid>
-
-
       </Grid>
 
       {popupType === "REJECT" && (
@@ -292,8 +366,6 @@ function ViewBookDetail(props) {
         />
       )}
       <ToastContainer position="top-center" />
-
-     
     </>
   );
 }

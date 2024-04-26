@@ -6,7 +6,7 @@ import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 
 function AddtionalStop() {
   const [additionalStopId, setAdditionalStopId] = React.useState(null);
@@ -46,7 +46,9 @@ function AddtionalStop() {
     table.setEditingRow(null);
   };
   const handleViewClick = (rowData) => {
-    navigate("/dashboard/additionalstop/additional-stop-detail", { state: { rowData } });
+    navigate("/dashboard/additionalstop/additional-stop-detail", {
+      state: { rowData },
+    });
   };
   const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(
     endpoint,
@@ -55,9 +57,7 @@ function AddtionalStop() {
 
   const openDeleteConfirmModal = (row) => {
     if (
-      window.confirm(
-        "Are you sure you want to delete this Addtional Stop?"
-      )
+      window.confirm("Are you sure you want to delete this Addtional Stop?")
     ) {
       deleteData({
         endpoint: endpoint,

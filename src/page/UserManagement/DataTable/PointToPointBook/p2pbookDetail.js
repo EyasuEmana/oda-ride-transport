@@ -14,39 +14,48 @@ import PaymentStatusPopup from "../PaymentStatus";
 import BookingStatusPoup from "../BookingStatus";
 import { BACKEND_API } from "../../../../store/utils/API";
 import { ToastContainer, toast } from "react-toastify";
+import useGetData from "../../../../store/hooks/useGetData";
 function P2pBookDetail(props) {
   const location = useLocation();
   // const [pointToPointBookId, setPointToPointBookId] = React.useState(null);
 
   const {
-    // pointtopointBookId,
     tripType,
     pickupPhysicalAddress,
+    pickupLongitude,
+    pickupLatitude,
     dropoffPhysicalAddress,
-    distanceInMiles,
-    numberOfPassengers,
-    numberOfSuitcases,
+    dropoffLongitude,
+    dropoffLatitude,
     pickupDateTime,
     returnPickupDateTime,
+    distanceInMiles,
     specialInstructions,
+    additionalStopOnTheWayDescription,
+    isGuestBooking,
     bookingFor,
     passengerFullName,
     passengerCellPhone,
+    passengerEmail,
+    numberOfPassengers,
+    numberOfSuitcases,
     totalTripFeeInDollars,
     paymentStatus,
     bookingStatus,
+    paymentDetailId,
+    userId,
+    carId,
+    additionalStopId,
+    AdditionalStopOnTheWay,
   } = location.state?.rowData || {};
 
   const pointToPointBookId = location.state?.rowData?.pointToPointBookId; // Provide a default value if Car is undefined
 
-
   const [open, setOpen] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
   const [popupType, setPopupType] = useState(null);
-  
 
   const handleClickOpen = (type) => {
     setOpen(true);
@@ -61,7 +70,20 @@ function P2pBookDetail(props) {
     setOpen(false);
     setPopupType(null);
   };
+
   const endpoint = `/api/v1/admin/bookings/approve`;
+  const detailendpoint = `/api/v1/point-to-point-books/${pointToPointBookId}`;
+
+  const {
+    data: response,
+    isLoading: isLoadingGet,
+    isError: isErrorGet,
+    isFetching: isFetchingTax,
+    error: errorGet,
+  } = useGetData(detailendpoint);
+
+  console.log("object", response?.PaymentDetail?.creditCardNumber);
+
   const handleAcceptBook = async () => {
     try {
       const response = await BACKEND_API.post(endpoint, {
@@ -74,12 +96,10 @@ function P2pBookDetail(props) {
         toast.success(response?.data?.message || `Book Updated successfully!`, {
           autoClose: 6000,
         });
-        //  
+        //
       }
-      
     } catch (error) {
-      toast.error(error?.response?.data?.message || " Network error...", {
-      });
+      toast.error(error?.response?.data?.message || " Network error...", {});
     } finally {
       setLoading(false);
     }
@@ -181,10 +201,68 @@ function P2pBookDetail(props) {
           <Field label="Passenger CellPhone" value={passengerCellPhone} />
           <Field label="Pickup Date Time" value={pickupDateTime} />
           <Field label="TotaTripFee In Dollars" value={totalTripFeeInDollars} />
+
+          <Field
+            label="Additional Stop On The Way Description"
+            value={additionalStopOnTheWayDescription}
+          />
+          <Field label="Is GuestBooking" value={isGuestBooking} />
+          <Field label="Passenger Email" value={passengerEmail} />
+          <Field label="Payment DetailId" value={paymentDetailId} />
+          <Field label="User Id" value={userId} />
+          <Field label="Car Id" value={carId} />
+          <Field label="Additional Stop Id" value={additionalStopId} />
+          <Field
+            label="Additional Stop On the Way"
+            value={AdditionalStopOnTheWay}
+          />
+          <Field
+            label="Credit Car-Number"
+            value={response?.PaymentDetail?.creditCardNumber}
+          />
+          <Field
+            label="Expiration date"
+            value={response?.PaymentDetail?.expirationDate}
+          />
+          <Field
+            label="Security code"
+            value={response?.PaymentDetail?.securityCode}/>
+          <Field label="Car Id" value={response?.Car?.carId} />
+          <Field label="Car Name" value={response?.Car?.carName} />
+          <Field label="Price Per-Mile" value={response?.Car?.pricePerMile} />
+          <Field label="Price Per-Hour" value={response?.Car?.pricePerHour} />
+
         </Grid>
 
+        <Grid item container lg={8} spacing={2} mt={2}>
+          <Typography variant="h6"> Extra Options:</Typography>
+        </Grid>
+
+        {/* Check if ExtraOptions is available */}
+        {response?.ExtraOptions && response.ExtraOptions.length > 0 && (
+          <>
+            {/* Render Extra Options in a Grid */}
+            {/* <Grid item xs={12}>
+              <Typography variant="h6">Extra Options:</Typography>
+            </Grid> */}
+            {response.ExtraOptions.map((option, index) => (
+              <Grid container item xs={10} spacing={2} key={index}>
+                {/* <Grid item xs={6}> */}
+                <Field label="Extra Option Id" value={option.extraOptionId} />
+                <Field label="Description" value={option.description} />
+                {/* </Grid> */}
+                {/* <Grid item xs={6}> */}
+                <Field label="Name" value={option.name} />
+                <Field label="Price" value={option.pricePerItem} />
+                {/* </Grid> */}
+              </Grid>
+            ))}
+          </>
+        )}
+
+
         <Grid item md={3}>
-        <Button
+          <Button
             variant="contained"
             sx={{
               backgroundColor: "#03930a", // Set background color to #03930a
@@ -267,8 +345,7 @@ function P2pBookDetail(props) {
         />
       )}
 
-<ToastContainer position="top-center" />
-
+      <ToastContainer position="top-center" />
     </>
   );
 }
