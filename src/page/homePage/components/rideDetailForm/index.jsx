@@ -39,7 +39,10 @@ import { MdOutlineHotel } from "react-icons/md";
 import RSRadio from "../../../../components/RSRadio";
 import { useNavigate, useParams } from "react-router-dom";
 import RSTypography from "../../../../components/RSTypography";
-import { checkServiceLocation } from "../../../../util/locationUtil";
+import {
+  checkServiceLocation,
+  isLocationInColifornia,
+} from "../../../../util/locationUtil";
 const libraries = ["places"];
 
 function Index({
@@ -216,7 +219,7 @@ function Index({
       const place = searchOriginResult.getPlace();
       const address_components = place.address_components;
 
-      const isInUsa = checkServiceLocation(address_components);
+      const isInUsa = isLocationInColifornia(address_components);
 
       const pickupPhysicalAddress = place.formatted_address;
       const latlng = {
@@ -329,7 +332,6 @@ function Index({
       console.log("heere1");
 
       if (!isInUsa) {
-        console.log("heere2");
         setAccomAddrChecker({
           isUnsupportedLocation: true,
           errorMessage: "accommodation address should be in US",
@@ -490,8 +492,8 @@ function Index({
                   error={formik.touched.hour && Boolean(formik.errors.hour)}
                   helperText={formik.touched.hour && formik.errors.hour}
                 >
-                  {Array.from({ length: 24 }, (_, index) => (
-                    <MenuItem value={index + 1}>{index + 1}</MenuItem>
+                  {Array.from({ length: 20 }, (_, index) => (
+                    <MenuItem value={index + 5}>{index + 5}</MenuItem>
                   ))}
                 </Select>
                 {formik.touched.hour && (
@@ -574,10 +576,9 @@ function Index({
               <Autocomplete
                 onPlaceChanged={onAccommodationChange}
                 onLoad={onLoadAccomodationFunc}
-                // types={["lodging"]}
               >
                 <TextField
-                  label="Select Hotel"
+                  label="Enter Hotel/ residence/ other"
                   fullWidth
                   name="accommodationAddress"
                   value={formik.values.accommodationAddress}

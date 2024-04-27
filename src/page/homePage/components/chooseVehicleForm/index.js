@@ -37,9 +37,7 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   );
   const carTypes = useMemo(() => [
     "All Vehicles",
-    "Limousis",
     "Sedan",
-    "Stretch Limousis",
     "SUV",
     "Van",
   ]);
