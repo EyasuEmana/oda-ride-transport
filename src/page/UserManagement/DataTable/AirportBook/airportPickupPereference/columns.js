@@ -1,10 +1,7 @@
 
 import React from "react"
 export const columns =  [
-    {
-        accessorKey: 'pickupPreferenceId',
-        header: 'ID',
-      },    
+      
       {
         accessorKey: 'preferenceName',
         header: 'Preference Name'
@@ -15,14 +12,14 @@ export const columns =  [
         header: 'Preference-Price',
       },
 
-      {
-        accessorKey: 'currency',
-        header: 'Currency',
-      },    
-      {
-        accessorKey: 'status',
-        header: 'Status',
-      }
+      // {
+      //   accessorKey: 'currency',
+      //   header: 'Currency',
+      // },    
+      // {
+      //   accessorKey: 'status',
+      //   header: 'Status',
+      // }
   ]
 
  

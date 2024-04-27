@@ -1,10 +1,10 @@
 
 import React from "react"
 export const columns =  [
-    {
-        accessorKey: 'extraOptionId',
-        header: 'ID',
-      },    
+    // {
+    //     accessorKey: 'extraOptionId',
+    //     header: 'ID',
+    //   },    
       {
         accessorKey: 'name',
         header: 'Extra Option Name'
@@ -20,8 +20,9 @@ export const columns =  [
         header: 'Price per Item',
       },    
       {
-        accessorKey: 'hasMaxAllowedItems',
-        header: 'Has Max Allowed Items',
+        accessorKey: 'hasMaxAllowedLimit',
+        
+        header: 'Has Max Allowed Limit',
       },
       {
         accessorKey: 'maxAllowedItems',
