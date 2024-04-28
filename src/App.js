@@ -44,6 +44,9 @@ import Admin from "./page/UserManagement/DataTable/Admin/Admin";
 import AdminDetails from "./page/UserManagement/DataTable/Admin/Admindetails";
 import TermAndCondition from "./page/landingPage/component/termCondition";
 import Trust from "./page/landingPage/component/trust";
+import PopularPlaces from "./page/UserManagement/DataTable/PopularPlace/PopularPlace";
+import AddPopularPlace from "./page/UserManagement/DataTable/PopularPlace/AddpopularPlace";
+import ViewPopularPlaceDetail from "./page/UserManagement/DataTable/PopularPlace/PopularPlaceDetail";
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
   const queryClient = new QueryClient();
@@ -142,7 +145,7 @@ function App() {
                 path={"book/book-detail"}
                 element={<ViewBookDetail />}
               ></Route>
-              <Route path={"fee/update-fee"} element={<MinimumFees />}></Route>
+              <Route path={"popular/popular-place"} element={<PopularPlaces />}></Route>
               <Route
                 path={"book/hourlybook-detail"}
                 element={<ViewHourlyBookDetail />}
@@ -163,6 +166,10 @@ function App() {
               ></Route>
               <Route path={"add-airport"} element={<AddAirPort />}></Route>
               <Route path={"add-car"} element={<AddCar />}></Route>
+              <Route path={"add-popular-place"} element={<AddPopularPlace/>}></Route>
+              <Route path={"popular-places"} element={<ViewPopularPlaceDetail/>}></Route>
+
+
               <Route path={"extraOptions"} element={<ExtraOptions />} />
               <Route
                 path={"pointToPointBookss"}

@@ -47,6 +47,10 @@ export const columns =  [
         header: 'Max Suit Cases',
       },
       {
+        accessorKey: 'maxPassengers',
+        header: 'Max  passengers',
+      },
+      {
         accessorKey: 'carType',
         header: 'Car Type',
       },
@@ -58,42 +62,50 @@ export const columns =  [
       // Cell: ({ cell }) => <p>{cell.getValue()[0].destination.name}</p>,
       // Cell: ({ cell }) => <p>{console.log('sss',cell.getValue()[0]?.destination.name)}</p>,
     },
-    // {
-    //   accessorKey: 'currency',
-    //   header: 'Currency',
-    // },
-    // {
-    //   accessorKey: 'engineType',
-    //   header: 'Engine type',
-    // },
-    // {
-    //   accessorKey: 'length',
-    //   header: 'Length',
-    // },
-    // {
-    //   accessorKey: 'interiorColor',
-    //   header: 'Interior Color',
-    // },
-    // {
-    //   accessorKey: 'exteriorColor',
-    //   header: 'Exterior Color',
-    // },
-    // {
-    //   accessorKey: 'power',
-    //   header: 'Power',
-    // },
-    // {
-    //   accessorKey: 'transmissionType',
-    //   header: 'Transmission Type',
-    // },
-    // {
-    //   accessorKey: 'fuelType',
-    //   header: 'Fuel Type',
-    // },
-    // {
-    //   accessorKey: 'extras',
-    //   header: 'Extras',
-    // }
+    {
+      accessorKey: 'pricePerHour',
+      header: 'Price Pre Hour',
+  },
+  {
+    accessorKey: 'minimumStartFee',
+    header: 'Minimum Start Fee',
+},
+    {
+      accessorKey: 'currency',
+      header: 'Currency',
+    },
+    {
+      accessorKey: 'engineType',
+      header: 'Engine type',
+    },
+    {
+      accessorKey: 'length',
+      header: 'Length',
+    },
+    {
+      accessorKey: 'interiorColor',
+      header: 'Interior Color',
+    },
+    {
+      accessorKey: 'exteriorColor',
+      header: 'Exterior Color',
+    },
+    {
+      accessorKey: 'power',
+      header: 'Power',
+    },
+    {
+      accessorKey: 'transmissionType',
+      header: 'Transmission Type',
+    },
+    {
+      accessorKey: 'fuelType',
+      header: 'Fuel Type',
+    },
+    {
+      accessorKey: 'extras',
+      header: 'Extras',
+    }
    
   ]
 

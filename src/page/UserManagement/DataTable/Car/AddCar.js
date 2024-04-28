@@ -39,6 +39,9 @@ export default function AddCar() {
     pricePerHour: yup
       .number("should be number")
       .required("price per hour is required"),
+      minimumStartFee: yup
+      .number("should be number")
+      .required("price per hour is required"),
     currency: yup.string().required("currency is required"),
     engineType: yup.string().required("Engine Type is required"),
     length: yup.number().required("length required"),
@@ -59,6 +62,7 @@ export default function AddCar() {
       carType: "",
       pricePerMile: 1,
       pricePerHour: 1,
+      minimumStartFee: 0,
       currency: "USD",
       engineType: "",
       length: 0,
@@ -251,6 +255,24 @@ export default function AddCar() {
               }
             />
           </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <TextField
+              fullWidth
+              label={"minimum Start Fee"}
+              {...formikCar.getFieldProps("minimumStartFee")}
+              error={
+                Boolean(formikCar.errors.minimumStartFee) &&
+                formikCar.touched.minimumStartFee
+              }
+              helperText={
+                formikCar.touched.minimumStartFee && formikCar.errors.minimumStartFee
+              }
+            />
+          </Grid>
+
+
+
           <Grid item xs={12} md={6} lg={4}>
             <TextField
               fullWidth
