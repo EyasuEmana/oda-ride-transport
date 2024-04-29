@@ -32,6 +32,14 @@ export default function AddPopularPlace() {
     description: yup.string().required("popular place description is required"),
     
   });
+  const token = sessionStorage.getItem("access_token");
+
+  // Set the Authorization header with the token
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const formikPopular = useFormik({
     initialValues: {
         title: "",
@@ -50,7 +58,7 @@ export default function AddPopularPlace() {
       createPopularLoading: true,
     }));
     await axios
-      .post(`https://api.odatransportation.com/api/v1/popular-places`, newPopularData)
+      .post(`https://api.odatransportation.com/api/v1/popular-places`, newPopularData, config)
       .then((response) => {
         const popularPlaceId = response.data.popularPlaceId;
         uploadPopularPlaceImage(popularPlaceId);
@@ -73,20 +81,19 @@ export default function AddPopularPlace() {
   };
   const uploadPopularPlaceImage = async (popularPlaceId) => {
     const popularForm = new FormData();
-    popularForm.append("popularPlaceImage", formikPopular.values.popularPlaceImage); // Assuming formikPopular.values.PopularPaceImage is the file object
+popularForm.append("image", formikPopular.values.popularPlaceImage);
     await axios
       .put(
         `https://api.odatransportation.com/api/v1/popular-places/${popularPlaceId}/upload-image`,
-        popularForm
-      )
+        popularForm, config)
       .then(() => {
-        setCreatePopularFail((prev) => ({ ...prev, isCreatePopularFail: false }));
+        setCreatePopularFail((prev) => ({ ...prev, isCreateCarFail: false }));
         setCreatePopularSuccess({
           createPopularLoading: false,
           isCreatePopularSuccess: true,
           createPopularSuccessMessage: "Popular place is successfully registered",
         });
-        formikPopular.resetForm();
+        // formikPopular.resetForm();
       })
       .catch((error) => {
         setCreatePopularSuccess((prev) => ({
