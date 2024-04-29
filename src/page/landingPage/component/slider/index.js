@@ -14,11 +14,14 @@ export default function Example(props) {
   const getPopularPlaces = async () => {
     try {
       await axios
-        .get(`${remote_host}/api/v1/popular-places/all`, authHeader())
+        .get(`${remote_host}/api/v1/popular-places`, authHeader())
         .then((res) => {
+          console.log("result: ", res.data);
           setPopularPlaces(res.data);
         });
-    } catch (e) {}
+    } catch (e) {
+      console.log("error: ", e);
+    }
   };
 
   useEffect(() => {
