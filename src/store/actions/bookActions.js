@@ -38,7 +38,7 @@ export const book = createAsyncThunk(
       expirationDate: contact.expirationDate,
       securityCode: contact.securityCode,
     };
-    if (rideInfo?.tripType == "Round-Trip" && !travelType == "3") {
+    if (rideInfo?.tripType === "Round-Trip" && !travelType === "3") {
       body.returnPickupDateTime =
         tripDetail?.formattedReturnPickupDate +
         " " +
@@ -54,7 +54,7 @@ export const book = createAsyncThunk(
     body.extraOptions = extraOptions;
 
     try {
-      if (travelType == 1) {
+      if (travelType === "1") {
         body.tripType = rideInfo?.tripType;
         body.distanceInMiles = rideInfo?.distanceInMiles;
 
@@ -68,7 +68,7 @@ export const book = createAsyncThunk(
           body,
           headers
         );
-      } else if (travelType == 2) {
+      } else if (travelType === "2") {
         const body = {
           tripType: rideInfo?.tripType,
           airportId: rideInfo?.airPortId,
@@ -119,7 +119,7 @@ export const book = createAsyncThunk(
           headers
         );
         return res.data;
-      } else if (travelType == 3) {
+      } else if (travelType === "3") {
         if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
           delete body.additionalStopId;
           delete body.additionalStopOnTheWayDescription;

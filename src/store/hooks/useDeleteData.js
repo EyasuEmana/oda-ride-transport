@@ -1,11 +1,9 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import { BACKEND_API } from "../utils/API";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const useDeleteData = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ endpoint, Id }) => {
       const response = await BACKEND_API.delete(`${endpoint}/${Id}`);
