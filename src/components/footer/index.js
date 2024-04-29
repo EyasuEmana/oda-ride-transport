@@ -21,13 +21,7 @@ function Index() {
   const navigate = useNavigate();
   const white = theme.palette.text.main;
 
-  const SocalMediaIcon = ({ url }) => (
-    <img
-      src={url}
-      alt="social media"
-      style={{ width: "24px", height: "24px" }}
-    />
-  );
+ 
   const getSocialMediaLinks = async () => {
     await axios
       .get(`${remote_host}/api/v1/social-medias`)
@@ -89,7 +83,7 @@ function Index() {
           </RSTypography>
         </Grid>
 
-        <Grid item md={2} xs={6}>
+        <Grid item md={3} xs={6}>
           <RSTypography txtcolor={white} fontsize={"18px"}>
             Contact Us
           </RSTypography>

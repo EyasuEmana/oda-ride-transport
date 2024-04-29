@@ -45,7 +45,8 @@ function Index() {
     (state) => state.authReducer
   );
   const { fee } = useSelector((state) => state.bookReducer);
-  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  // const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
   const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
   const location = useLocation();

@@ -37,7 +37,6 @@ import ContentDetail from "./page/UserManagement/DataTable/UpdateContent/Content
 import AddContent from "./page/UserManagement/DataTable/UpdateContent/AddContent";
 import NotInCaliforniaError from "./components/NotInCaliforniaError";
 import { isAdminAuthenticated, isUserAuthenticated } from "./util/authUtil";
-import MinimumFees from "./page/UserManagement/DataTable/MinimFees/MinimFees";
 import SocialMedia from "./page/UserManagement/DataTable/SocialMedia/SocialMedia";
 import SocialMediaDetail from "./page/UserManagement/DataTable/SocialMedia/SocialMediaDetail";
 import Admin from "./page/UserManagement/DataTable/Admin/Admin";

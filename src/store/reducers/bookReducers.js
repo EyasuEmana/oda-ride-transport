@@ -54,10 +54,6 @@ const UserSlice = createSlice({
       const { stopOnWayFee, prevAddtionalStopOnTheWayFee } = action.payload;
       state.fee = state.fee - prevAddtionalStopOnTheWayFee + stopOnWayFee;
     },
-    reduceAirportPreferenceFee: (state, action) => {
-      const { prevAirportPickupPreferenceFee, fee } = state;
-      fee = fee - prevAirportPickupPreferenceFee;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(book.pending, (state, action) => {
@@ -101,7 +97,6 @@ export const {
   addExtraOptionFee,
   reduceExtraOptionFee,
   addAirportPreferenceFee,
-  reduceAirportPreferenceFee,
   addAdditionalStopFee,
   addMinimumInitialFee,
 } = UserSlice.actions;
