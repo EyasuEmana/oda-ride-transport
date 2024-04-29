@@ -1,26 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import RSTypography from "../../../../components/RSTypography";
-export default function Example(props) {
-  var items = [
-    {
-      imgUrl: "https://watermark.lovepik.com/photo/40194/0673.jpg_wh1200.jpg",
-      title: "The Grand Canyon",
-      description:
-        "Explore the awe-inspiring beauty of one of the world's most iconic natural wonders, The Grand Canyon.",
-    },
-    {
-      imgUrl:
-        "https://thumbs.dreamstime.com/b/container-truck-ship-port-freight-cargo-plane-transpo-transport-import-export-commercial-logistic-shipping-business-61432246.jpg",
-      title: "Times Square, New York City",
-      description:
-        "Immerse yourself in the vibrant energy of Times Square, the bustling heart of New York City.",
-    },
-  ];
+import axios from "axios";
+import { remote_host } from "../../../../globalVariable";
+import { authHeader } from "../../../../util/authUtil";
 
+export default function Example(props) {
+  const [popularPlaces, setPopularPlaces] = useState();
+
+  const getPopularPlaces = async () => {
+    try {
+      await axios
+        .get(`${remote_host}/api/v1/popular-places/all`, authHeader())
+        .then((res) => {
+          setPopularPlaces(res.data);
+        });
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    getPopularPlaces();
+  }, []);
   return (
     <Carousel
       animation="fade"
@@ -58,10 +61,10 @@ export default function Example(props) {
         },
       }}
     >
-      {items.map(({ imgUrl, title, description }, i) => (
+      {popularPlaces?.map(({ image, title, description }, i) => (
         <SlideItem
           key={i}
-          imgUrl={imgUrl}
+          image={image}
           title={title}
           description={description}
         />
@@ -70,11 +73,11 @@ export default function Example(props) {
   );
 }
 
-function SlideItem({ imgUrl, title, description }) {
+function SlideItem({ image, title, description }) {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${imgUrl})`,
+        backgroundImage: `url(${image})`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
