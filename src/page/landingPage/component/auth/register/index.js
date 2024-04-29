@@ -19,7 +19,7 @@ function Index() {
   const { signupLoanding, signUpSuccessMessage, isSignupSuccess } = useSelector(
     (state) => state.authReducer
   );
-  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  const phoneRegex = /^(?:\+?1[-.\s]?)?\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})$/;
   const signInValidationSchema = yup.object({
     firstname: yup.string().required("first name required"),
     lastname: yup.string().required("last name required"),
