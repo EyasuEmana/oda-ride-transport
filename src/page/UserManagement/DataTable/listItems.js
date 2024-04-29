@@ -108,8 +108,8 @@ const menus = [
   },
   {
     index: 10,
-    link: "/dashboard/fee/update-fee",
-    title: "Minimum Start fees",
+    link: "/dashboard/popular/popular-place",
+    title: "Popular Places",
     icon: <AttachMoneyIcon />,
   },
 

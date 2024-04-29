@@ -13,6 +13,8 @@ function Cars() {
   const navigate = useNavigate();
 
   let endpoint = `/api/v1/cars`;
+  let getendpoint = `/api/v1/cars/all`;
+
 
   const {
     data: response,
@@ -20,7 +22,7 @@ function Cars() {
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData(getendpoint);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {

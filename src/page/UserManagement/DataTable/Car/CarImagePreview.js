@@ -86,7 +86,7 @@ function CarImagePreview({ formik }) {
           >
             {formik.touched.carImage && formik.errors.carImage
               ? formik.errors.carImage
-              : " Click here or Drop your a Car"}
+              : " Click here or Drop Car Image"}
           </Typography>
         )}
       </Box>

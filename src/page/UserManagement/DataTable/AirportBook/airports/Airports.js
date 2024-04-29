@@ -14,6 +14,7 @@ function Airports() {
   const navigate = useNavigate();
 
   let endpoint = `/api/v1/airports`;
+  const getendpoint = '/api/v1/airports/all'
 
   const {
     data: response,
@@ -21,7 +22,7 @@ function Airports() {
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData(getendpoint);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {

@@ -211,6 +211,20 @@ const MDataTable = (props) => {
                 >
                   {`Add NEW CAR`}
                 </Button>
+              ) : props.title == "Popular Places" ? (
+                <Button
+                  // variant="contained"
+                  sx={{
+                    color: "black",
+                    backgroundColor: "info.main",
+                    backgroundColor: "green",
+                  }}
+                  onClick={() => {
+                    navigate("/dashboard/add-popular-place");
+                  }}
+                >
+                  {`Add New Popular Place`}
+                </Button>
               ) : (
                 <Button
                   // variant="contained"

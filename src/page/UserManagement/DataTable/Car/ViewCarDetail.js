@@ -21,6 +21,8 @@ function ViewCarDetail(props) {
     maxSuitcases,
     carType,
     pricePerMile,
+    pricePerHour,
+    minimumStartFee,
     currency,
     engineType,
     length,
@@ -49,7 +51,6 @@ function ViewCarDetail(props) {
       );
       if (response.status === 200 || response.status === 201) {
         toast.success(response?.data?.message || `Book Updated successfully!`, {
-          autoClose: 6000,
         });
         //  
       }
@@ -100,6 +101,9 @@ function ViewCarDetail(props) {
         <Field label="Max suitcase" value={maxSuitcases} />
         <Field label="Car Type" value={carType} />
         <Field label="Price Per-mile" value={pricePerMile} />
+        <Field label="Price Per-Hour" value={pricePerHour} />
+        <Field label="Minimum Start Fee" value={minimumStartFee} />
+
         <Field label="Currency" value={currency} />
         <Field label="Engine Type" value={engineType} />
         <Field label="Length" value={length} />

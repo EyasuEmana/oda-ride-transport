@@ -71,7 +71,7 @@ export default function AddAirPort() {
       if (status == "OK") {
         if (results[0]) {
           console.log(results[0].formatted_address); // Location name
-          console.log(latLng); // Latitude and Longitude
+          // console.log(latLng); // Latitude and Longitude
           setLatLng(latLng);
         } else {
           console.log("No results found");
