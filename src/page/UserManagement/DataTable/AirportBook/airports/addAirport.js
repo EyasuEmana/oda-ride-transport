@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useRef } from "react";
-import { Box, Stack, Typography, Button, TextField, Grid } from "@mui/material";
+import { Box, Stack, Typography, Button, TextField, Grid, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import {
   useLoadScript,
@@ -28,6 +28,15 @@ export default function AddAirPort() {
   const mapRef = useRef();
   const navigate = useNavigate();
   const onLoad = useCallback((map) => (mapRef.current = map), []);
+
+
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error message
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State to control Snackbar visibility
+  
+
+
+
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
     libraries: libraries,
@@ -38,8 +47,11 @@ export default function AddAirPort() {
       const address_components = place.address_components;
 
       const isInCalifornia = checkServiceLocation(address_components);
-      if (!isInCalifornia) navigate("/not-in-california");
-
+      if (!isInCalifornia) {
+        setErrorMessage("We don't provide service around this location!");
+        setOpenSnackbar(true); // Open Snackbar when error occurs
+        return; // Exit the function if not in California
+      }
       const airportPhysicalAddress = place.formatted_address;
       const longitude = place.geometry.location.lng();
       const latitude = place.geometry.location.lat();
@@ -142,7 +154,22 @@ export default function AddAirPort() {
           <DirectionsRenderer directions={directionsResponse} />
         )}
       </GoogleMap>
-      <ToastContainer/>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={openSnackbar} // Snackbar opens when error occurs
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)} // Close Snackbar on action
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)} // Close Snackbar on action
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+      <ToastContainer position="top-center"/>
     </Box>
   );
 }
