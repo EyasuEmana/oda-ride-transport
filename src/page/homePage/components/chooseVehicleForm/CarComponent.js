@@ -32,12 +32,14 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
       <img
         style={{ width: "100%", height: "auto", objectFit: "contain" }}
         src={carImageUrl}
+        alt="car"
       />
     );
   };
   const handleSelect = () => {
     formik.setFieldValue("vehicle", carDetail.carId);
     formik.setFieldValue("vehicleName", carDetail.carName);
+    formik.setFieldValue("prevCarMinimumStartFee", carDetail.minimumStartFee);
     if (travelType == "1" || travelType == "2") {
       formik.setFieldValue("vehicleFee", parseFloat(carDetail.pricePerMile));
     } else if (travelType == "3") {

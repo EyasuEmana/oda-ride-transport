@@ -7,7 +7,7 @@ import { store } from "./store";
 import { Provider } from "react-redux";
 import compareDate from "./util/dateUtil";
 
-const isdateFreeTrial = compareDate("2024-05-01");
+const isdateFreeTrial = compareDate("2024-06-08");
 const root = ReactDOM.createRoot(
   document.getElementById(isdateFreeTrial ? "root" : "rot")
 );
