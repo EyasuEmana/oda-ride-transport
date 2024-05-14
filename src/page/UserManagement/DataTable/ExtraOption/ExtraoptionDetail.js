@@ -13,13 +13,12 @@ function ExtraOptionDetail(props) {
     currency,
     hasMaxAllowedLimit,
     maxAllowedItems,
-    status,
 
   } = location.state?.rowData || {};
 
   const [loading, setLoading] = useState(false);
 
-  const [status1, setStatus1] = useState(false); // Initialize status as false initially
+  const [status, setStatus1] = useState(false); // Initialize status as false initially
   useEffect(() => {
     // Set the status based on the initial value from the API
     setStatus1(location.state?.rowData?.status === "Active");
@@ -45,11 +44,7 @@ function ExtraOptionDetail(props) {
     }
   };
 
-
-
-
-
-
+  
   const Field = ({ label, value }) => {
     return (
       <Grid item xs={6}>

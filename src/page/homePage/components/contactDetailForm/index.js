@@ -179,7 +179,7 @@ function Index({
               onChange={handleChangeGratitude}
               defaultValue={0}
             >
-              <FormLabel id="gratitude_label" sx={{ fontSize: 20 }}>Gratitude</FormLabel>
+              <FormLabel id="gratitude_label" sx={{ fontSize: 20 }}>Gratuity</FormLabel>
               {gratuities.map((gratuity) => {
                 const { gratuityId, description, gratuityFee } = gratuity
                 return (

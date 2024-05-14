@@ -46,6 +46,8 @@ import Trust from "./page/landingPage/component/trust";
 import PopularPlaces from "./page/UserManagement/DataTable/PopularPlace/PopularPlace";
 import AddPopularPlace from "./page/UserManagement/DataTable/PopularPlace/AddpopularPlace";
 import ViewPopularPlaceDetail from "./page/UserManagement/DataTable/PopularPlace/PopularPlaceDetail";
+import Gratuity from "./page/UserManagement/DataTable/Gratutity/Gratuity";
+import GratuityDetails from "./page/UserManagement/DataTable/Gratutity/GratuityDetails";
 function App() {
   const [usernameFocus, setUsernameFocus] = useState(false);
   const queryClient = new QueryClient();
@@ -165,8 +167,8 @@ function App() {
               ></Route>
               <Route path={"add-airport"} element={<AddAirPort />}></Route>
               <Route path={"add-car"} element={<AddCar />}></Route>
-              <Route path={"add-popular-place"} element={<AddPopularPlace/>}></Route>
-              <Route path={"popular-places"} element={<ViewPopularPlaceDetail/>}></Route>
+              <Route path={"add-popular-place"} element={<AddPopularPlace />}></Route>
+              <Route path={"popular-places"} element={<ViewPopularPlaceDetail />}></Route>
 
 
               <Route path={"extraOptions"} element={<ExtraOptions />} />
@@ -216,6 +218,16 @@ function App() {
                 element={<SocialMediaDetail />}
               ></Route>
 
+
+              <Route
+                path={"gratuity"}
+                element={<Gratuity />}
+              ></Route>
+
+              <Route
+                path={"gratuity/gratuity-details"}
+                element={<GratuityDetails />}
+              ></Route>
               <Route path={"airportbook"} element={<AirportBooks />}></Route>
             </Route>
             <Route path="*" element={<ErrorMessage />} />

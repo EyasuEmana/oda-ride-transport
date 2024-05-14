@@ -12,6 +12,8 @@ function ExtraOptions() {
   const [extraOptionId, setExtraOptionId] = React.useState(null);
   const navigate = useNavigate();
   let endpoint = `/api/v1/extra-options`;
+  let endpointget = `/api/v1/extra-options/all`;
+
 
   const {
     data: response,
@@ -19,7 +21,7 @@ function ExtraOptions() {
     isError: isErrorGet,
     isFetching: isFetchingTax,
     error: errorGet,
-  } = useGetData(endpoint);
+  } = useGetData(endpointget);
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {
