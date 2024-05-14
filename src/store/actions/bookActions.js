@@ -9,15 +9,6 @@ export const book = createAsyncThunk(
     const { rideInfo, contact, tripDetail, vehicle, travelType } = values;
     var res = null;
 
-    const isRoundTrip = () => {
-      var tripType = rideInfo?.tripType;
-      return (
-        tripType == "Round-Trip" ||
-        tripType == "Ride to the airport(round trip)" ||
-        tripType == "Ride from the airport(round trip)"
-      );
-    };
-
     const headers = contact.isGuestBooking ? null : authHeader();
     const body = {
       pickupPhysicalAddress: rideInfo?.pickupPhysicalAddress,
@@ -38,6 +29,7 @@ export const book = createAsyncThunk(
         tripDetail.additionalStopOnTheWayDescription,
       passengerFullName: contact?.passengerFullName,
       passengerEmail: contact?.email,
+      gratuityId:contact.gratuityId,
       isGuestBooking: contact.isGuestBooking,
       passengerCellPhone: contact?.passengerCellPhone,
       carId: vehicle?.vehicle,
@@ -51,7 +43,7 @@ export const book = createAsyncThunk(
         tripDetail?.formattedReturnPickupDate +
         " " +
         tripDetail?.formattedReturnPickupTime;
-    } else if (travelType == "3") {
+    } else if (travelType == "3" || rideInfo?.tripType == "One-Way") {
       delete body.returnPickupDateTime;
     }
     var extraOptions = [];
@@ -90,6 +82,7 @@ export const book = createAsyncThunk(
           accommodationLongitude: rideInfo?.accommodationLongitude,
           accommodationLatitude: rideInfo?.accommodationLatitude,
           airline: tripDetail?.airline,
+          gratuityId:contact.gratuityId,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
           isGuestBooking: contact.isGuestBooking,

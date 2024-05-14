@@ -84,7 +84,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
                   navigate(`/home/1`);
                 }}
               >
-                Unlock your ride
+                Book Now
                 <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
               </RSButton>
             </motion.div>

@@ -28,7 +28,7 @@ import axios from "axios";
 import { addMinimumInitialFee } from "../../store/reducers/bookReducers";
 import { remote_host } from "../../globalVariable";
 function Index() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
   const [selectedTripType, setSelectedTripType] = React.useState();
   const [entryAsGuestOptionPage, setEntryAsGuestOptionPage] = useState(false);
   const [locationChecker, setLocationCkecker] = useState({
@@ -213,6 +213,7 @@ function Index() {
       prevPickupPrefValue: 0,
       prevAddtionalStopOnTheWayFee: 0,
       stopOnWayFee: 0,
+
     },
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
@@ -278,6 +279,9 @@ function Index() {
       creditCardNumber: "",
       expirationDate: "",
       securityCode: "",
+      gratuityId: 1,
+      prevGratuityFee: 0,
+      feeBeforeGratuity: 0,
     },
     validationSchema: contactValidationSchema,
     onSubmit: () => {
@@ -516,8 +520,8 @@ function Index() {
   return (
     <Box>
       {entryAsGuestOptionPage &&
-      !isAuthenticated &&
-      !formikContact.values.entryOptionSelected ? (
+        !isAuthenticated &&
+        !formikContact.values.entryOptionSelected ? (
         <GuestUser
           setEntryAsGuestOptionPage={setEntryAsGuestOptionPage}
           formik={formikContact}

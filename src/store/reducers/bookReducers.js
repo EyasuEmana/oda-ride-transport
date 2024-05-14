@@ -26,6 +26,9 @@ const UserSlice = createSlice({
     adCarFee: (state, action) => {
       state.fee = action.payload;
     },
+    adGratitudeFee: (state, action) => {
+      state.fee = action.payload;
+    },
     addExtraOptionFee: (state, action) => {
       const fee = state.fee + action.payload;
       return {
@@ -95,6 +98,7 @@ export const {
   adCarFee,
   reduceCost,
   addExtraOptionFee,
+  adGratitudeFee,
   reduceExtraOptionFee,
   addAirportPreferenceFee,
   addAdditionalStopFee,

@@ -32,7 +32,6 @@ import {
 } from "../../../../store/reducers/bookReducers";
 function Index({ formik, vehicleSummaryData, rideSummaryData }) {
   const [stopOnWay, setStopOnWay] = useState(false);
-  const [gratitudes, setGratitudes] = useState([]);
   const [additionalStopsOnTheWay, setAdditionalStopsOnTheWay] = useState([]);
   const { fee } = useSelector((state) => state.bookReducer);
   const getFormattdTime = (time) => {
@@ -53,6 +52,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       },
     };
   };
+
   const isPointToPointTravel = travelType === "1";
   const isAirportTravel = travelType === "2";
   const isHourlyTravel = travelType === "3";
@@ -76,16 +76,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       );
   };
 
-  const getGratitude = async () => {
-    try {
-      axios.get(`${remote_host}/api/v1/gratuities`).then((res) => {
-        console.log("result: ", res.data);
-        setGratitudes(res.data);
-      });
-    } catch (error) {
-      console.log("unable to load gratitudes: ", error);
-    }
-  };
+
 
   const handleStopOnWayChange = (event) => {
     formik.setFieldValue("additionalStopId", event.target.value);
@@ -98,15 +89,14 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
     );
     formik.setFieldValue("prevAddtionalStopOnTheWayFee", stopOnWayFee);
   };
-  
-  const handleChangeGratitude=()=>{
 
-  }
+
+
   useEffect(() => {
-    getGratitude();
     getAdditionalAtStopOnTheWay();
     dispatch(getAllPreferences());
   }, []);
+
 
   return (
     <Box>
@@ -357,25 +347,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
               </FormControl>
             )}
 
-            <FormControl>
-              <RadioGroup
-                aria-labelledby="gratitude"
-                name="radio-gratitude"
-                onChange={handleChangeGratitude}
-              >
-                {gratitudes.map((gratitude) => {
-                  return (
-                    <FormControlLabel
-                      key={gratitude.gratuityId}
-                      value={gratitude.percentage}
-                      name={gratitude.description}
-                      control={<RSRadio />}
-                      label={gratitude.description + " $10"}
-                    />
-                  );
-                })}
-              </RadioGroup>
-            </FormControl>
+            
 
             {(isPointToPointTravel || isAirportTravel) && (
               <>
