@@ -60,11 +60,7 @@ function Index({
   const [searchDestinationResult, setSearchDestinationResult] = useState(null);
   const [searchAccomodationResult, setSearchAccomodationResult] =
     useState(null);
-  const [originLatLng, setOriginLatLng] = useState();
-  const [airportLatLng, setAirportLatLng] = useState();
-  const [accomodationtLatLng, setAccomodationLatLng] = useState();
   const [directionsResponse, setDirectionsResponse] = useState();
-  const [destinationLatLng, setDestinationLatLng] = useState();
   const theme = useTheme();
   const matchXS = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -84,16 +80,29 @@ function Index({
   });
 
   useEffect(() => {
-    if (originLatLng && destinationLatLng) {
+    if (formik.values.pickupLatitude &&
+      formik.values.pickupLongitude &&
+      formik.values.dropoffLatitude &&
+      formik.values.dropoffLongitude
+    ) {
       calculateDistance();
     }
-  }, [originLatLng, destinationLatLng]);
+  }, [formik.values.pickupLatitude &&
+    formik.values.pickupLongitude &&
+    formik.values.dropoffLatitude &&
+    formik.values.dropoffLongitude]);
 
   useEffect(() => {
-    if (airportLatLng && accomodationtLatLng) {
+    if (formik.values.airportAddressLatitude &&
+      formik.values.airportAddressLongitude &&
+      formik.values.accommodationLatitude &&
+      formik.values.accommodationLongitude) {
       calculateAirportDistance();
     }
-  }, [airportLatLng, accomodationtLatLng]);
+  }, [formik.values.airportAddressLatitude,
+  formik.values.airportAddressLongitude,
+  formik.values.accommodationLatitude,
+  formik.values.accommodationLongitude]);
 
   const airportServiceTripTypes = useMemo(
     () => [
@@ -110,6 +119,14 @@ function Index({
     var directionsService = null;
     if (google) {
       directionsService = new google.maps.DirectionsService();
+      const originLatLng = {
+        lat: formik.values.pickupLatitude,
+        lng: formik.values.pickupLongitude
+      }
+      const destinationLatLng = {
+        lat: formik.values.dropoffLatitude,
+        lng: formik.values.dropoffLongitude
+      }
 
       await directionsService
         .route({
@@ -135,8 +152,17 @@ function Index({
     var directionsService = null;
     if (google) {
       directionsService = new google.maps.DirectionsService();
-      console.log("airportLatLng: ", airportLatLng);
-      console.log("accomodationtLatLng: ", accomodationtLatLng);
+
+      const airportLatLng = {
+        lat: formik.values.airportAddressLatitude,
+        lng: formik.values.airportAddressLongitude
+      };
+
+      const accomodationtLatLng = {
+        lat: formik.values.accommodationLatitude,
+        lng: formik.values.accommodationLongitude
+      };
+
       await directionsService
         .route({
           origin: airportLatLng,
@@ -229,12 +255,11 @@ function Index({
       formik.setFieldValue("pickupPhysicalAddress", pickupPhysicalAddress);
       formik.setFieldValue("pickupLatitude", latlng?.lat);
       formik.setFieldValue("pickupLongitude", latlng?.lng);
-      setOriginLatLng(latlng);
 
       if (!isInUsa) {
         setLocationCkecker({
           isUnsupportedLocation: true,
-          errorMessage: "pickup address should be in US",
+          errorMessage: "pickup address should be in California, USA",
         });
         formik.setFieldValue("isUnsupportedPickupAddr", true);
       } else if (formik.values.isUnsupportedDropoffAddr) {
@@ -278,7 +303,6 @@ function Index({
       formik.setFieldValue("dropoffPhysicalAddress", dropoffPhysicalAddress);
       formik.setFieldValue("dropoffLatitude", latlng?.lat);
       formik.setFieldValue("dropoffLongitude", latlng?.lng);
-      setDestinationLatLng(latlng);
 
       if (!isInUsa) {
         setLocationCkecker({
@@ -289,7 +313,7 @@ function Index({
       } else if (formik.values.isUnsupportedPickupAddr) {
         setLocationCkecker({
           isUnsupportedLocation: true,
-          errorMessage: "pickup address should be in US",
+          errorMessage: "pickup address should be in California, USA",
         });
       }
 
@@ -297,7 +321,7 @@ function Index({
         if (formik.values.isUnsupportedPickupAddr) {
           setLocationCkecker({
             isUnsupportedLocation: true,
-            errorMessage: "pickup address should be in US",
+            errorMessage: "pickup address should be in California, USA",
           });
         } else {
           setLocationCkecker({
@@ -328,8 +352,6 @@ function Index({
       formik.setFieldValue("accommodationAddress", accommodationAddress);
       formik.setFieldValue("accommodationLatitude", latlng?.lat);
       formik.setFieldValue("accommodationLongitude", latlng?.lng);
-      setAccomodationLatLng(latlng);
-      console.log("heere1");
 
       if (!isInUsa) {
         setAccomAddrChecker({
@@ -337,7 +359,6 @@ function Index({
           errorMessage: "accommodation address should be in US",
         });
       } else {
-        console.log("heere3");
 
         setAccomAddrChecker({
           isUnsupportedLocation: false,
@@ -365,11 +386,6 @@ function Index({
     formik.setFieldValue("airPortId", e.target.value.airportId);
     formik.setFieldValue("airportAddressLatitude", lat);
     formik.setFieldValue("airportAddressLongitude", lng);
-    const airportLatLng = {
-      lat: lat,
-      lng: lng,
-    };
-    setAirportLatLng(airportLatLng);
   }
 
   if (!isLoaded) {

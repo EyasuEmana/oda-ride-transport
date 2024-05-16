@@ -291,6 +291,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                     const prevPrefFee = formik.values.prevPickupPrefValue;
                     dispatch(addAirportPreferenceFee({ prefFee, prevPrefFee }));
                     formik.setFieldValue("prevPickupPrefValue", prefFee);
+                    formik.setFieldValue("pickupPreferenceFee", prefFee);
                   }}
                   error={
                     formik.touched.pickupPreference &&
@@ -347,7 +348,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
               </FormControl>
             )}
 
-            
+
 
             {(isPointToPointTravel || isAirportTravel) && (
               <>
@@ -358,12 +359,13 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                       onChange={(e) => {
                         const isChecked = e.target.checked;
                         setStopOnWay(e.target.checked);
-                        formik.setFieldValue("additionalStopId", null);
+                        formik.setFieldValue("additionalStopId", 0);
                         formik.setFieldValue(
                           "additionalStopOnTheWayDescription",
                           ""
                         );
                         if (!isChecked) {
+
                           var stopOnWayFee = formik.values.stopOnWayFee;
                           dispatch(
                             addAdditionalStopFee({
@@ -376,6 +378,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                             0
                           );
                           formik.setFieldValue("stopOnWayFee", 0);
+                          formik.setFieldValue("additionalStopId", 0)
                         }
                       }}
                     />
@@ -415,6 +418,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                             );
                           })}
                         </RadioGroup>
+
                       </FormControl>
                       <RSTextField
                         color="info"
@@ -430,6 +434,10 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                           Boolean(
                             formik.errors.additionalStopOnTheWayDescription
                           )
+                        }
+                        helperText={
+                          formik.touched.additionalStopOnTheWayDescription &&
+                          formik.errors.additionalStopOnTheWayDescription
                         }
                       />
                     </Stack>

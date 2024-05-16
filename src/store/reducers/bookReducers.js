@@ -8,6 +8,7 @@ const initialState = {
   errorMessage: "",
   cost: 0,
   fee: 0,
+  totalFee: 0,
   prevAirportPickupPreferenceFee: 0,
 
   isGetPassengerBookLoading: false,
@@ -35,6 +36,9 @@ const UserSlice = createSlice({
         ...state,
         fee: fee,
       };
+    },
+    updateTotalFee: (state, action) => {
+      state.totalFee = action.payload
     },
     reduceExtraOptionFee: (state, action) => {
       return {
@@ -103,5 +107,6 @@ export const {
   addAirportPreferenceFee,
   addAdditionalStopFee,
   addMinimumInitialFee,
+  updateTotalFee,
 } = UserSlice.actions;
 export default UserSlice.reducer;

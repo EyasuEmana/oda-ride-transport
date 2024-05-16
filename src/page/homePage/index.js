@@ -25,10 +25,10 @@ import { getExtraOptions } from "../../store/actions/extraOptions";
 import { getAirports } from "../../store/actions/airportAction";
 import GuestUser from "./components/GuestUser";
 import axios from "axios";
-import { addMinimumInitialFee } from "../../store/reducers/bookReducers";
+import { addMinimumInitialFee, updateTotalFee } from "../../store/reducers/bookReducers";
 import { remote_host } from "../../globalVariable";
 function Index() {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const [selectedTripType, setSelectedTripType] = React.useState();
   const [entryAsGuestOptionPage, setEntryAsGuestOptionPage] = useState(false);
   const [locationChecker, setLocationCkecker] = useState({
@@ -135,6 +135,14 @@ function Index() {
     isHourly: yup.boolean().default(location.pathname.split("/").pop() == 3),
     isAirport: yup.boolean().default(location.pathname.split("/").pop() == 2),
     isRoundTrip: yup.boolean().default(isRoundTrip()),
+    additionalStopId: yup.number().default(0),
+    additionalStopOnTheWayDescription: yup.string().when("additionalStopId",
+      {
+        is: (value) => value > 0,
+        then: () => yup.string().required("description required"),
+        otherwise: () => yup.number().default(0)
+      }
+    ),
     formattedPickupDate: yup
       .string("should be string value")
       .required("Pickup date is required"),
@@ -167,6 +175,7 @@ function Index() {
       then: (schema) => schema.required("flight number is required"),
       otherwise: (schema) => schema,
     }),
+
     airline: yup.string().when("isAirport", {
       is: true,
       then: (schema) => schema.required("airline is required"),
@@ -183,10 +192,12 @@ function Index() {
       numberOfSuitcases: 0,
       numberOfPassengers: 1,
       extraOptions: [],
+      pricePerMile: 0,
+      minimumStartFee: 0,
+      extraOptionFee: 0
     },
     validationSchema: rideValidationSchema,
     onSubmit: (values) => {
-      console.log("values: ", values);
       handleNext();
     },
   });
@@ -203,14 +214,15 @@ function Index() {
       formattedReturnPickupTime: null,
       returnPickupTime: null,
       additionalStopOnTheWayPrice: 0,
-      additionalStopId: null,
-      additionalStopOnTheWayDescription: " ",
+      additionalStopId: 0,
+      additionalStopOnTheWayDescription: "",
       instruction: "",
       arrivalFlightNumber: "",
       airline: "",
       occation: "",
       pickupPreference: 1,
       prevPickupPrefValue: 0,
+      pickupPreferenceFee: 0,
       prevAddtionalStopOnTheWayFee: 0,
       stopOnWayFee: 0,
 
@@ -280,6 +292,7 @@ function Index() {
       expirationDate: "",
       securityCode: "",
       gratuityId: 1,
+      gratuityFee: 0,
       prevGratuityFee: 0,
       feeBeforeGratuity: 0,
     },
@@ -510,6 +523,45 @@ function Index() {
       console.log("error: ", error);
     }
   };
+
+  const feeCalculator = () => {
+
+    var totalFee = 0
+
+    const { vehicleFee,
+      minimumStartFee,
+      extraOptionFee } = formikChooseVehicle.values
+
+    const { distanceInMiles, hour } = formikRideInfo.values
+
+    const { stopOnWayFee, pickupPreferenceFee } = formikTripDetail.values
+    const gratuityFee = formikContact.values.gratuityFee
+    if (travelType === "1" || travelType === "2") {
+      if (isRoundTrip()) {
+        totalFee = totalFee + vehicleFee * distanceInMiles * 2
+      } else {
+        totalFee = totalFee + vehicleFee * distanceInMiles
+      }
+
+    } else if (travelType === "3") {
+      totalFee = totalFee + vehicleFee * hour;
+    }
+    totalFee =
+      totalFee + extraOptionFee + minimumStartFee +
+      stopOnWayFee + pickupPreferenceFee + gratuityFee;
+
+    dispatch(updateTotalFee(totalFee));
+
+  }
+
+  useEffect(() => {
+    feeCalculator()
+
+  }, [formikContact,
+    formikChooseVehicle,
+    formikRideInfo,
+    formikTripDetail])
+
   useEffect(() => {
     dispatch(getAllCars());
     dispatch(getAirports());

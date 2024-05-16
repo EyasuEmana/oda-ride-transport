@@ -17,7 +17,7 @@ function StepSummary({
   const isPointToPointTravel = travelType === "1";
   const isAirportTravel = travelType === "2";
   const isHourlyTravel = travelType === "3";
-  const { fee } = useSelector((state) => state.bookReducer);
+  const { fee, totalFee } = useSelector((state) => state.bookReducer);
 
   const isRoundTrip = () => {
     return (
@@ -50,8 +50,8 @@ function StepSummary({
         pickupAddr = isFromAirport
           ? rideSummaryData.airPortId
           : isToAirport
-          ? rideSummaryData.hotel
-          : null;
+            ? rideSummaryData.hotel
+            : null;
       default:
         break;
     }
@@ -75,8 +75,8 @@ function StepSummary({
         dropoffAddr = isFromAirport
           ? rideSummaryData.hotel
           : isToAirport
-          ? rideSummaryData.airPortId
-          : null;
+            ? rideSummaryData.airPortId
+            : null;
       default:
         break;
     }
@@ -181,7 +181,7 @@ function StepSummary({
             <Field
               key={"fee"}
               label={"Service Fee"}
-              value={"$" + fee.toFixed(2)}
+              value={"$" + totalFee.toFixed(2)}
             />
           </Stack>
         )}

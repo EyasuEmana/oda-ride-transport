@@ -88,7 +88,9 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
         {
+          const extraOptionFee = formik.values.extraOptionFee
           const pricePerExtraOption = parseFloat(option.pricePerItem);
+          formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption)
           dispatch(addExtraOptionFee(pricePerExtraOption));
           return {
             ...option,
@@ -103,8 +105,11 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
 
   const handleExtraOptionUnSelect = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
+
       if (selectedOptionId == option.extraOptionId) {
-        const pricePerExtraOption = parseFloat(option.pricePerItem);
+        const extraOptionFee = formik.values.extraOptionFee
+        const pricePerExtraOption = parseFloat(option.pricePerItem) * (option.itemQuantity);
+        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption)
         dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
@@ -119,10 +124,10 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const addExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
+        const extraOptionFee = formik.values.extraOptionFee
         const pricePerExtraOption = parseFloat(option.pricePerItem);
-        const totoalExtraOptionFee =
-          pricePerExtraOption * (option.itemQuantity + 1) - pricePerExtraOption;
-        dispatch(addExtraOptionFee(totoalExtraOptionFee));
+        formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption)
+        dispatch(addExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
           itemQuantity: option.itemQuantity + 1,
@@ -137,9 +142,9 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const reduceExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
+        const extraOptionFee = formik.values.extraOptionFee
         const pricePerExtraOption = parseFloat(option.pricePerItem);
-        const totoalExtraOptionFee =
-          pricePerExtraOption * (option.itemQuantity - 1) - pricePerExtraOption;
+        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption)
         dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,

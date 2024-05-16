@@ -22,7 +22,7 @@ function Index({
     formik.values.bookingFor == "SomeoneElse"
   );
   const [gratuities, setGratuity] = useState([]);
-  const { fee } = useSelector((state) => state.bookReducer);
+  const { fee, totalFee } = useSelector((state) => state.bookReducer);
   const dispatch = useDispatch();
 
   const { isAuthenticated } = useSelector((state) => state.authReducer);
@@ -62,9 +62,10 @@ function Index({
   };
 
   const handleChangeGratitude = (e) => {
-    const calculatedFee = fee + parseInt(e.target.value) - parseInt(formik.values.prevGratuityFee)
+    const calculatedFee = totalFee + parseInt(e.target.value) - parseInt(formik.values.prevGratuityFee)
     formik.setFieldValue("gratuityId", e.target.name)
     formik.setFieldValue("prevGratuityFee", e.target.value)
+    formik.setFieldValue("gratuityFee", parseInt(e.target.value))
     dispatch(adGratitudeFee(calculatedFee))
   }
 
@@ -77,7 +78,7 @@ function Index({
           index = index + 1;
           gratuityData.splice(index, 0, {
             ...gratuity,
-            gratuityFee: (fee * gratuity.percentage / 100).toFixed(2)
+            gratuityFee: (totalFee * gratuity.percentage / 100).toFixed(2)
           });
         });
         console.log("gratuityData: ", gratuityData)
@@ -188,7 +189,8 @@ function Index({
                     value={gratuityFee}
                     name={gratuityId}
                     control={<RSRadio />}
-                    label={`${description} $${gratuityFee}`}
+                    // label={`${description} ($${gratuityFee > 0 && gratuityFee})`}
+                    label={`${description} ${gratuityFee > 0 ? `(${gratuityFee})` : ""}`}
                   />
                 );
               })}

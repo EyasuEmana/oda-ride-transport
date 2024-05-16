@@ -40,6 +40,8 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
     formik.setFieldValue("vehicle", carDetail.carId);
     formik.setFieldValue("vehicleName", carDetail.carName);
     formik.setFieldValue("prevCarMinimumStartFee", carDetail.minimumStartFee);
+    formik.setFieldValue("minimumStartFee", parseFloat(carDetail.minimumStartFee));
+
     if (travelType == "1" || travelType == "2") {
       formik.setFieldValue("vehicleFee", parseFloat(carDetail.pricePerMile));
     } else if (travelType == "3") {
@@ -104,7 +106,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
 
             <Grid container justifyContent={"center"}>
               <Grid item xs={6}>
-                <RSTypography fontsize={"25px"}>
+                <RSTypography fontsize={"25px"}>$
                   {travelType == "3" && pricePerHour + "/hr"}
                   {(travelType == "1" || travelType == "2") &&
                     pricePerMile + "/mile"}
