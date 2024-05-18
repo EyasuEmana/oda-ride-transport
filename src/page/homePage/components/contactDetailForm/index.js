@@ -190,7 +190,7 @@ function Index({
                     name={gratuityId}
                     control={<RSRadio />}
                     // label={`${description} ($${gratuityFee > 0 && gratuityFee})`}
-                    label={`${description} ${gratuityFee > 0 ? `(${gratuityFee})` : ""}`}
+                    label={`${description} ${gratuityFee > 0 ? `$(${gratuityFee})` : ""}`}
                   />
                 );
               })}
