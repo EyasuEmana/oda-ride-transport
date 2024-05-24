@@ -49,6 +49,8 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
     }
     handleCarSelect(carDetail.carId);
   };
+
+  const selectCarButtonStyle = { width: { md: 200, xs: "100%", marginBottom: 4 } }
   return (
     <Box
       sx={{
@@ -106,24 +108,24 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
 
             <Grid container justifyContent={"center"}>
               <Grid item xs={6}>
-                <RSTypography fontsize={"25px"}>$
+                {/* <RSTypography fontsize={"25px"}>$
                   {travelType == "3" && pricePerHour + "/hr"}
                   {(travelType == "1" || travelType == "2") &&
                     pricePerMile + "/mile"}
-                </RSTypography>
+                </RSTypography> */}
               </Grid>
               <Grid item xs={11} md={6} mt={{ xs: 2, md: 0 }}>
                 {isSelected ? (
                   <RSButton
                     backgroundcolor={"#FF0013"}
                     txtcolor={"#FFF"}
-                    sx={{ width: { md: 200, xs: "100%" } }}
+                    sx={selectCarButtonStyle}
                   >
                     Selected
                   </RSButton>
                 ) : (
                   <RSButton
-                    sx={{ width: { md: 200, xs: "100%" } }}
+                    sx={selectCarButtonStyle}
                     variant="outlined"
                     txtcolor={theme.palette.warning.main}
                     bordercolor={theme.palette.warning.main}

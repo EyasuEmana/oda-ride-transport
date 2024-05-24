@@ -90,6 +90,7 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
         {
           const extraOptionFee = formik.values.extraOptionFee
           const pricePerExtraOption = parseFloat(option.pricePerItem);
+          console.log("extra fee: ", extraOptionFee + pricePerExtraOption)
           formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption)
           dispatch(addExtraOptionFee(pricePerExtraOption));
           return {
