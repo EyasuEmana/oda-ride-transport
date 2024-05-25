@@ -17,7 +17,7 @@ const CreditCardForm = ({ formik }) => {
   });
   const [cardInfo, setCardInfo] = useState({
     number: "",
-    name: "",
+    zipCode: "",
     expiry: "",
     cvc: "",
     name: "",
@@ -48,6 +48,7 @@ const CreditCardForm = ({ formik }) => {
       creditCardNumber: cardInfo.number,
       expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
       securityCode: cardInfo.cvc, //"123",
+      zipCode: cardInfo.zipCode
     };
     setSuccessresponse((prev) => ({
       ...prev,
@@ -63,6 +64,7 @@ const CreditCardForm = ({ formik }) => {
             "expirationDate",
             formatDateString(cardInfo.expiry)
           );
+          formik.setFieldValue("zipCode", cardInfo.zipCode);
           formik.setFieldValue("securityCode", cardInfo.cvc);
           setErrorresponse((prev) => ({ ...prev, isError: false }));
           setSuccessresponse({
@@ -117,11 +119,13 @@ const CreditCardForm = ({ formik }) => {
           <div className="mb-3">
             <input
               type="text"
-              name="name"
+              name="zipCode"
               className="form-control"
-              placeholder="Name"
+              placeholder="Zip Code"
               onChange={handleInputChange}
               onFocus={handleInputFocus}
+              pattern="^\d{5}(-\d{4})?$"
+              title="Please enter a valid US zip code (XXXXX or XXXXX-XXXX)"
               required
             />
           </div>

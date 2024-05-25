@@ -29,7 +29,7 @@ export const book = createAsyncThunk(
         tripDetail.additionalStopOnTheWayDescription,
       passengerFullName: contact?.passengerFullName,
       passengerEmail: contact?.email,
-      gratuityId:contact.gratuityId,
+      gratuityId: contact.gratuityId,
       isGuestBooking: contact.isGuestBooking,
       passengerCellPhone: contact?.passengerCellPhone,
       carId: vehicle?.vehicle,
@@ -37,6 +37,7 @@ export const book = createAsyncThunk(
       creditCardNumber: contact.creditCardNumber,
       expirationDate: contact.expirationDate,
       securityCode: contact.securityCode,
+      zipCode: contact.zipCode,
     };
     if (rideInfo?.tripType == "Round-Trip") {
       body.returnPickupDateTime =
@@ -82,7 +83,7 @@ export const book = createAsyncThunk(
           accommodationLongitude: rideInfo?.accommodationLongitude,
           accommodationLatitude: rideInfo?.accommodationLatitude,
           airline: tripDetail?.airline,
-          gratuityId:contact.gratuityId,
+          gratuityId: contact.gratuityId,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
           isGuestBooking: contact.isGuestBooking,
@@ -105,6 +106,7 @@ export const book = createAsyncThunk(
           creditCardNumber: contact.creditCardNumber,
           expirationDate: contact.expirationDate,
           securityCode: contact.securityCode,
+          zipCode: contact.zipCode,
         };
         if (body.extraOptions.length === 0) {
           delete body.extraOptions;
@@ -124,7 +126,7 @@ export const book = createAsyncThunk(
           delete body.additionalStopId;
           delete body.additionalStopOnTheWayDescription;
         }
-        
+
         res = await axios.post(
           remote_host + "/api/v1/airport-books",
           body,

@@ -9,7 +9,7 @@ import compareDate from "./util/dateUtil";
 
 const isdateFreeTrial = compareDate("2024-06-08");
 const root = ReactDOM.createRoot(
-  document.getElementById(isdateFreeTrial ? "root" : "rot")
+  document.getElementById("root")
 );
 
 root.render(

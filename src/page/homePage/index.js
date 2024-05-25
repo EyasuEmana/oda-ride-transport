@@ -41,7 +41,7 @@ function Index() {
         errorMessage: "",
     });
     const dispatch = useDispatch();
-    const { isSigninSuccess, isAuthenticated } = useSelector(
+    const { isAuthenticated } = useSelector(
         (state) => state.authReducer
     );
     const { fee } = useSelector((state) => state.bookReducer);
@@ -279,6 +279,7 @@ function Index() {
             number: "",
             name: "",
             expiry: "",
+            zipCode: "",
             cvc: "",
             name: "",
             isValidCardInfo: false,
