@@ -8,12 +8,11 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
+
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItems from "../../page/UserManagement/DataTable/listItems";
 import { Outlet, useLocation } from "react-router-dom";
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import logoutIcon from "../../assets/images/logoutIcon.png";
 
 const drawerWidth = 240;
@@ -52,6 +51,8 @@ const drawerStyle = {
     paddingX: 0,
   },
 };
+
+
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
@@ -112,13 +113,8 @@ export default function Dashboard() {
               alignItems="stretch"
             >
               <Box>
-                {/* Pass userRoles as a prop to ListItems */}
                 <ListItems />
               </Box>
-              {/* <Button variant="contained" sx={logoutIconStyle}>
-                <LogoutIcon />
-                <Link href="/">logout</Link>
-              </Button> */}
             </Stack>
           </List>
         </Drawer>
@@ -132,12 +128,7 @@ export default function Dashboard() {
           }}
         >
           <Container maxWidth="100" sx={{ mt: 2, mb: 4 }}>
-            {/* <Grid container spacing={3}>
-              <Grid item xs={12}> */}
-            {/* Render nested routes */}
             <Outlet />
-            {/* </Grid>
-            </Grid> */}
           </Container>
         </Box>
       </Box>

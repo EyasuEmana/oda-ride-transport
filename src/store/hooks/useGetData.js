@@ -9,9 +9,9 @@ const fetchData = async (endpoint) => {
     const response = await BACKEND_API.get(endpoint);
     // console.log("data", response.data)
     if (response.status === 200 || response.status === 201) {
-      toast.success(response?.data?.message || `Successfully Loaded!`, {
+      // toast.success(response?.data?.message || `Successfully Loaded!`, {
         // position: toast.POSITION.TOP_CENTER
-      });
+      // });
       return response.data;
     }
 

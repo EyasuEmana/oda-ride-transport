@@ -128,7 +128,7 @@ const MDataTable = (props) => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} or render custom edit components here
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
