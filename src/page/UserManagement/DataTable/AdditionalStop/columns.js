@@ -7,10 +7,10 @@ export const columns =  [
     //     header: 'ID',
 
     //   },    
-      {
-        accessorKey: 'stopType',
-        header: 'Stop-type'
-      },
+      // {
+      //   accessorKey: 'stopType',
+      //   header: 'Stop-type'
+      // },
       {
         accessorKey: 'additionalStopPrice',
         header: 'Additional-stop-Price',

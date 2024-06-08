@@ -5,12 +5,14 @@ import useGetData from "../../../../store/hooks/useGetData";
 import usePostData from "../../../../store/hooks/usePostData";
 import usePutData from "../../../../store/hooks/usePutData";
 import { columns } from "./columns";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 function AddtionalStop() {
-  const [additionalStopId, setAdditionalStopId] = React.useState(null);
-  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { additionalStopId,  } = location.state?.rowData || {};  
+    const navigate = useNavigate();
 
   let endpoint = `/api/v1/additional-stops`;
 
@@ -21,6 +23,7 @@ function AddtionalStop() {
     isFetching: isFetchingTax,
     error: errorGet,
   } = useGetData(endpoint);
+
 
   const { mutate, isLoading, isError, data, isSuccess } = usePostData(endpoint);
   const handleNewAdd = async ({ values, table }) => {
@@ -37,6 +40,7 @@ function AddtionalStop() {
     error: errorupdate,
   } = usePutData(endpoint, additionalStopId, data);
 
+  
   const handleEdit = async ({ row, values, table }) => {
     update({
       endpoint: endpoint,
@@ -45,6 +49,7 @@ function AddtionalStop() {
     });
     table.setEditingRow(null);
   };
+
   const handleViewClick = (rowData) => {
     navigate("/dashboard/additionalstop/additional-stop-detail", {
       state: { rowData },
