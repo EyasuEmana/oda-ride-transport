@@ -116,19 +116,7 @@ const CreditCardForm = ({ formik }) => {
               required
             />
           </div>
-          <div className="mb-3">
-            <input
-              type="text"
-              name="zipCode"
-              className="form-control"
-              placeholder="Zip Code"
-              onChange={handleInputChange}
-              onFocus={handleInputFocus}
-              pattern="^\d{5}(-\d{4})?$"
-              title="Please enter a valid US zip code (XXXXX or XXXXX-XXXX)"
-              required
-            />
-          </div>
+
           <div className="row">
             <div className="col-6 mb-3">
               <input
@@ -156,6 +144,19 @@ const CreditCardForm = ({ formik }) => {
                 required
               />
             </div>
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              name="zipCode"
+              className="form-control"
+              placeholder="Zip Code"
+              onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              pattern="^\d{5}(-\d{4})?$"
+              title="Please enter a valid US zip code (XXXXX or XXXXX-XXXX)"
+              required
+            />
           </div>
           <div className="d-grid">
             <button className="btn btn-dark">

@@ -134,6 +134,8 @@ function Index() {
     const tripDetailValidationSchema = yup.object({
         isHourly: yup.boolean().default(location.pathname.split("/").pop() == 3),
         isAirport: yup.boolean().default(location.pathname.split("/").pop() == 2),
+        isRoundTripAirport: yup.boolean().default(location.pathname.split("/").pop() == 2 && isRoundTrip()),
+
         isRoundTrip: yup.boolean().default(isRoundTrip()),
         additionalStopId: yup.number().default(0),
         additionalStopOnTheWayDescription: yup.string().when("additionalStopId",
@@ -170,13 +172,13 @@ function Index() {
             then: (schema) => schema.required("Occation is required"),
             otherwise: (schema) => schema,
         }),
-        arrivalFlightNumber: yup.string().when("isAirport", {
+        returnFlightNumber: yup.string().when("isRoundTripAirport", {
             is: true,
             then: (schema) => schema.required("flight number is required"),
             otherwise: (schema) => schema,
         }),
 
-        airline: yup.string().when("isAirport", {
+        returnAirline: yup.string().when("isRoundTripAirport", {
             is: true,
             then: (schema) => schema.required("airline is required"),
             otherwise: (schema) => schema,
@@ -219,6 +221,8 @@ function Index() {
             instruction: "",
             arrivalFlightNumber: "",
             airline: "",
+            returnFlightNumber: "",
+            returnAirline: "",
             occation: "",
             pickupPreference: 1,
             prevPickupPrefValue: 0,

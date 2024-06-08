@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Stack, Grid, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import RSTypography from "../../../../components/RSTypography";
-import logoUrl from "../../../../assets/images/OdaaLogo.svg";
-import logoUrlLowOpacity from "../../../../assets/images/OdaaLogolowOpacity.png";
+import logoUrl from "../../../../assets/images/Odaa Transportation - Logo-01.svg";
+import logoUrlLowOpacity from "../../../../assets/images/grayLogo-transparent.png";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 function Index() {

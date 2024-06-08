@@ -21,7 +21,7 @@ function Index() {
   const navigate = useNavigate();
   const white = theme.palette.text.main;
 
- 
+
   const getSocialMediaLinks = async () => {
     await axios
       .get(`${remote_host}/api/v1/social-medias`)
@@ -100,6 +100,19 @@ function Index() {
             tel: {contactPhoneNumber}
           </RSTypography>
         </Grid>
+
+        <Grid item md={3} xs={6}>
+          <RSTypography txtcolor={white} fontsize={"18px"}>
+            Our Partners
+          </RSTypography>
+          <RSTypography
+            txtcolor={white}
+            fontsize={"15px"}
+            style={{ cursor: "pointer" }}
+            onClick={() => window.open("https://www.olittech.com", "_blank")}>
+            Olit Technologies
+          </RSTypography>
+        </Grid>
       </Grid>
       <Box>
         <Grid container justifyContent={"space-between"} alignItems={"center"}>
@@ -141,7 +154,7 @@ function Index() {
           © Oda Transportation service. All rights reserved!
         </RSTypography>
       </Box>
-    </Box>
+    </Box >
   );
 }
 

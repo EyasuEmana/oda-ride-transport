@@ -203,29 +203,14 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
               </LocalizationProvider>
             )}
 
-            {/* <RSTextField
-              color="info"
-              name="instruction"
-              onBlur={formik.handleBlur}
-              label="Special Instructions"
-              value={formik.values.instruction}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.instruction && Boolean(formik.errors.instruction)
-              }
-              helperText={
-                formik.touched.instruction && formik.errors.instruction
-              }
-            />
-            <RSTextField label="Flight Number (arrival)" color="info" />
-*/}
+
             {isAirportTravel && (
               <RSTextField
                 fullWidth
                 color="info"
                 name="airline"
                 onBlur={formik.handleBlur}
-                label="Airline"
+                label="Airline (arrival)"
                 value={formik.values.airline}
                 onChange={formik.handleChange}
                 error={formik.touched.airline && Boolean(formik.errors.airline)}
@@ -253,6 +238,52 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                 multiline
               />
             )}
+
+
+
+
+
+
+            {isAirportTravel && isRoundTrip() && (
+              <RSTextField
+                fullWidth
+                color="info"
+                name="returnAirline"
+                onBlur={formik.handleBlur}
+                label="airline (return)"
+                value={formik.values.returnAirline}
+                onChange={formik.handleChange}
+                error={formik.touched.returnAirline && Boolean(formik.errors.returnAirline)}
+                helperText={formik.touched.returnAirline && formik.errors.returnAirline}
+                multiline
+              />
+            )}
+            {isAirportTravel && isRoundTrip() && (
+              <RSTextField
+                fullWidth
+                color="info"
+                name="returnFlightNumber"
+                onBlur={formik.handleBlur}
+                label="Flight Number (return)"
+                value={formik.values.returnFlightNumber}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.returnFlightNumber &&
+                  Boolean(formik.errors.returnFlightNumber)
+                }
+                helperText={
+                  formik.touched.returnFlightNumber &&
+                  formik.errors.returnFlightNumber
+                }
+                multiline
+              />
+            )}
+
+
+
+
+
+
 
             <RSTextField
               fullWidth

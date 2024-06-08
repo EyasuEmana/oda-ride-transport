@@ -83,8 +83,10 @@ export const book = createAsyncThunk(
           accommodationLongitude: rideInfo?.accommodationLongitude,
           accommodationLatitude: rideInfo?.accommodationLatitude,
           airline: tripDetail?.airline,
-          gratuityId: contact.gratuityId,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
+          returnAirline: "",
+          returnFlightNumber: "",
+          gratuityId: contact.gratuityId,
           specialInstructions: tripDetail?.instruction,
           isGuestBooking: contact.isGuestBooking,
           pickupDateTime:
@@ -92,6 +94,7 @@ export const book = createAsyncThunk(
             " " +
             tripDetail?.formattedPickupTime,
           returnPickupDateTime: "",
+
           distanceInMiles: rideInfo?.distanceInMiles,
           carId: vehicle?.vehicle,
           additionalStopId: tripDetail.additionalStopId,
@@ -119,8 +122,14 @@ export const book = createAsyncThunk(
             tripDetail?.formattedReturnPickupDate +
             " " +
             tripDetail?.formattedReturnPickupTime;
+
+          body.returnAirline = tripDetail.returnAirline
+          body.returnFlightNumber = tripDetail.returnFlightNumber
+
         } else {
           delete body.returnPickupDateTime;
+          delete body.returnAirline
+          delete body.returnFlightNumber
         }
         if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
           delete body.additionalStopId;
