@@ -34,8 +34,8 @@ const CreditCardForm = ({ formik }) => {
       setCardInfo((prev) => ({ ...prev, [name]: value }));
       formik.setFieldValue(name, value);
     }
-
   };
+
   const handleInputFocus = (e) => {
     setCardInfo((prev) => ({ ...prev, focus: e.target.name }));
   };
@@ -68,6 +68,7 @@ const CreditCardForm = ({ formik }) => {
         if (result.data) {
           formik.setFieldValue("isValidCardInfo", true);
           formik.setFieldValue("creditCardNumber", cardInfo.number);
+          formik.setFieldValue("cardOwnerName", cardInfo.name);
           formik.setFieldValue(
             "expirationDate",
             formatDateString(cardInfo.expiry)
