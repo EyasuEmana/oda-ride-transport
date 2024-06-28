@@ -25,9 +25,17 @@ const CreditCardForm = ({ formik }) => {
   });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCardInfo((prev) => ({ ...prev, [name]: value }));
-    formik.setFieldValue(name, value);
+    if (name == "expiry") {
+      if (value.length <= 4) {
+        setCardInfo((prev) => ({ ...prev, [name]: value }));
+        formik.setFieldValue(name, value);
+      }
+    } else {
+      setCardInfo((prev) => ({ ...prev, [name]: value }));
+      formik.setFieldValue(name, value);
+    }
   };
+
   const handleInputFocus = (e) => {
     setCardInfo((prev) => ({ ...prev, focus: e.target.name }));
   };
@@ -46,6 +54,7 @@ const CreditCardForm = ({ formik }) => {
     // Expiration date must be in MM/YYYY format
     const body = {
       creditCardNumber: cardInfo.number,
+      cardOwnerName: cardInfo.name,
       expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
       securityCode: cardInfo.cvc, //"123",
       zipCode: cardInfo.zipCode
@@ -60,6 +69,7 @@ const CreditCardForm = ({ formik }) => {
         if (result.data) {
           formik.setFieldValue("isValidCardInfo", true);
           formik.setFieldValue("creditCardNumber", cardInfo.number);
+          formik.setFieldValue("cardOwnerName", cardInfo.name);
           formik.setFieldValue(
             "expirationDate",
             formatDateString(cardInfo.expiry)
@@ -106,6 +116,18 @@ const CreditCardForm = ({ formik }) => {
         <form onSubmit={handleCardInfoSubmit}>
           <div className="mb-3">
             <input
+              type="text"
+              name="name"
+              className="form-control"
+              placeholder="Name on Card"
+              value={cardInfo.name}
+              onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
               type="number"
               name="number"
               className="form-control"
@@ -131,6 +153,7 @@ const CreditCardForm = ({ formik }) => {
                 required
               />
             </div>
+
             <div className="col-6 mb-3">
               <input
                 type="number"
