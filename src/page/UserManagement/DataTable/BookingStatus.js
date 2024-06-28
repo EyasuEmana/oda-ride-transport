@@ -19,7 +19,6 @@ export default function BookingStatusPoup({
 }) {
   const [status, setStatus] = useState("PENDING_APPROVAL"); // Default value
   const [isUpdated, setIsUpdated] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -73,7 +72,6 @@ export default function BookingStatusPoup({
       // navigate("/dashboard/airportbook")
     } catch (error) {
       toast.error(error?.response?.data?.message || " Network error...", {
-
         // position: toast.POSITION.TOP_CENTER
       });
       //  handleClose();
@@ -166,7 +164,7 @@ export default function BookingStatusPoup({
         <ToastContainer />
       </Dialog>
 
-      <ToastContainer position="top-center"/>
+      <ToastContainer position="top-center" />
     </React.Fragment>
   );
 }

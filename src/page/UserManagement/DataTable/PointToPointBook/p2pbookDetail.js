@@ -18,7 +18,6 @@ import useGetData from "../../../../store/hooks/useGetData";
 function P2pBookDetail(props) {
   const location = useLocation();
   // const [pointToPointBookId, setPointToPointBookId] = React.useState(null);
-
   const {
     tripType,
     pickupPhysicalAddress,
@@ -73,7 +72,6 @@ function P2pBookDetail(props) {
 
   const endpoint = `/api/v1/admin/bookings/approve`;
   const paymentendpoint = `/api/v1/admin/bookings/update-payment-status`;
-
   const detailendpoint = `/api/v1/point-to-point-books/${pointToPointBookId}`;
 
   const {
@@ -126,11 +124,6 @@ function P2pBookDetail(props) {
       setLoading(false);
     }
   };
-
-
-
-
-
 
 
   const getBackgroundColorforpayment = (paymentStatus) => {
@@ -368,10 +361,7 @@ function P2pBookDetail(props) {
         </Grid>
 
 
-
-
       </Grid>
-
       {popupType === "REJECT" && (
         <ReasonPopup
           bookingId={pointToPointBookId}

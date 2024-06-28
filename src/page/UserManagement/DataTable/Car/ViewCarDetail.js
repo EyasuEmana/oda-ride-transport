@@ -37,6 +37,7 @@ function ViewCarDetail(props) {
 
   const [loading, setLoading] = useState(false);
 
+  
   const [status, setStatus] = useState(false); // Initialize status as false initially
   useEffect(() => {
     // Set the status based on the initial value from the API
@@ -44,6 +45,7 @@ function ViewCarDetail(props) {
   }, [location.state]);
 
   const handleToggleStatus = async () => {
+    setLoading(true);
     try {
       // Send PUT request to the API endpoint using axios
       const response = await BACKEND_API.put(
