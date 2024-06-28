@@ -54,6 +54,7 @@ const CreditCardForm = ({ formik }) => {
     // Expiration date must be in MM/YYYY format
     const body = {
       creditCardNumber: cardInfo.number,
+      cardOwnerName: cardInfo.name,
       expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
       securityCode: cardInfo.cvc, //"123",
       zipCode: cardInfo.zipCode
