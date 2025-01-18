@@ -45,6 +45,9 @@ function ViewBookDetail(props) {
     userId,
     additionalStopId,
     pickupPreferenceId,
+    returnAirline,
+    returnFlightNumber,
+    
   } = location.state?.rowData || {};
 
   const airportBookId = location.state?.rowData?.airportBookId;
@@ -211,12 +214,13 @@ function ViewBookDetail(props) {
           <Field label="Num. of Suitcase" value={numberOfSuitcases} />
           <Field label="Accomodation Addr." value={accommodationAddress} />
           <Field label="Airline" value={airline} />
-          <Field label="Flight Num." value={arrivalFlightNumber} />
+          <Field label="Arrival Flight Number" value={arrivalFlightNumber} />
           <Field label="Accommodation Address" value={accommodationAddress} />
-          <Field label="Airline" value={airline} />
+          <Field label="Return Airline" value={returnAirline} />
+          <Field label="Return Flight Number" value={returnFlightNumber} />
+
           <Field label="Special Instructions" value={specialInstructions} />
           <Field label="Pickup DateTime" value={pickupDateTime} />
-          <Field label="Arrival Flight Number" value={arrivalFlightNumber} />
           <Field label="distanceInMiles" value={distanceInMiles} />
           <Field
             label="Additional stop on the way descrption"
@@ -249,6 +253,10 @@ function ViewBookDetail(props) {
           <Field
             label="Security code"
             value={response?.PaymentDetail?.securityCode}
+          />
+                    <Field
+            label="Zip code"
+            value={response?.PaymentDetail?.zipCode}
           />
 
           <Field label="Airport ID" value={response?.Airport?.airportId} />

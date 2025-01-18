@@ -33,6 +33,7 @@ function Index() {
           </Grid>
         )}
         <Grid item lg={10} xs={11} sx={{ marginTop: "86px", paddingRight: 4 }}>
+
           <FaqAccordion />
         </Grid>
       </Grid>

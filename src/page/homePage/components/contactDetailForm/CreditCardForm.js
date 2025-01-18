@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Cards from "react-credit-cards-2";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Alert } from "@mui/material";
 import axios from "axios";
-import { Alert } from "@mui/material";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
 import { remote_host } from "../../../../globalVariable";
+
 const CreditCardForm = ({ formik }) => {
   const [errorResponse, setErrorresponse] = useState({
     isError: false,
@@ -23,12 +23,28 @@ const CreditCardForm = ({ formik }) => {
     name: "",
     focus: "",
   });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name == "expiry") {
-      if (value.length <= 4) {
-        setCardInfo((prev) => ({ ...prev, [name]: value }));
-        formik.setFieldValue(name, value);
+
+    if (name === "expiry") {
+      // Allow only digits and "/"
+      const regex = /^(\d{0,2})(\/?)(\d{0,2})$/;
+      const match = value.match(regex);
+
+      if (match) {
+        let formattedValue = match[1];
+        if (match[2]) formattedValue += "/";
+        if (match[3]) formattedValue += match[3];
+
+        // Validate MM and ensure YY is numeric
+        if (
+          formattedValue.length <= 5 &&
+          (formattedValue.length < 2 || (parseInt(match[1]) >= 1 && parseInt(match[1]) <= 12))
+        ) {
+          setCardInfo((prev) => ({ ...prev, [name]: formattedValue }));
+          formik.setFieldValue(name, formattedValue);
+        }
       }
     } else {
       setCardInfo((prev) => ({ ...prev, [name]: value }));
@@ -39,30 +55,26 @@ const CreditCardForm = ({ formik }) => {
   const handleInputFocus = (e) => {
     setCardInfo((prev) => ({ ...prev, focus: e.target.name }));
   };
+
   function formatDateString(inputString) {
-    // Split the input string into parts
-    var year = inputString.slice(0, 2);
-    var month = inputString.slice(2);
-
-    // Concatenate parts with "/"
-    var formattedString = year + "/" + month;
-
-    return formattedString;
+    // Ensure MM/YY format
+    if (inputString.length === 4 && !inputString.includes("/")) {
+      return `${inputString.slice(0, 2)}/${inputString.slice(2)}`;
+    }
+    return inputString;
   }
+
   const handleCardInfoSubmit = async (e) => {
     e.preventDefault();
-    // Expiration date must be in MM/YYYY format
     const body = {
       creditCardNumber: cardInfo.number,
       cardOwnerName: cardInfo.name,
-      expirationDate: formatDateString(cardInfo.expiry), //"12/2023",
-      securityCode: cardInfo.cvc, //"123",
-      zipCode: cardInfo.zipCode
+      expirationDate: formatDateString(cardInfo.expiry),
+      securityCode: cardInfo.cvc,
+      zipCode: cardInfo.zipCode,
     };
-    setSuccessresponse((prev) => ({
-      ...prev,
-      isLoading: true,
-    }));
+
+    setSuccessresponse((prev) => ({ ...prev, isLoading: true }));
     await axios
       .post(`${remote_host}/api/v1/users/payment-detail/validate-card`, body)
       .then((result) => {
@@ -97,10 +109,7 @@ const CreditCardForm = ({ formik }) => {
           });
         }
       });
-    setSuccessresponse((prev) => ({
-      ...prev,
-      isLoading: false,
-    }));
+    setSuccessresponse((prev) => ({ ...prev, isLoading: false }));
   };
 
   return (
@@ -142,11 +151,10 @@ const CreditCardForm = ({ formik }) => {
           <div className="row">
             <div className="col-6 mb-3">
               <input
-                type="number"
+                type="text"
                 name="expiry"
                 className="form-control"
-                placeholder="Expire Date"
-                pattern="\d\d/\d\d"
+                placeholder="MM/YY"
                 value={cardInfo.expiry}
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
@@ -212,4 +220,5 @@ const CreditCardForm = ({ formik }) => {
     </div>
   );
 };
+
 export default CreditCardForm;

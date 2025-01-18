@@ -38,7 +38,7 @@ export default function Example(props) {
         color: "#678",
       }}
       sx={{
-        height: "100vh",
+        height: { xs: '50vh', md: '100vh' },
         indicators: {
           width: "100%",
           marginTop: "3px",
@@ -84,7 +84,8 @@ function SlideItem({ image, title, description }) {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
-        height: "75vh",
+        height: { xs: '40vh', sm: '60vh', md: '75vh' },
+        width: '100%',
       }}
     >
       <Stack
@@ -98,20 +99,20 @@ function SlideItem({ image, title, description }) {
             backgroundColor: "#000",
             opacity: 0.7,
             width: "100%",
-            paddingY: 4,
+            paddingY: { xs: 2, md: 4 },
             paddingX: 2,
           }}
         >
           <center>
             <RSTypography
-              fontsize={"35px"}
+              fontsize={{ xs: "24px", sm: "30px", md: "35px" }}
               fontweight={"500"}
               txtcolor={"#FFF"}
             >
               {title}
             </RSTypography>
             <RSTypography
-              fontsize={"20px"}
+              fontsize={{ xs: "16px", sm: "18px", md: "20px" }}
               fontweight={"300"}
               txtcolor={"#DDD"}
             >

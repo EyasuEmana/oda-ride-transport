@@ -87,18 +87,17 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const handleExtraOptionSelect = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
-        {
-          const extraOptionFee = formik.values.extraOptionFee
-          const pricePerExtraOption = parseFloat(option.pricePerItem);
-          console.log("extra fee: ", extraOptionFee + pricePerExtraOption)
-          formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption)
-          dispatch(addExtraOptionFee(pricePerExtraOption));
-          return {
-            ...option,
-            itemQuantity: 1,
-            isSelected: selectedOptionId == option.extraOptionId,
-          };
-        }
+        const extraOptionFee = formik.values.extraOptionFee;
+        const priceMultiplier = isRoundTrip() ? 2 : 1;
+        const pricePerExtraOption = parseFloat(option.pricePerItem) * priceMultiplier;
+        
+        formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption);
+        dispatch(addExtraOptionFee(pricePerExtraOption));
+        return {
+          ...option,
+          itemQuantity: 1,
+          isSelected: selectedOptionId == option.extraOptionId,
+        };
       } else return option;
     });
     dispatch(updateExtraOption(updatedExtraOptions));
@@ -106,11 +105,12 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
 
   const handleExtraOptionUnSelect = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
-
       if (selectedOptionId == option.extraOptionId) {
-        const extraOptionFee = formik.values.extraOptionFee
-        const pricePerExtraOption = parseFloat(option.pricePerItem) * (option.itemQuantity);
-        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption)
+        const extraOptionFee = formik.values.extraOptionFee;
+        const priceMultiplier = isRoundTrip() ? 2 : 1;
+        const pricePerExtraOption = parseFloat(option.pricePerItem) * option.itemQuantity * priceMultiplier;
+        
+        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption);
         dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
@@ -125,9 +125,11 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const addExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
-        const extraOptionFee = formik.values.extraOptionFee
-        const pricePerExtraOption = parseFloat(option.pricePerItem);
-        formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption)
+        const extraOptionFee = formik.values.extraOptionFee;
+        const priceMultiplier = isRoundTrip() ? 2 : 1;
+        const pricePerExtraOption = parseFloat(option.pricePerItem) * priceMultiplier;
+        
+        formik.setFieldValue("extraOptionFee", extraOptionFee + pricePerExtraOption);
         dispatch(addExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
@@ -143,9 +145,11 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const reduceExtraOptionQuantity = (selectedOptionId) => {
     const updatedExtraOptions = extraOptions.map((option) => {
       if (selectedOptionId == option.extraOptionId) {
-        const extraOptionFee = formik.values.extraOptionFee
-        const pricePerExtraOption = parseFloat(option.pricePerItem);
-        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption)
+        const extraOptionFee = formik.values.extraOptionFee;
+        const priceMultiplier = isRoundTrip() ? 2 : 1;
+        const pricePerExtraOption = parseFloat(option.pricePerItem) * priceMultiplier;
+        
+        formik.setFieldValue("extraOptionFee", extraOptionFee - pricePerExtraOption);
         dispatch(reduceExtraOptionFee(pricePerExtraOption));
         return {
           ...option,
@@ -301,6 +305,9 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
                   carDetail={car}
                   formik={formik}
                   handleCarSelect={handleCarSelect}
+                  hour={hour}
+                  distanceInMiles={distanceInMiles}
+                  isRoundTrip={isRoundTrip}
                 />
               </Box>
             ))}

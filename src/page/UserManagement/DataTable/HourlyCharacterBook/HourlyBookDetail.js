@@ -244,6 +244,10 @@ function ViewHourlyBookDetail(props) {
             value={response?.PaymentDetail?.securityCode}
           />
           <Field
+            label="Zip  code"
+            value={response?.PaymentDetail?.zipCode}
+          />
+          <Field
             label="Additional Stop On the Way "
             value={AdditionalStopOnTheWay}
           />

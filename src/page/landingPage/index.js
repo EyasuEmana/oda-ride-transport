@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Stack, Grid } from "@mui/material";
+import { Box, Stack, Grid, Container } from "@mui/material";
 import ServiceCard from "./component/serviceCard/index";
 import car from "../../assets/images/car.png";
 import plane from "../../assets/images/plane.png";
@@ -21,21 +21,21 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   const serviceCardData = [
     {
       id: 1,
-      imgUrl: car,
+      imgUrl: plane,
       delay: 0,
-      text: "From doorstep to destination, we cater to your needs, everywhere and anytime.",
+      text: "Airport pickup & drop off Service",
     },
     {
       id: 2,
-      imgUrl: plane,
+      imgUrl: car,
       delay: 0.3,
-      text: "Reserve transportation to and from the airport in advance for tranquility.",
+      text: "Ponit to Point Service ",
     },
     {
       id: 3,
       imgUrl: clock,
       delay: 0.6,
-      text: "We're here for you, for as long as you require. Accessible within your locality.",
+      text: "Hourly Charter Service",
     },
   ];
 
@@ -52,65 +52,92 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   return (
     <Box paddingBottom={10} id="home">
       <Slider />
-      <Grid
-        container
-        alignItems={"flex-start"}
-        justifyContent={"center"}
-        spacing={5}
-        mt={-20}
-      >
-        <Grid item md={5} xs={11}>
-          <Stack direction={"column"} spacing={3}>
-            <RSTypography fontsize={"25px"} fontweight={"500"}>
-              "Discover the safest and most customer-friendly ride system in our
-              city!"
-            </RSTypography>
-            <motion.div
-              animate={{ scale: 1 }}
-              whileHover={{ scale: 1.02 }}
-              transition={{
-                repeat: Infinity,
-                type: "spring",
-                bounce: 5,
-                duration: 4,
+        <Grid
+          container
+          alignItems={"center"}
+          justifyContent={"center"}
+          spacing={{ xs: 2, sm: 3, md: 5 }}
+          sx={{ mt: { xs: -10, sm: -15, md: -20 } }}
+        >
+          <Grid 
+            item 
+            xs={12}
+            sm={10}
+            md={6}
+            lg={5}
+            xl={4}
+            sx={{
+              maxHeight: { xs: '50vh', sm: '60vh', md: '65vh' },
+              overflow: 'auto',
+              mb: { xs: 4, sm: 6, md: 8 },
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: -20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '60%',
+                height: '4px',
+                background: 'linear-gradient(90deg, transparent, #888, transparent)',
+                borderRadius: '2px',
+              },
+              '&::-webkit-scrollbar': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
+                borderRadius: '10px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#888',
+                borderRadius: '10px',
+                '&:hover': {
+                  background: '#555',
+                },
+              },
+            }}
+          >
+            <Stack 
+              direction={"column"} 
+              spacing={{ xs: 2, sm: 3, md: 4 }}
+              alignItems={"center"}
+              sx={{ 
+                px: { xs: 1, sm: 2, md: 3 },
+                py: 2,
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+                  borderRadius: 2,
+                  zIndex: -1,
+                },
               }}
-              initial={{ scale: 0.9 }}
             >
-              <RSButton
-                sx={{ width: 200 }}
-                backgroundcolor={"#FF0013"}
-                txtcolor={"#FFF"}
-                onClick={() => {
-                  navigate(`/home/1`);
-                }}
-              >
-                Book Now
-                <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
-              </RSButton>
-            </motion.div>
-          </Stack>
+              {serviceCardData.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  imgUrl={service.imgUrl}
+                  text={service.text}
+                  id={service.id}
+                  delay={service.delay}
+                />
+              ))}
+            </Stack>
+          </Grid>
+          <Grid item container xs={10} justifyContent={"center"} id="auth">
+            <Auth usernameFocus={usernameFocus} />
+          </Grid>
+          <AboutUs />
+          <Grid item container xs={11} justifyContent={"center"}>
+            <Faq />
+          </Grid>
         </Grid>
-        <Grid item md={5} xs={11}>
-          <Stack direction={"column"} spacing={2} alignItems={"center"}>
-            {serviceCardData.map((service) => (
-              <ServiceCard
-                key={service.id}
-                imgUrl={service.imgUrl}
-                text={service.text}
-                id={service.id}
-                delay={service.delay}
-              />
-            ))}
-          </Stack>
-        </Grid>
-        <Grid item container xs={10} justifyContent={"center"} id="auth">
-          <Auth usernameFocus={usernameFocus} />
-        </Grid>
-        <AboutUs />
-        <Grid item container xs={11} justifyContent={"center"}>
-          <Faq />
-        </Grid>
-      </Grid>
     </Box>
   );
 }

@@ -10,7 +10,7 @@ import useGetData12 from "../../../../store/hooks/airbook";
 import { ToastContainer } from "react-toastify";
 
 function HourlyCharacter() {
-  const [hourlyCharacterId, setHourlyCharacterId] = React.useState(null);
+  const [hourlyCharterBookId, setHourlyCharterId] = React.useState(null);
   const navigate = useNavigate();
 
   let endpoint = `/api/v1/hourly-charter-books`;
@@ -46,12 +46,12 @@ function HourlyCharacter() {
     isError: isErrorUpdate,
     isSuccess: setSuccessUpdate,
     error: errorupdate,
-  } = usePutData(endpoint, hourlyCharacterId, data);
+  } = usePutData(endpoint, hourlyCharterBookId, data);
 
   const handleEdit = async ({ row, values, table }) => {
     update({
       endpoint: endpoint,
-      Id: row.original.hourlyCharacterId,
+      Id: row.original.hourlyCharterBookId,
       data: values,
     });
     table.setEditingRow(null);
@@ -62,7 +62,7 @@ function HourlyCharacter() {
 
   const { mutateAsync: deleteData, isPending: isDeleting } = useDeleteData(
     endpoint,
-    hourlyCharacterId
+    hourlyCharterBookId
   );
 
   const openDeleteConfirmModal = (row) => {
@@ -73,7 +73,7 @@ function HourlyCharacter() {
     ) {
       deleteData({
         endpoint: endpoint,
-        Id: row.original.hourlyCharacterId,
+        Id: row.original.hourlyCharterBookId,
       });
     }
   };

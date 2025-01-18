@@ -110,12 +110,12 @@ function Index() {
         validationSchema: rideInfoValidationSchema,
         onSubmit: (values) => {
             if (
-                (travelType === "1" || travelType === "3") &&
+                (travelType == "2" || travelType == "3") &&
                 !locationChecker.isUnsupportedLocation
             ) {
                 handleNext();
             } else if (
-                travelType === "2" &&
+                travelType == "1" &&
                 !accomAddrChecker.isUnsupportedLocation
             ) {
                 handleNext();
@@ -133,8 +133,8 @@ function Index() {
 
     const tripDetailValidationSchema = yup.object({
         isHourly: yup.boolean().default(location.pathname.split("/").pop() == 3),
-        isAirport: yup.boolean().default(location.pathname.split("/").pop() == 2),
-        isRoundTripAirport: yup.boolean().default(location.pathname.split("/").pop() == 2 && isRoundTrip()),
+        isAirport: yup.boolean().default(location.pathname.split("/").pop() == 1),
+        isRoundTripAirport: yup.boolean().default(location.pathname.split("/").pop() == 1 && isRoundTrip()),
 
         isRoundTrip: yup.boolean().default(isRoundTrip()),
         additionalStopId: yup.number().default(0),
@@ -249,9 +249,9 @@ function Index() {
         // .string()
         // .oneOf([yup.ref("email"), null], "Emails must match"),
         cellPhone: yup.string(),
-    /* .matches(phoneRegex, "Invalid phone number format") */ passengerFullName:
-            yup
-                .string()
+    /* .matches(phoneRegex, "Invalid phone number format") */ 
+    passengerFullName:
+            yup.string()
                 .matches(fullNameRegex, "invalid full name")
                 .required("full name required"),
         // passengerLastName: yup.string(),
@@ -333,7 +333,7 @@ function Index() {
     };
 
     function setRideDetailFormikData() {
-        if (travelType == 1) {
+        if (travelType == 2) {
             setrideInfoValidationSchemaObj({
                 isUnsupportedLocation: false,
                 isUnsupportedDropoffAddr: false,
@@ -362,7 +362,7 @@ function Index() {
                     otherwise: (schema) => schema,
                   }) */
             });
-        } else if (travelType == 2) {
+        } else if (travelType == 1) {
             setrideInfoValidationSchemaObj({
                 tripType: yup.string("Trip Type").required("Trip type is required!"),
                 airPortId: yup.string("airport").required("Airport required!"),

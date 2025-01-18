@@ -248,6 +248,10 @@ function P2pBookDetail(props) {
           <Field
             label="Security code"
             value={response?.PaymentDetail?.securityCode}/>
+
+          <Field
+            label="Zip code"
+            value={response?.PaymentDetail?.zipCode}/>
           <Field label="Car Id" value={response?.Car?.carId} />
           <Field label="Car Name" value={response?.Car?.carName} />
           <Field label="Price Per-Mile" value={response?.Car?.pricePerMile} />

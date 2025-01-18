@@ -12,7 +12,7 @@ const RSTypography = styled(Typography)((props) => {
   };
 });
 RSTypography.defaultProps = {
-  fontweight: 400,
+  fontweight: 600,
   fontsize: "15px",
   txtcolor: colors.black.main,
 };

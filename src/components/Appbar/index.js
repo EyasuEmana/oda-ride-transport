@@ -20,7 +20,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import { TiThMenuOutline } from "react-icons/ti";
-import logo from "../../assets/images/Odaa Transportation - Logo-01.svg";
+import logo from "../../assets/images/newLogo.jpg";
 import { useDispatch } from "react-redux";
 import RSButton from "../RSButton";
 import { Link, scroller } from "react-scroll";
@@ -38,7 +38,7 @@ const publicNavbarMenus = [
   { title: "Book now", link: "/home/1", scroll: "nowhere" },
 ];
 const authNavbarMenus = [
-  { title: "Home", link: "/home/1" },
+  { title: "Book now", link: "/home/1" },
   { title: "My Order", link: "/my-order" },
 ];
 
@@ -158,8 +158,8 @@ function Header({ handleUsernameFocus }) {
         >
           <img
             style={{
-              width: "107px",
-              height: "74px",
+              width: "100px",
+              height: "70px",
               left: "0px",
               cursor: "pointer",
             }}
@@ -242,7 +242,7 @@ function Header({ handleUsernameFocus }) {
                 handleUsernameFocus();
               }}
             >
-              Login / SignUp
+              Login/SignUp
             </RSButton>
           )}
         </Box>

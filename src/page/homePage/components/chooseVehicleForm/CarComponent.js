@@ -12,8 +12,9 @@ import RSButton from "../../../../components/RSButton";
 import { BsPeople } from "react-icons/bs";
 import { PiSuitcaseDuotone } from "react-icons/pi";
 import { useLocation } from "react-router-dom";
+import { round } from "lodash";
 
-function CarComponent({ carDetail, formik, handleCarSelect }) {
+function CarComponent({ carDetail, formik, handleCarSelect, hour, distanceInMiles, isRoundTrip }) {
   const {
     carName,
     carImageUrl,
@@ -51,6 +52,30 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
   };
 
   const selectCarButtonStyle = { width: { md: 200, xs: "100%", marginBottom: 4 } }
+
+  const calculateCarFee = () => {
+    const baseMinimumFee = parseFloat(carDetail.minimumStartFee);
+    let calculatedFee = 0;
+
+    if (travelType == "1" || travelType == "2") {
+      const carPricePerMile = parseFloat(carDetail.pricePerMile);
+      const roundTrip = isRoundTrip();
+      
+      // Double the minimum fee for round trips
+      const minimumCarFee = roundTrip ? baseMinimumFee * 2 : baseMinimumFee;
+      const distance = roundTrip ? distanceInMiles * 2 : distanceInMiles;
+      
+      calculatedFee = (carPricePerMile * distance) + minimumCarFee;
+      
+
+    } else if (travelType == "3") {
+      const carPricePerHour = parseFloat(carDetail.pricePerHour);
+      calculatedFee = (carPricePerHour * hour) + baseMinimumFee;
+    }
+
+    return calculatedFee.toFixed(0);
+  };
+
   return (
     <Box
       sx={{
@@ -72,17 +97,7 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
             spacing={2}
             sx={{ height: "100%", margin: matchSmallScreen && 2 }}
           >
-            <Grid container justifyContent={"space-between"}>
-              <Grid item xs={6}>
-                <RSTypography
-                  fontweight={700}
-                  fontsize={"25px"}
-                  txtcolor={theme.palette.warning.main}
-                >
-                  {carName}
-                </RSTypography>
-              </Grid>
-              <Grid item xs={5}>
+                          <Grid item xs={5}>
                 <Box>
                   <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack direction={"row"} justifyContent={"flex-start"}>
@@ -104,17 +119,23 @@ function CarComponent({ carDetail, formik, handleCarSelect }) {
                   </Stack>
                 </Box>
               </Grid>
-            </Grid>
+            {/* Car Name */}
+            <RSTypography
+              fontweight={700}
+              fontsize={"25px"}
+              txtcolor={theme.palette.warning.main}
+            >
+              {carName}
+            </RSTypography>
 
+            {/* Price */}
+            <RSTypography fontsize={"25px"}>
+              ${calculateCarFee()}
+            </RSTypography>
+
+            {/* Select Button */}
             <Grid container justifyContent={"center"}>
-              <Grid item xs={6}>
-                {/* <RSTypography fontsize={"25px"}>$
-                  {travelType == "3" && pricePerHour + "/hr"}
-                  {(travelType == "1" || travelType == "2") &&
-                    pricePerMile + "/mile"}
-                </RSTypography> */}
-              </Grid>
-              <Grid item xs={11} md={6} mt={{ xs: 2, md: 0 }}>
+              <Grid item xs={11} md={6}>
                 {isSelected ? (
                   <RSButton
                     backgroundcolor={"#FF0013"}

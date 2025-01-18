@@ -53,8 +53,8 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
     };
   };
 
-  const isPointToPointTravel = travelType === "1";
-  const isAirportTravel = travelType === "2";
+  const isPointToPointTravel = travelType === "2";
+  const isAirportTravel = travelType === "1";
   const isHourlyTravel = travelType === "3";
 
   const isRoundTrip = () => {
@@ -381,7 +381,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
 
 
 
-            {(isPointToPointTravel || isAirportTravel) && (
+            {( isAirportTravel || isPointToPointTravel) && (
               <>
                 <FormControlLabel
                   control={

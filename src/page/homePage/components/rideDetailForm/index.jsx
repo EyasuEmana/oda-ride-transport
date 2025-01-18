@@ -74,7 +74,8 @@ function Index({
   const pointToPointTripTypes = useMemo(() => ["One-Way", "Round-Trip"]);
   const { airports } = useSelector((state) => state.airportReducer);
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
+    // googleMapsApiKey: "AIzaSyAgAp1RwiIqCyZZg63gsmyP6TZBuVxw_8c",
+    googleMapsApiKey: "AIzaSyCvm85RFSLVS4DV7zBb1l0UlOJ1tpSXRPQ",
 
     libraries: libraries,
   });
@@ -184,10 +185,10 @@ function Index({
   };
   const getTripType = () => {
     if (travelType == 1) {
-      return "point-to-point";
+      return "airport";
     }
     if (travelType == 2) {
-      return "airport";
+      return "point-to-point";
     }
   };
 
@@ -402,35 +403,36 @@ function Index({
         <Grid item md={5} xs={12}>
           <Stack direction={"column"} spacing={2}>
             <FormControl fullWidth>
-              <FormLabel sx={{ color: "info" }}>Trip Type</FormLabel>
+              <FormLabel sx={{ color: "info" }}>Select Type of Service</FormLabel>
               <RadioGroup
                 row
                 defaultValue={travelType}
                 name="radio-buttons-group"
                 onChange={handleChangeTripType}
               >
+               
                 <FormControlLabel
                   value={1}
+                  control={<RSRadio />}
+                  label="Airport Service"
+                />
+                 <FormControlLabel
+                  value={2}
                   control={<RSRadio />}
                   label="Point to Point"
                 />
                 <FormControlLabel
-                  value={2}
-                  control={<RSRadio />}
-                  label="Airport Service"
-                />
-                <FormControlLabel
                   value={3}
                   control={<RSRadio />}
-                  label="Hourly Based"
+                  label="Hourly Charter"
                 />
               </RadioGroup>
             </FormControl>
             {locationChecker.isUnsupportedLocation &&
-              (travelType === "1" || travelType === "3") && (
+              (travelType == "2" || travelType === "3") && (
                 <Alert severity="error">{locationChecker.errorMessage}</Alert>
               )}
-            {accomAddrChecker.isUnsupportedLocation && travelType === "2" && (
+            {accomAddrChecker.isUnsupportedLocation && travelType == "1" && (
               <Alert severity="error">{accomAddrChecker.errorMessage}</Alert>
             )}
             {(travelType == 1 || travelType == 2) && (
@@ -463,7 +465,7 @@ function Index({
               </FormControl>
             )}
 
-            {travelType == 2 && (
+            {travelType == 1 && (
               <FormControl fullWidth color="info">
                 <InputLabel id="airport label">Select Airport</InputLabel>
                 <Select
@@ -520,7 +522,7 @@ function Index({
               </FormControl>
             )}
 
-            {(travelType == 1 || travelType == 3) && isLoaded && (
+            {(travelType == 2 || travelType == 3) && isLoaded && (
               <Autocomplete
                 onPlaceChanged={onOriginChanged}
                 onLoad={onLoadOriginFunc}
@@ -554,7 +556,7 @@ function Index({
               </Autocomplete>
             )}
 
-            {(travelType == 1 || travelType == 3) && (
+            {(travelType == 2 || travelType == 3) && (
               <Autocomplete
                 onPlaceChanged={onDestinationChanged}
                 onLoad={onLoadDestinationFunc}
@@ -588,7 +590,7 @@ function Index({
               </Autocomplete>
             )}
 
-            {travelType == 2 && (
+            {travelType == 1 && (
               <Autocomplete
                 onPlaceChanged={onAccommodationChange}
                 onLoad={onLoadAccomodationFunc}

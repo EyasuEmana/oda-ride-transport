@@ -14,9 +14,9 @@ function StepSummary({
   const location = useLocation();
   const tripType = rideSummaryData.tripType;
   var travelType = location.pathname.split("/").pop();
-  const isPointToPointTravel = travelType === "1";
-  const isAirportTravel = travelType === "2";
-  const isHourlyTravel = travelType === "3";
+  const isPointToPointTravel = travelType == "2";
+  const isAirportTravel = travelType == "1";
+  const isHourlyTravel = travelType == "3";
   const { fee, totalFee } = useSelector((state) => state.bookReducer);
 
   const isRoundTrip = () => {
@@ -36,11 +36,11 @@ function StepSummary({
   const getPickupAddr = () => {
     var pickupAddr = null;
     switch (travelType) {
-      case "1":
+      case "2":
       case "3":
         pickupAddr = rideSummaryData.pickupPhysicalAddress;
         break;
-      case "2":
+      case "1":
         const isFromAirport =
           tripType == "Ride from the airport(round trip)" ||
           "Ride from the airport(one way)";
@@ -61,11 +61,11 @@ function StepSummary({
   const getDropoffAddr = () => {
     var dropoffAddr = null;
     switch (travelType) {
-      case "1":
+      case "2":
       case "3":
         dropoffAddr = rideSummaryData.dropoffPhysicalAddress;
         break;
-      case "2":
+      case "1":
         const isFromAirport =
           tripType == "Ride from the airport(round trip)" ||
           "Ride from the airport(one way)";

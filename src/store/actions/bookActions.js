@@ -60,7 +60,7 @@ export const book = createAsyncThunk(
       delete body.extraOptions;
     }
     try {
-      if (travelType === "1") {
+      if (travelType == "2") {
         body.tripType = rideInfo?.tripType;
         body.distanceInMiles = rideInfo?.distanceInMiles;
 
@@ -74,7 +74,7 @@ export const book = createAsyncThunk(
           body,
           headers
         );
-      } else if (travelType === "2") {
+      } else if (travelType == "1") {
         const body = {
           tripType: rideInfo?.tripType,
           airportId: rideInfo?.airPortId,

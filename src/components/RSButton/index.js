@@ -55,11 +55,11 @@ RSButton.defaultProps = {
   backgroundcolor: "#FFF",
   borderradius: "5px",
   txtcolor: "light",
-  fontWeight: 500,
-  fontSize: "12px",
+  fontWeight: 600,
+  fontSize: "15px",
   paddingX: "10px",
   variant: "contained",
   bordercolor: "#FFF",
-  radius: "12px",
+  radius: "14px",
 };
 export default RSButton;
