@@ -57,7 +57,15 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
           alignItems={"center"}
           justifyContent={"center"}
           spacing={{ xs: 2, sm: 3, md: 5 }}
-          sx={{ mt: { xs: -10, sm: -15, md: -20 } }}
+          sx={{
+            mt: { 
+              xs: -4,
+              sm: -1,  // Changed from -1 to -8 for better positioning on tablets
+              md: -25
+            },
+            position: 'relative',
+            zIndex: 1
+          }}
         >
           <Grid 
             item 
@@ -67,10 +75,27 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
             lg={5}
             xl={4}
             sx={{
-              maxHeight: { xs: '50vh', sm: '60vh', md: '65vh' },
+              maxHeight: { 
+                xs: '50vh', 
+                sm: '55vh',  // Adjusted for tablets
+                md: '60vh' 
+              },
+              minHeight: {  // Added minimum height
+                xs: '300px',
+                sm: '400px',
+                md: '500px'
+              },
               overflow: 'auto',
-              mb: { xs: 4, sm: 6, md: 8 },
+              mb: { 
+                xs: 4, 
+                sm: 5,  // Adjusted spacing
+                md: 8 
+              },
               position: 'relative',
+              backdropFilter: 'blur(5px)',  // Added for better visibility
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',  // Semi-transparent background
+              borderRadius: 2,
+              boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
               '&::after': {
                 content: '""',
                 position: 'absolute',
@@ -100,11 +125,11 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
           >
             <Stack 
               direction={"column"} 
-              spacing={{ xs: 2, sm: 3, md: 4 }}
+              spacing={{ xs: 2, sm: 2.5, md: 4 }}  // Adjusted spacing
               alignItems={"center"}
               sx={{ 
                 px: { xs: 1, sm: 2, md: 3 },
-                py: 2,
+                py: { xs: 2, sm: 3, md: 3 },  // Added responsive padding
                 position: 'relative',
                 '&::before': {
                   content: '""',

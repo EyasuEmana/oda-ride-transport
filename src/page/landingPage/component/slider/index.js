@@ -84,7 +84,7 @@ function SlideItem({ image, title, description }) {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
-        height: { xs: '40vh', sm: '60vh', md: '75vh' },
+        height: { xs: '40vh', sm: '42vh', md: '69vh' },
         width: '100%',
       }}
     >
