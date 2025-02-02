@@ -4,7 +4,9 @@ export const columns =  [
     {
         accessorKey: 'pointToPointBookId',
         header: 'ID',
-      },    
+      },  
+
+
       {
         accessorKey: 'tripType',
         header: 'Trip Type'
@@ -15,26 +17,11 @@ export const columns =  [
         header: 'PickUp physical Address',
       },
 
-      // {
-      //   accessorKey: 'pickupLongitude',
-      //   header: 'PickUp Longitude',
-      // },    
-      // {
-      //   accessorKey: 'pickupLatitude',
-      //   header: 'PickUp latitude',
-      // },
       {
         accessorKey: 'dropoffPhysicalAddress',
         header: 'Dropoff Physical Address',
       },
-    //   {
-    //     accessorKey: 'dropoffLongitude',
-    //     header: 'Dropoff Longitude',
-      
 
-    //   // Cell: ({ cell }) => <p>{cell.getValue()[0].destination.name}</p>,
-    //   // Cell: ({ cell }) => <p>{console.log('sss',cell.getValue()[0]?.destination.name)}</p>,
-    // }, 
     {
       accessorKey: 'paymentStatus',
       header: 'Payment Status',
@@ -44,13 +31,33 @@ export const columns =  [
   {
     accessorKey: 'bookingStatus',
     header: 'Booking Status',
-  
 },
 
-    // {
-    //   accessorKey: 'dropoffLatitude',
-    //   header: 'Dropoff Latitude',
-    // }
+{
+  accessorKey: 'pickupDateTime',
+  header: 'pickup-Date-Time',
+},
+{
+  accessorKey: 'passengerFullName',
+  header: 'passenger-FullName',
+},
+
+{
+  accessorKey: 'passengerCellPhone',
+  header: 'passenger-Cell-Phone',
+},
+
+{
+  accessorKey: 'passengerEmail',
+  header: 'passenger-Email',
+},
+
+{
+  accessorKey: 'numberOfPassengers',
+  header: 'Number-Of-Passengers',
+},
+
+
   ]
 
  

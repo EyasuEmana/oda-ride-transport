@@ -10,6 +10,24 @@ export const columns =  [
         header: 'Trip Type'
         
       },
+      
+      {
+        accessorKey: 'paymentStatus',
+        header: 'Payment-Status',
+      },
+      {
+        accessorKey: 'bookingStatus',
+        header: 'Booking-Status',
+      },
+
+      {
+        accessorKey: 'passengerCellPhone',
+        header: 'Passenger-Cell-Phone',
+      },
+      {
+        accessorKey: 'passengerEmail',
+        header: 'Passenger-Email',
+      },
       {
         accessorKey: 'numberOfPassengers',
         header: 'number-Of-Passengers',
@@ -18,15 +36,28 @@ export const columns =  [
       {
         accessorKey: 'accommodationAddress',
         header: 'Accommodation-Address',
-      },    
+      }, 
+      
+    
       {
-        accessorKey: 'accommodationLongitude',
-        header: 'Accommodation-Longitude',
+        accessorKey: 'airline',
+        header: 'Airline',
+      },
+      
+      {
+        accessorKey: 'arrivalFlightNumber',
+        header: 'Arrival-Flight-Number',
       },
       {
-        accessorKey: 'accommodationLatitude',
-        header: 'Accommodation-Latitude',
-      }
+        accessorKey: 'returnAirline',
+        header: 'Return-Airline',
+      },
+      {
+        accessorKey: 'returnFlightNumber',
+        header: 'Return-Flight-Number',
+      },
+
+
   ]
 
  

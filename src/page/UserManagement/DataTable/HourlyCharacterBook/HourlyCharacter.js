@@ -1,5 +1,5 @@
-import React from "react";
-import MDataTable from "../MDataTable";
+import React, { useState } from "react";
+import MDataTable1 from "../MDataTable1";
 import useDeleteData from "../../../../store/hooks/useDeleteData";
 
 import usePostData from "../../../../store/hooks/usePostData";
@@ -13,13 +13,28 @@ function HourlyCharacter() {
   const [hourlyCharterBookId, setHourlyCharterId] = React.useState(null);
   const navigate = useNavigate();
 
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [columnFilters, setColumnFilters] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState([]);
+
   let endpoint = `/api/v1/hourly-charter-books`;
   const queryParams = {
-    page: 1,
-    pageSize: 7,
-    sortDirection: "ASC",
-    // Add other query parameters here
+    page: pagination.pageIndex + 1, // API expects 1-based index
+    pageSize: pagination.pageSize,
+    sortDirection: "DESC",
+    filters: JSON.stringify(columnFilters),
+    search: globalFilter,
+    sort: sorting.length ? JSON.stringify(sorting) : undefined
   };
+
+
+
   const getendpoint = `/api/v1/hourly-charter-books?${Object.keys(queryParams)
     .map((key) => `${key}=${queryParams[key]}`)
     .join("&")}`;
@@ -80,19 +95,44 @@ function HourlyCharacter() {
 
   return (
     <div>
-      <MDataTable
-        headerTitle="Hourly Character Booking"
-        add="Hourly Character Book"
+      <MDataTable1
+        headerTitle="Hourly Charter Booking"
+        add="Hourly Charter Book"
         openDeleteConfirmModal={openDeleteConfirmModal}
         handleNewAdd={handleNewAdd}
         handleEdit={handleEdit}
         editable={true}
         columns={columns}
-        data={response || []}
+        data={response?.data || []}
         isLoading={isLoadingGet}
         isError={isErrorGet}
-        title={"Hourly Character Book"}
+        isRefetching={isRefetching}
+        title={"Hourly Charter Book"}
         handleViewClick={handleViewClick}
+        // Pagination props
+        enablePagination={true}
+        rowCount={response?.totalElements || 0}
+        pagination={pagination}
+        onPaginationChange={setPagination}
+        // Filtering props
+        enableFiltering={true}
+        enableColumnFilters={true}
+        enableGlobalFilter={true}
+        onColumnFiltersChange={setColumnFilters}
+        onGlobalFilterChange={setGlobalFilter}
+        // Sorting props
+        enableSorting={true}
+        onSortingChange={setSorting}
+        manualSorting={true}
+        state={{
+          pagination,
+          columnFilters,
+          globalFilter,
+          sorting,
+          isLoading: isLoadingGet,
+          showProgressBars: isRefetching,
+          showAlertBanner: isErrorGet,
+        }}
       />
             <ToastContainer />
 

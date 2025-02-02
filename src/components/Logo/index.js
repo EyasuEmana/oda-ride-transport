@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import newLogo from '../../assets/images/newLogo.jpg';
+import OdaaLogo from '../../assets/images/Odaa Transportation - Logo-01.svg';
 
 // Logo component with size variants
 const Logo = ({ variant = 'default', sx }) => {
@@ -14,7 +14,7 @@ const Logo = ({ variant = 'default', sx }) => {
   return (
     <Box
       component="img"
-      src={newLogo}
+      src={OdaaLogo}
       alt="Company Logo"
       sx={{
         ...logoSizes[variant],

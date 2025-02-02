@@ -12,6 +12,27 @@ import { remote_host } from "../../globalVariable";
 import { useSelector, useDispatch } from "react-redux";
 import { getFooterData } from "../../store/actions/footerAction";
 import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
+
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="white"
+      align="center"
+      {...props}
+    >
+
+
+      {new Date().getFullYear()}
+         
+    </Typography>
+  );
+}
+
+
+
 function Index() {
   const theme = useTheme();
   const [socialMedias, setSocialMedias] = useState();
@@ -150,8 +171,8 @@ function Index() {
         sx={{ borderColor: "text.main", borderWidth: "1px", marginY: 2 }}
       />
       <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <RSTypography txtcolor={white}>
-          © Oda Transportation service. All rights reserved!
+      <RSTypography txtcolor={white}>
+          Copyright © {new Date().getFullYear()} Oda Transportation service. All rights reserved!
         </RSTypography>
       </Box>
     </Box >
