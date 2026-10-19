@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Grid,
   Stack,
   CircularProgress,
-  Alert,
   Button,
-  Snackbar,
 } from "@mui/material";
 import RSTextField from "../../../../../components/RSTextField";
-import RSTypography from "../../../../../components/RSTypography";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../../../../../store/actions/authAction";
 function Index() {
   const dispatch = useDispatch();
-  const { signupLoanding, signUpSuccessMessage, isSignupSuccess } = useSelector(
+  const { signupLoanding,  } = useSelector(
     (state) => state.authReducer
   );
-  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  const phoneRegex = /^[0-9]{10,15}$/;
   const signInValidationSchema = yup.object({
     firstname: yup.string().required("first name required"),
     lastname: yup.string().required("last name required"),

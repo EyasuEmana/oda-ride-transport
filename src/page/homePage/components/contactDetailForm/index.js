@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Stack, Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
+import { Stack, Grid, FormControlLabel, Checkbox, Box, FormControl, RadioGroup, FormLabel } from "@mui/material";
+import RSRadio from "../../../../components/RSRadio";
 import "bootstrap/dist/css/bootstrap.min.css";
 import RSTextField from "../../../../components/RSTextField";
 import StepSummary from "../StepSummary";
@@ -7,7 +8,10 @@ import CreditCardForm from "./CreditCardForm";
 import { remote_host } from "../../../../globalVariable";
 import axios from "axios";
 import { authHeader } from "../../../../util/authUtil";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  adGratitudeFee
+} from "../../../../store/reducers/bookReducers";
 function Index({
   formik,
   vehicleSummaryData,
@@ -17,6 +21,10 @@ function Index({
   const [bookForPassenger, setBookForPassenger] = useState(
     formik.values.bookingFor == "SomeoneElse"
   );
+  const [gratuities, setGratuity] = useState([]);
+  const { fee } = useSelector((state) => state.bookReducer);
+  const dispatch = useDispatch();
+
   const { isAuthenticated } = useSelector((state) => state.authReducer);
   const handleBookForPassenger = (e) => {
     setBookForPassenger(e.target.checked);
@@ -50,11 +58,40 @@ function Index({
           formik.setFieldValue("passengerCellPhone", phoneNumber);
           formik.setFieldValue("email", email);
         });
-    } catch (error) {}
+    } catch (error) { }
+  };
+
+  const handleChangeGratitude = (e) => {
+    const calculatedFee = fee + parseInt(e.target.value) - parseInt(formik.values.prevGratuityFee)
+    formik.setFieldValue("gratuityId", e.target.name)
+    formik.setFieldValue("prevGratuityFee", e.target.value)
+    dispatch(adGratitudeFee(calculatedFee))
+  }
+
+  const getGratitude = async () => {
+    try {
+      axios.get(`${remote_host}/api/v1/gratuities`).then((res) => {
+        var gratuityData = [];
+        var index = 0
+        res.data.forEach(gratuity => {
+          index = index + 1;
+          gratuityData.splice(index, 0, {
+            ...gratuity,
+            gratuityFee: (fee * gratuity.percentage / 100).toFixed(2)
+          });
+        });
+        console.log("gratuityData: ", gratuityData)
+        setGratuity(gratuityData);
+      });
+    } catch (error) {
+      console.log("unable to load gratitudes: ", error);
+    }
   };
   useEffect(() => {
     getUserInfo();
+    getGratitude();
   }, []);
+
   const isFieldDisabled = () => {
     if (isAuthenticated) {
       return !bookForPassenger;
@@ -90,6 +127,7 @@ function Index({
             label="I'm booking this for someone else."
           />
         </Grid>
+
         <Grid item xs={12}>
           <Stack direction={{ md: "row", xs: "column" }} spacing={2}>
             <RSTextField
@@ -132,6 +170,30 @@ function Index({
               helperText={formik.touched.email && formik.errors.email}
             />
           </Stack>
+        </Grid>
+        <Grid item xs={12} my={3}>
+          <FormControl>
+            <RadioGroup
+              aria-labelledby="gratitude"
+              name="radio-gratitude"
+              onChange={handleChangeGratitude}
+              defaultValue={0}
+            >
+              <FormLabel id="gratitude_label" sx={{ fontSize: 20 }}>Gratuity</FormLabel>
+              {gratuities.map((gratuity) => {
+                const { gratuityId, description, gratuityFee } = gratuity
+                return (
+                  <FormControlLabel
+                    key={gratuityId}
+                    value={gratuityFee}
+                    name={gratuityId}
+                    control={<RSRadio />}
+                    label={`${description} $${gratuityFee}`}
+                  />
+                );
+              })}
+            </RadioGroup>
+          </FormControl>
         </Grid>
         <Grid item xs={12} mt={2}>
           <Box>

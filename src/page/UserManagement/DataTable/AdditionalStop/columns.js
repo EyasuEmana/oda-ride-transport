@@ -2,11 +2,11 @@ import { CImage } from "@coreui/react"
 import React from "react"
  
 export const columns =  [
-    {
-        accessorKey: 'additionalStopId',
-        header: 'ID',
+    // {
+    //     accessorKey: 'additionalStopId',
+    //     header: 'ID',
 
-      },    
+    //   },    
       {
         accessorKey: 'stopType',
         header: 'Stop-type'
@@ -16,10 +16,10 @@ export const columns =  [
         header: 'Additional-stop-Price',
       },
 
-      {
-        accessorKey: 'currency',
-        header: 'Currency',
-      },    
+      // {
+      //   accessorKey: 'currency',
+      //   header: 'Currency',
+      // },    
     
    
    

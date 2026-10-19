@@ -45,7 +45,8 @@ function Index() {
     (state) => state.authReducer
   );
   const { fee } = useSelector((state) => state.bookReducer);
-  const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  // const phoneRegex = /^(09|07|2519|2517|\+2519|\+2517)\d{8}$/;
+  const phoneRegex = /^[0-9]{10,15}$/;
   const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)$/;
 
   const location = useLocation();
@@ -177,6 +178,7 @@ function Index() {
     initialValues: {
       vehicle: null,
       vehicleFee: 0,
+      prevCarMinimumStartFee: 0,
       vehicleName: "",
       numberOfSuitcases: 0,
       numberOfPassengers: 1,
@@ -202,7 +204,7 @@ function Index() {
       returnPickupTime: null,
       additionalStopOnTheWayPrice: 0,
       additionalStopId: null,
-      additionalStopOnTheWayDescription: "",
+      additionalStopOnTheWayDescription: " ",
       instruction: "",
       arrivalFlightNumber: "",
       airline: "",
@@ -211,6 +213,7 @@ function Index() {
       prevPickupPrefValue: 0,
       prevAddtionalStopOnTheWayFee: 0,
       stopOnWayFee: 0,
+
     },
     validationSchema: tripDetailValidationSchema,
     onSubmit: (value) => {
@@ -276,6 +279,9 @@ function Index() {
       creditCardNumber: "",
       expirationDate: "",
       securityCode: "",
+      gratuityId: 1,
+      prevGratuityFee: 0,
+      feeBeforeGratuity: 0,
     },
     validationSchema: contactValidationSchema,
     onSubmit: () => {
@@ -514,8 +520,8 @@ function Index() {
   return (
     <Box>
       {entryAsGuestOptionPage &&
-      !isAuthenticated &&
-      !formikContact.values.entryOptionSelected ? (
+        !isAuthenticated &&
+        !formikContact.values.entryOptionSelected ? (
         <GuestUser
           setEntryAsGuestOptionPage={setEntryAsGuestOptionPage}
           formik={formikContact}

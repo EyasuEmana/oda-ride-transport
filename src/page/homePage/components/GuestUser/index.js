@@ -51,12 +51,14 @@ function Index({ setEntryAsGuestOptionPage, formik }) {
         <RSButton
           borderradius={"5px"}
           variant="contained"
-          backgroundcolor={"#4D4C4C"}
+          backgroundcolor={"#03930A"}
           onClick={() => {
             formik.setFieldValue("isGuestBooking", true);
             formik.setFieldValue("entryOptionSelected", true);
             setEntryAsGuestOptionPage(false);
           }}
+          sx={{ padding: 2 }}
+          fontSize={14}
         >
           CONTINUE AS GUEST
         </RSButton>

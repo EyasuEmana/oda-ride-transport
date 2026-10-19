@@ -35,14 +35,7 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
   const { extraOptions, loading_extra_option } = useSelector(
     (state) => state.extraOptionReducer
   );
-  const carTypes = useMemo(() => [
-    "All Vehicles",
-    "Limousis",
-    "Sedan",
-    "Stretch Limousis",
-    "SUV",
-    "Van",
-  ]);
+  const carTypes = useMemo(() => ["All Vehicles", "Sedan", "SUV", "Van"]);
 
   const isRoundTrip = () => {
     var tripType = rideSummaryData.tripType;
@@ -56,24 +49,30 @@ function Index({ formik, rideSummaryData, hour, distanceInMiles }) {
     const updatedCars = cars.map((car) => {
       if (car.carId == selectedCarId && formik?.vehicle != car.carId) {
         const prevSelectedCarFee = formik.values.vehicleFee;
+        const prevCarMinimumStartFee = parseFloat(
+          formik.values.prevCarMinimumStartFee
+        );
+        const minimumCarFee = parseFloat(car.minimumStartFee);
+        var carPricePerMile = parseFloat(car.pricePerMile);
         var calculatedCarFee = 0;
         if (travelType == "1" || travelType == "2") {
           if (isRoundTrip()) {
             calculatedCarFee =
               fee -
-              prevSelectedCarFee * distanceInMiles * 2 +
-              parseFloat(car.pricePerMile) * distanceInMiles * 2;
+              (prevSelectedCarFee * distanceInMiles * 2 +
+                prevCarMinimumStartFee) +
+              (carPricePerMile * distanceInMiles * 2 + minimumCarFee);
           } else {
             calculatedCarFee =
               fee -
-              prevSelectedCarFee * distanceInMiles +
-              parseFloat(car.pricePerMile) * distanceInMiles;
+              (prevSelectedCarFee * distanceInMiles + prevCarMinimumStartFee) +
+              (carPricePerMile * distanceInMiles + minimumCarFee);
           }
         } else if (travelType == "3") {
           calculatedCarFee =
             fee -
-            prevSelectedCarFee * hour +
-            parseFloat(car.pricePerHour) * hour;
+            (prevSelectedCarFee * hour + prevCarMinimumStartFee) +
+            (parseFloat(car.pricePerHour) * hour + minimumCarFee);
         }
         dispatch(adCarFee(calculatedCarFee));
       }

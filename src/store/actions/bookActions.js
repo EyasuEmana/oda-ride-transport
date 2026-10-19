@@ -10,8 +10,6 @@ export const book = createAsyncThunk(
     var res = null;
 
     const headers = contact.isGuestBooking ? null : authHeader();
-    console.log("contact: ", contact);
-    console.log("headers: ", headers);
     const body = {
       pickupPhysicalAddress: rideInfo?.pickupPhysicalAddress,
       pickupLongitude: rideInfo?.pickupLongitude,
@@ -23,6 +21,7 @@ export const book = createAsyncThunk(
       numberOfSuitcases: vehicle?.numberOfSuitcases,
       pickupDateTime:
         tripDetail?.formattedPickupDate + " " + tripDetail?.formattedPickupTime,
+      returnPickupDateTime: "",
       specialInstructions: tripDetail?.instruction,
       bookingFor: contact?.bookingFor,
       additionalStopId: tripDetail.additionalStopId || 0,
@@ -30,6 +29,7 @@ export const book = createAsyncThunk(
         tripDetail.additionalStopOnTheWayDescription,
       passengerFullName: contact?.passengerFullName,
       passengerEmail: contact?.email,
+      gratuityId:contact.gratuityId,
       isGuestBooking: contact.isGuestBooking,
       passengerCellPhone: contact?.passengerCellPhone,
       carId: vehicle?.vehicle,
@@ -38,11 +38,13 @@ export const book = createAsyncThunk(
       expirationDate: contact.expirationDate,
       securityCode: contact.securityCode,
     };
-    if (rideInfo?.tripType == "Round-Trip" && !travelType == "3") {
+    if (rideInfo?.tripType == "Round-Trip") {
       body.returnPickupDateTime =
         tripDetail?.formattedReturnPickupDate +
         " " +
         tripDetail?.formattedReturnPickupTime;
+    } else if (travelType == "3" || rideInfo?.tripType == "One-Way") {
+      delete body.returnPickupDateTime;
     }
     var extraOptions = [];
     body.extraOptions.map((option) => {
@@ -52,9 +54,11 @@ export const book = createAsyncThunk(
       });
     });
     body.extraOptions = extraOptions;
-
+    if (extraOptions.length === 0) {
+      delete body.extraOptions;
+    }
     try {
-      if (travelType == 1) {
+      if (travelType === "1") {
         body.tripType = rideInfo?.tripType;
         body.distanceInMiles = rideInfo?.distanceInMiles;
 
@@ -68,7 +72,7 @@ export const book = createAsyncThunk(
           body,
           headers
         );
-      } else if (travelType == 2) {
+      } else if (travelType === "2") {
         const body = {
           tripType: rideInfo?.tripType,
           airportId: rideInfo?.airPortId,
@@ -78,6 +82,7 @@ export const book = createAsyncThunk(
           accommodationLongitude: rideInfo?.accommodationLongitude,
           accommodationLatitude: rideInfo?.accommodationLatitude,
           airline: tripDetail?.airline,
+          gratuityId:contact.gratuityId,
           arrivalFlightNumber: tripDetail?.arrivalFlightNumber,
           specialInstructions: tripDetail?.instruction,
           isGuestBooking: contact.isGuestBooking,
@@ -85,6 +90,7 @@ export const book = createAsyncThunk(
             tripDetail?.formattedPickupDate +
             " " +
             tripDetail?.formattedPickupTime,
+          returnPickupDateTime: "",
           distanceInMiles: rideInfo?.distanceInMiles,
           carId: vehicle?.vehicle,
           additionalStopId: tripDetail.additionalStopId,
@@ -100,6 +106,9 @@ export const book = createAsyncThunk(
           expirationDate: contact.expirationDate,
           securityCode: contact.securityCode,
         };
+        if (body.extraOptions.length === 0) {
+          delete body.extraOptions;
+        }
         if (
           rideInfo?.tripType == "Ride from the airport(round trip)" ||
           rideInfo?.tripType == "Ride to the airport(round trip)"
@@ -108,18 +117,21 @@ export const book = createAsyncThunk(
             tripDetail?.formattedReturnPickupDate +
             " " +
             tripDetail?.formattedReturnPickupTime;
+        } else {
+          delete body.returnPickupDateTime;
         }
         if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
           delete body.additionalStopId;
           delete body.additionalStopOnTheWayDescription;
         }
+        
         res = await axios.post(
           remote_host + "/api/v1/airport-books",
           body,
           headers
         );
         return res.data;
-      } else if (travelType == 3) {
+      } else if (travelType === "3") {
         if (!tripDetail.additionalStopId || tripDetail.additionalStopId == 0) {
           delete body.additionalStopId;
           delete body.additionalStopOnTheWayDescription;

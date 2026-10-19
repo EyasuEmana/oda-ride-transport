@@ -60,8 +60,8 @@ export default function PaymentStatusPopup({
       toast.error(error?.response?.data?.message ||" Network error...", {
         // position: toast.POSITION.TOP_CENTER
       });
-      handleClose();
-      setIsUpdated(true);
+      // handleClose();
+      // setIsUpdated(true);
     } finally {
       setLoading(false);
     }

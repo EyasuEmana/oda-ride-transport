@@ -35,6 +35,7 @@ const publicNavbarMenus = [
   { title: "About Us", link: "/about-us", scrollLink: "aboutus" },
   { title: "Contact Us", link: "/contact-us", scrollLink: "footer" },
   { title: "FAQ", link: "/faq", scrollLink: "faq" },
+  { title: "Book now", link: "/home/1", scroll: "nowhere" },
 ];
 const authNavbarMenus = [
   { title: "Home", link: "/home/1" },
@@ -131,6 +132,7 @@ function Header({ handleUsernameFocus }) {
         break;
     }
   }, [location]);
+
   return (
     <AppBar
       sx={{
@@ -185,18 +187,12 @@ function Header({ handleUsernameFocus }) {
                     if (isAuthenticated) {
                       navigate(menu.link);
                     } else {
-                      scrollToSection(menu.scrollLink);
+                      if (menu.title === "Book now") navigate(menu.link);
+                      else scrollToSection(menu.scrollLink);
                     }
                   }}
                 />
               ))}
-              <RSButton
-                variant="text"
-                sx={{ color: "info.main",border:"1px solid info.main" }}
-                 onClick={() => navigate("/home/1")}
-              >
-                Book now
-              </RSButton>
             </StyledTabs>
           )}
         </Stack>

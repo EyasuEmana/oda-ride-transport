@@ -39,6 +39,9 @@ export default function AddCar() {
     pricePerHour: yup
       .number("should be number")
       .required("price per hour is required"),
+    minimumStartFee: yup
+      .number("should be number")
+      .required("price per hour is required"),
     currency: yup.string().required("currency is required"),
     engineType: yup.string().required("Engine Type is required"),
     length: yup.number().required("length required"),
@@ -59,6 +62,7 @@ export default function AddCar() {
       carType: "",
       pricePerMile: 1,
       pricePerHour: 1,
+      minimumStartFee: 0,
       currency: "USD",
       engineType: "",
       length: 0,
@@ -75,6 +79,16 @@ export default function AddCar() {
       handleCreateCar(values);
     },
   });
+
+  const token = sessionStorage.getItem("access_token");
+
+  // Set the Authorization header with the token
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   const handleCreateCar = async (carData) => {
     const newCarData = _.omit(carData, "carImage");
     setCreateCarSuccess((prev) => ({
@@ -82,7 +96,7 @@ export default function AddCar() {
       createCarLoading: true,
     }));
     await axios
-      .post(`https://api.odatransportation.com/api/v1/cars`, newCarData)
+      .post(`https://api.odatransportation.com/api/v1/cars`, newCarData, config)
       .then((response) => {
         const carId = response.data.carId;
         uploadCarImage(carId);
@@ -109,7 +123,7 @@ export default function AddCar() {
     await axios
       .put(
         `https://api.odatransportation.com/api/v1/cars/${carId}/upload-image`,
-        carForm
+        carForm, config
       )
       .then(() => {
         setCreateCarFail((prev) => ({ ...prev, isCreateCarFail: false }));
@@ -251,6 +265,23 @@ export default function AddCar() {
               }
             />
           </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <TextField
+              fullWidth
+              label={"minimum Start Fee"}
+              {...formikCar.getFieldProps("minimumStartFee")}
+              error={
+                Boolean(formikCar.errors.minimumStartFee) &&
+                formikCar.touched.minimumStartFee
+              }
+              helperText={
+                formikCar.touched.minimumStartFee &&
+                formikCar.errors.minimumStartFee
+              }
+            />
+          </Grid>
+
           <Grid item xs={12} md={6} lg={4}>
             <TextField
               fullWidth
@@ -399,7 +430,7 @@ export default function AddCar() {
               onClick={() => formikCar.handleSubmit()}
             >
               {createCarSuccess.createCarLoading ? (
-                <CircularProgress size={20} sx={{color:"#FFF"}} />
+                <CircularProgress size={20} sx={{ color: "#FFF" }} />
               ) : (
                 "Register Car"
               )}

@@ -52,6 +52,7 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       },
     };
   };
+
   const isPointToPointTravel = travelType === "1";
   const isAirportTravel = travelType === "2";
   const isHourlyTravel = travelType === "3";
@@ -75,6 +76,8 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
       );
   };
 
+
+
   const handleStopOnWayChange = (event) => {
     formik.setFieldValue("additionalStopId", event.target.value);
     var stopOnWayFee = parseFloat(event.target.name);
@@ -86,10 +89,15 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
     );
     formik.setFieldValue("prevAddtionalStopOnTheWayFee", stopOnWayFee);
   };
+
+
+
   useEffect(() => {
     getAdditionalAtStopOnTheWay();
     dispatch(getAllPreferences());
   }, []);
+
+
   return (
     <Box>
       <Grid
@@ -338,6 +346,9 @@ function Index({ formik, vehicleSummaryData, rideSummaryData }) {
                 )}
               </FormControl>
             )}
+
+            
+
             {(isPointToPointTravel || isAirportTravel) && (
               <>
                 <FormControlLabel

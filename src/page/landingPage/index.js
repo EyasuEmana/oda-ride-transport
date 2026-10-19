@@ -14,6 +14,7 @@ import AboutUs from "./component/about_us";
 import Auth from "./component/auth";
 import { setIsAuthenticated } from "../../store/reducers/authReducer";
 import { motion } from "framer-motion";
+import Slider from "./component/slider/index";
 function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,12 +50,14 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
   }, []);
 
   return (
-    <Box py={10} id="home">
+    <Box paddingBottom={10} id="home">
+      <Slider />
       <Grid
         container
         alignItems={"flex-start"}
         justifyContent={"center"}
         spacing={5}
+        mt={-20}
       >
         <Grid item md={5} xs={11}>
           <Stack direction={"column"} spacing={3}>
@@ -81,7 +84,7 @@ function Index({ usernameFocus, handleUsernameFocus, setUsernameFocus }) {
                   navigate(`/home/1`);
                 }}
               >
-                Unlock your ride
+                Book Now
                 <MdOutlineSend style={{ marginLeft: 5 }} size={20} />
               </RSButton>
             </motion.div>

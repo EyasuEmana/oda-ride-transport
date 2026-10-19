@@ -69,6 +69,7 @@ function ViewHourlyBookDetail(props) {
     setPopupType(null);
   };
   const endpoint = `/api/v1/admin/bookings/approve`;
+  const paymentendpoint = `/api/v1/admin/bookings/update-payment-status`;
 
   const detailendpoint = `/api/v1/airport-books/${hourlyCharterBookId}`;
 
@@ -95,6 +96,29 @@ function ViewHourlyBookDetail(props) {
           autoClose: 6000,
           // position: toast.POSITION.TOP_CENTER
         });
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || " Network error...", {});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptPayment = async () => {
+    try {
+      const response = await BACKEND_API.post(paymentendpoint, {
+        bookingId: hourlyCharterBookId,
+        bookingType: "HOURLY_CHARTER",
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success(
+          response?.data?.message || `Payment Taken successfully!`,
+          {
+            autoClose: 6000,
+          }
+        );
+        //
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || " Network error...", {});
@@ -223,22 +247,10 @@ function ViewHourlyBookDetail(props) {
             label="Additional Stop On the Way "
             value={AdditionalStopOnTheWay}
           />
-          <Field
-            label="Car Id"
-            value={response?.Car?.carId}
-          />
-          <Field
-            label="Car Name"
-            value={response?.Car?.carName}
-          />
-          <Field
-            label="Price Per-Mile"
-            value={response?.Car?.pricePerMile}
-          />
-          <Field
-            label="Price Per-Hour"
-            value={response?.Car?.pricePerHour}
-          />
+          <Field label="Car Id" value={response?.Car?.carId} />
+          <Field label="Car Name" value={response?.Car?.carName} />
+          <Field label="Price Per-Mile" value={response?.Car?.pricePerMile} />
+          <Field label="Price Per-Hour" value={response?.Car?.pricePerHour} />
         </Grid>
 
         <Grid item container lg={8} spacing={2} mt={2}>
@@ -266,11 +278,6 @@ function ViewHourlyBookDetail(props) {
             ))}
           </>
         )}
-
-
-
-
-
 
         <Grid item lg={5}>
           <Button
@@ -317,7 +324,7 @@ function ViewHourlyBookDetail(props) {
           </Button>
         </Grid>
 
-        <Grid item sx={5}>
+        {/* <Grid item sx={5}>
           <Button
             variant="contained"
             color="warning"
@@ -326,7 +333,26 @@ function ViewHourlyBookDetail(props) {
           >
             EDIT PAYMENT STATUS
           </Button>
+        </Grid> */}
+
+        <Grid item sx={5}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#03930a", // Set background color to #03930a
+              color: "white", // Set text color to white or any color you prefer
+              "&:hover": {
+                backgroundColor: "#027c08", // Change color on hover if needed
+              },
+            }}
+            fullWidth
+            onClick={handleAcceptPayment}
+          >
+            TAKE PAYMENT
+          </Button>
         </Grid>
+
+        
       </Grid>
 
       {popupType === "REJECT" && (

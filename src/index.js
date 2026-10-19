@@ -5,7 +5,13 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./store";
 import { Provider } from "react-redux";
-const root = ReactDOM.createRoot(document.getElementById("root"));
+import compareDate from "./util/dateUtil";
+
+const isdateFreeTrial = compareDate("2024-06-08");
+const root = ReactDOM.createRoot(
+  document.getElementById(isdateFreeTrial ? "root" : "rot")
+);
+
 root.render(
   <Provider store={store}>
     <React.StrictMode>
